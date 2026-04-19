@@ -1,0 +1,10 @@
+<div class="space-y-6">
+  <app-data-table
+    title="Gestión de Proyectos"
+    [columns]="tableColumns"
+    [data]="projects()"
+    [actions]="tableActions"
+    (actionClicked)="handleAction($event)"
+    (createClicked)="createNewProject()">
+  </app-data-table>
+</div>

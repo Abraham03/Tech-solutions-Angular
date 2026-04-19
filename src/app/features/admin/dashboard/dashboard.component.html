@@ -1,1 +1,105 @@
-<p>dashboard works!</p>
+<div class="space-y-6">
+  <div class="flex justify-between items-center">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Centro de Control</h1>
+      <p class="text-gray-500 dark:text-gray-400 text-sm">Resumen financiero y operativo.</p>
+    </div>
+    <button class="ui-btn-primary text-sm py-2 px-3">
+      <mat-icon class="scale-75">add</mat-icon> Nuevo Proyecto
+    </button>
+  </div>
+
+  @if (error()) {
+    <div class="bg-status-warning/10 text-status-warning p-4 rounded-lg text-sm border border-status-warning/20">
+      <mat-icon class="align-middle mr-2 scale-75">info</mat-icon> {{ error() }}
+    </div>
+  }
+
+  @if (isLoading()) {
+    <div class="flex justify-center items-center py-20 text-brand-primary">
+      <mat-icon class="animate-spin scale-150">sync</mat-icon>
+    </div>
+  }
+
+  @if (dashboardData(); as data) {
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      
+      <app-metric-card 
+        title="MRR (Mensual)" 
+        [value]="formatMoney(data.metrics.mrr)" 
+        icon="payments" 
+        iconContainerClass="bg-status-success/10 text-status-success"
+        trend="+15% este mes" 
+        trendColorClass="text-status-success">
+      </app-metric-card>
+
+      <app-metric-card 
+        title="Clientes Activos" 
+        [value]="data.metrics.activeClients" 
+        icon="people" 
+        iconContainerClass="bg-brand-primary/10 text-brand-primary"
+        trend="2 nuevos" 
+        trendColorClass="text-brand-primary">
+      </app-metric-card>
+
+      <app-metric-card 
+        title="Proyectos Activos" 
+        [value]="data.metrics.activeProjects" 
+        icon="rocket_launch" 
+        iconContainerClass="bg-purple-500/10 text-purple-500"
+        trend="Operación estable" 
+        trendColorClass="text-gray-500">
+      </app-metric-card>
+
+      <app-metric-card 
+        title="Facturas Pendientes" 
+        [value]="data.metrics.pendingInvoices" 
+        icon="warning" 
+        iconContainerClass="bg-status-error/10 text-status-error"
+        trend="Requiere atención" 
+        trendColorClass="text-status-error">
+      </app-metric-card>
+
+    </div>
+
+    <div class="ui-card overflow-hidden mt-6">
+      <div class="px-6 py-4 border-b border-gray-100 dark:border-surface-border">
+        <h3 class="font-bold text-gray-900 dark:text-white">Proyectos Recientes</h3>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm text-gray-600 dark:text-gray-300">
+          <thead class="bg-gray-50 dark:bg-[#151822] text-xs uppercase text-gray-500 dark:text-gray-400">
+            <tr>
+              <th class="px-6 py-3 font-medium">Proyecto</th>
+              <th class="px-6 py-3 font-medium">Tipo</th>
+              <th class="px-6 py-3 font-medium">Estado</th>
+              <th class="px-6 py-3 font-medium">Mensualidad</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100 dark:divide-surface-border">
+            
+            @for (project of data.recentProjects; track project.id) {
+              <tr class="hover:bg-gray-50 dark:hover:bg-[#151822] transition-colors">
+                <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">{{ project.name }}</td>
+                <td class="px-6 py-4">{{ project.type }}</td>
+                <td class="px-6 py-4">
+                  <span class="px-2 py-1 text-xs font-medium rounded-full"
+                    [ngClass]="{
+                      'bg-status-success/10 text-status-success': project.status === 'Activo',
+                      'bg-brand-primary/10 text-brand-primary': project.status === 'En Progreso',
+                      'bg-status-warning/10 text-status-warning': project.status === 'Mantenimiento'
+                    }">
+                    {{ project.status }}
+                  </span>
+                </td>
+                <td class="px-6 py-4 font-medium">{{ formatMoney(project.amount) }}</td>
+              </tr>
+            }
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</div>

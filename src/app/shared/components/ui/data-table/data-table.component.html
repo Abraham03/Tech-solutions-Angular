@@ -1,0 +1,90 @@
+<div class="ui-card overflow-hidden flex flex-col">
+  
+  <div class="p-6 border-b border-gray-100 dark:border-surface-border flex flex-col sm:flex-row justify-between items-center gap-4">
+    <h3 class="font-bold text-gray-900 dark:text-white text-lg">{{ title() }}</h3>
+    
+    <div class="flex items-center gap-3 w-full sm:w-auto">
+      <div class="relative w-full sm:w-64">
+        <mat-icon class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 scale-75">search</mat-icon>
+        <input 
+          type="text" 
+          [ngModel]="searchTerm()" 
+          (ngModelChange)="searchTerm.set($event)"
+          placeholder="Buscar..." 
+          class="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-[#151822] border border-gray-200 dark:border-surface-border rounded-lg text-sm focus:ring-2 focus:ring-brand-primary outline-none transition-all dark:text-white">
+      </div>
+      
+      <button (click)="createClicked.emit()" class="ui-btn-primary !py-2 !px-3 text-sm whitespace-nowrap">
+        <mat-icon class="scale-75">add</mat-icon> Nuevo
+      </button>
+    </div>
+  </div>
+
+  <div class="overflow-x-auto">
+    <table class="w-full text-left text-sm text-gray-600 dark:text-gray-300">
+      <thead class="bg-gray-50 dark:bg-[#151822] text-xs uppercase text-gray-500 dark:text-gray-400">
+        <tr>
+          @for (col of columns(); track col.key) {
+            <th class="px-6 py-4 font-medium">{{ col.label }}</th>
+          }
+          @if (actions().length > 0) {
+            <th class="px-6 py-4 font-medium text-right">Acciones</th>
+          }
+        </tr>
+      </thead>
+      
+      <tbody class="divide-y divide-gray-100 dark:divide-surface-border">
+        
+        @for (row of filteredData(); track row.id || $index) {
+          <tr class="hover:bg-gray-50 dark:hover:bg-[#151822] transition-colors group">
+            
+            @for (col of columns(); track col.key) {
+              <td class="px-6 py-4">
+                
+                @if (!col.type || col.type === 'text') {
+                  <span class="font-medium text-gray-900 dark:text-white">{{ row[col.key] }}</span>
+                }
+                
+                @if (col.type === 'currency') {
+                  <span class="font-medium text-gray-900 dark:text-white">{{ formatCurrency(row[col.key]) }}</span>
+                }
+                
+                @if (col.type === 'badge') {
+                  <span class="px-3 py-1 text-xs font-medium rounded-full"
+                        [ngClass]="col.badgeColors?.[row[col.key]] || 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'">
+                    {{ row[col.key] | titlecase }}
+                  </span>
+                }
+
+              </td>
+            }
+
+            @if (actions().length > 0) {
+              <td class="px-6 py-4 text-right">
+                <div class="table-actions flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  @for (action of actions(); track action.actionName) {
+                    <button 
+                      (click)="onAction(action.actionName, row)"
+                      [title]="action.tooltip"
+                      class="p-1 rounded transition-colors"
+                      [ngClass]="action.colorClass">
+                      <mat-icon class="scale-75">{{ action.icon }}</mat-icon>
+                    </button>
+                  }
+                </div>
+              </td>
+            }
+          </tr>
+        } @empty {
+          <tr>
+            <td [attr.colspan]="columns().length + (actions().length > 0 ? 1 : 0)" class="px-6 py-12 text-center text-gray-500">
+              <mat-icon class="scale-150 mb-4 opacity-50">folder_open</mat-icon>
+              <p>No se encontraron registros.</p>
+            </td>
+          </tr>
+        }
+
+      </tbody>
+    </table>
+  </div>
+</div>
