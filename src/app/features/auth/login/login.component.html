@@ -1,0 +1,56 @@
+<div class="flex min-h-screen bg-white dark:bg-surface-dark transition-colors duration-300">
+  
+  <div class="hidden lg:flex lg:w-1/2 bg-[#000814] relative overflow-hidden flex-col justify-end p-12 text-white">
+    <div class="absolute inset-0 bg-brand-primary opacity-20 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-brand-primaryHover via-[#000814] to-black"></div>
+    
+    <div class="relative z-10 max-w-md">
+      <h1 class="text-4xl font-bold mb-4">Potencia tu negocio digital</h1>
+      <p class="text-gray-300 text-lg">
+        Gestiona tus proyectos, servicios y pagos en un solo lugar. La plataforma integral para nuestros clientes.
+      </p>
+    </div>
+  </div>
+
+  <div class="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-50 dark:bg-surface-dark transition-colors">
+    <div class="w-full max-w-md p-10 ui-card">
+      
+      <div class="flex items-center gap-3 mb-8">
+        <div class="w-8 h-8 bg-brand-primary rounded flex items-center justify-center text-white font-bold">
+          <mat-icon class="text-sm scale-75">computer</mat-icon>
+        </div>
+        <span class="font-bold text-gray-900 dark:text-white text-xl tracking-tight">Tech Solutions Portal</span>
+      </div>
+
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Bienvenido de nuevo</h2>
+      <p class="text-gray-500 dark:text-gray-400 mb-8 text-sm">Ingresa a tu portal de cliente para gestionar tus servicios.</p>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-5">
+        
+        <div *ngIf="errorMessage" class="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-sm p-3 rounded-lg border border-red-100 dark:border-red-900/50">
+          {{ errorMessage }}
+        </div>
+
+        <div class="flex flex-col">
+          <label class="ui-label">Correo electrónico</label>
+          <input type="email" formControlName="email" placeholder="ejemplo@correo.com" class="ui-input">
+          <span class="text-xs text-status-error mt-1" *ngIf="loginForm.get('email')?.hasError('required') && loginForm.get('email')?.touched">Requerido</span>
+        </div>
+
+        <div class="flex flex-col">
+          <div class="flex justify-between items-center mb-1">
+            <label class="ui-label !mb-0">Contraseña</label>
+            <a href="#" class="text-sm text-brand-primary hover:underline">¿Olvidaste tu contraseña?</a>
+          </div>
+          <input type="password" formControlName="password" placeholder="••••••••" class="ui-input">
+        </div>
+
+        <button type="submit" [disabled]="loginForm.invalid || isLoading" class="ui-btn-primary mt-2">
+          <span *ngIf="!isLoading">Entrar al Portal</span>
+          <mat-icon *ngIf="!isLoading" class="text-sm scale-75">arrow_forward</mat-icon>
+          <span *ngIf="isLoading">Verificando...</span>
+        </button>
+
+      </form>
+    </div>
+  </div>
+</div>

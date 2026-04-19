@@ -1,0 +1,58 @@
+<div class="flex h-screen bg-gray-100 dark:bg-surface-dark transition-colors duration-300">
+  
+  <aside class="w-64 bg-white dark:bg-surface-paper border-r border-gray-200 dark:border-surface-border flex flex-col transition-colors duration-300">
+    <div class="h-16 flex items-center px-6 border-b border-gray-200 dark:border-surface-border">
+      <span class="text-xl font-bold text-gray-900 dark:text-white tracking-wide">Tech Solutions</span>
+    </div>
+    
+    <nav class="flex-1 p-4 space-y-2">
+      <ng-container *ngIf="user()?.role === 'admin'">
+        <a routerLink="/admin/dashboard" routerLinkActive="bg-brand-primary text-white" class="flex items-center gap-3 px-4 py-3 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-surface-border transition-colors">
+          <mat-icon>dashboard</mat-icon>
+          <span>Dashboard</span>
+        </a>
+        <a routerLink="/admin/clients" routerLinkActive="bg-brand-primary text-white" class="flex items-center gap-3 px-4 py-3 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-surface-border transition-colors">
+          <mat-icon>people</mat-icon>
+          <span>Clientes</span>
+        </a>
+      </ng-container>
+
+      <ng-container *ngIf="user()?.role === 'client'">
+        <a routerLink="/client/portal" routerLinkActive="bg-brand-primary text-white" class="flex items-center gap-3 px-4 py-3 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-surface-border transition-colors">
+          <mat-icon>home</mat-icon>
+          <span>Mi Resumen</span>
+        </a>
+      </ng-container>
+    </nav>
+  </aside>
+
+  <main class="flex-1 flex flex-col min-w-0 overflow-hidden">
+    
+    <header class="h-16 bg-white dark:bg-surface-paper border-b border-gray-200 dark:border-surface-border flex items-center justify-between px-6 transition-colors duration-300">
+      <div></div>
+      
+      <div class="flex items-center gap-4">
+        <button mat-icon-button (click)="toggleDarkMode()" class="text-gray-600 dark:text-gray-300">
+          <mat-icon>{{ isDarkMode ? 'light_mode' : 'dark_mode' }}</mat-icon>
+        </button>
+
+        <button mat-button [matMenuTriggerFor]="userMenu" class="!text-gray-700 dark:!text-gray-300">
+          <mat-icon class="mr-2">account_circle</mat-icon>
+          {{ user()?.name || 'Usuario' }}
+        </button>
+        
+        <mat-menu #userMenu="matMenu" class="dark:bg-surface-paper">
+          <button mat-menu-item (click)="logout()">
+            <mat-icon>exit_to_app</mat-icon>
+            <span>Cerrar Sesión</span>
+          </button>
+        </mat-menu>
+      </div>
+    </header>
+
+    <div class="flex-1 overflow-auto p-6 text-gray-900 dark:text-gray-100">
+      <router-outlet></router-outlet>
+    </div>
+    
+  </main>
+</div>

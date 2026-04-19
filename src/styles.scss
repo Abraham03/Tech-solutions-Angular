@@ -1,11 +1,12 @@
-
-// Include theming for Angular Material with `mat.theme()`.
-// This Sass mixin will define CSS variables that are used for styling Angular Material
-// components according to the Material 3 design spec.
-// Learn more about theming and how to use it for your application's
-// custom components at https://material.angular.dev/guide/theming
+// 1. Angular Material SIEMPRE debe ir primero
 @use '@angular/material' as mat;
 
+// 2. Importamos Tailwind de forma nativa
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+// 3. Configuración de tu Tema
 html {
   height: 100%;
   @include mat.theme((
@@ -13,26 +14,40 @@ html {
       primary: mat.$azure-palette,
       tertiary: mat.$blue-palette,
     ),
-    typography: Roboto,
+    // Le decimos a Material que use nuestra nueva fuente
+    typography: Inter,
     density: 0,
   ));
 }
 
 body {
-  // Default the application to a light color theme. This can be changed to
-  // `dark` to enable the dark color theme, or to `light dark` to defer to the
-  // user's system settings.
-  color-scheme: light;
-
-  // Set a default background, font and text colors for the application using
-  // Angular Material's system-level CSS variables. Learn more about these
-  // variables at https://material.angular.dev/guide/system-variables
-  background-color: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
-  font: var(--mat-sys-body-medium);
-
-  // Reset the user agent margin.
   margin: 0;
   height: 100%;
 }
-/* You can add global styles to this file, and also import other style files */
+
+// ==========================================
+// 4. TECH SOLUTIONS DESIGN SYSTEM
+// Clases reutilizables para toda la app (Fase 3)
+// ==========================================
+@layer components {
+  
+  /* Tarjetas (Para el Dashboard y Resumen) */
+  .ui-card {
+    @apply bg-white dark:bg-surface-paper rounded-xl border border-gray-100 dark:border-surface-border shadow-sm transition-colors duration-300;
+  }
+
+  /* Botón Principal (Azul) */
+  .ui-btn-primary {
+    @apply bg-brand-primary hover:bg-brand-primaryHover text-white font-medium py-3 px-4 rounded-lg transition-colors flex justify-center items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* Cajas de Texto (Inputs) */
+  .ui-input {
+    @apply w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-surface-border bg-white dark:bg-[#151822] text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-primary focus:border-transparent outline-none transition-all;
+  }
+
+  /* Etiquetas de Texto (Labels) */
+  .ui-label {
+    @apply text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 block;
+  }
+}
