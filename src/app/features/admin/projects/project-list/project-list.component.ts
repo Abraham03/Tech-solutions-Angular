@@ -2,6 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DataTableComponent, TableColumn, TableActionConfig } from '../../../../shared/components/ui/data-table/data-table.component';
 import { ProjectService } from '../../../../core/services/project.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-project-list',
@@ -11,6 +12,7 @@ import { ProjectService } from '../../../../core/services/project.service';
 })
 export class ProjectListComponent implements OnInit {
   private projectService = inject(ProjectService);
+  private router = inject(Router);
 
   // Estado reactivo para los datos
   projects = signal<any[]>([]);
@@ -47,18 +49,29 @@ export class ProjectListComponent implements OnInit {
   loadProjects() {
     this.projectService.getProjects().subscribe({
       next: (response: any) => {
-        // Asumiendo que Laravel usa un Resource Collection que devuelve data en 'data'
-        this.projects.set(response.data || response); 
+        // 1. Extraemos la data (Laravel Resource suele enviarlo en 'data')
+        let extractedData = response?.data || response;
+        
+        // 2. Si Laravel manda paginación nativa, la data real está un nivel más adentro
+        if (extractedData && extractedData.data && Array.isArray(extractedData.data)) {
+          extractedData = extractedData.data;
+        }
+
+        // 3. Validación estricta: Si no es un Array, forzamos un Array vacío
+        this.projects.set(Array.isArray(extractedData) ? extractedData : []); 
       },
-      error: (err) => console.error('Error cargando proyectos', err)
+      error: (err) => {
+        console.error('Error cargando proyectos', err);
+        // Si hay error 500 o 404, evitamos que la tabla se rompa
+        this.projects.set([]); 
+      }
     });
   }
 
   // 3. Manejador de eventos (Cuando hacen clic en algún botón de la tabla)
   handleAction(event: { action: string; row: any }) {
     if (event.action === 'edit') {
-      console.log('Navegar a editar:', event.row.id);
-      // Aquí agregaremos el ruteo: this.router.navigate(['/admin/projects/edit', event.row.id])
+      this.router.navigate(['/admin/projects/edit', event.row.id]);
     } else if (event.action === 'delete') {
       if (confirm(`¿Estás seguro de eliminar el proyecto ${event.row.name}?`)) {
         this.projectService.deleteProject(event.row.id).subscribe(() => this.loadProjects());
@@ -67,6 +80,6 @@ export class ProjectListComponent implements OnInit {
   }
 
   createNewProject() {
-    console.log('Abrir formulario para nuevo proyecto');
+    this.router.navigate(['/admin/projects/new']);
   }
 }

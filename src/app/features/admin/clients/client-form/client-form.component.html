@@ -1,0 +1,77 @@
+<div class="max-w-3xl mx-auto space-y-6">
+  
+  <div class="flex items-center gap-4">
+    <button (click)="goBack()" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-surface-border transition-colors text-gray-500 dark:text-gray-400">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+        {{ isEditMode() ? 'Editar Cliente' : 'Nuevo Cliente' }}
+      </h1>
+      <p class="text-gray-500 dark:text-gray-400 text-sm">Ingresa los datos fiscales y de contacto.</p>
+    </div>
+  </div>
+
+  <div class="ui-card p-8">
+    
+    @if (serverError()) {
+      <div class="mb-6 p-4 bg-status-error/10 border border-status-error/20 text-status-error rounded-lg flex items-center gap-3">
+        <mat-icon class="scale-75">error_outline</mat-icon>
+        <span class="text-sm font-medium">{{ serverError() }}</span>
+      </div>
+    }
+
+    <form [formGroup]="clientForm" (ngSubmit)="onSubmit()" class="space-y-6">
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <div>
+          <label class="ui-label">Razón Social o Nombre <span class="text-status-error">*</span></label>
+          <input type="text" formControlName="name" class="ui-input" placeholder="Ej. Tech Solutions S.A.">
+          @if (clientForm.get('name')?.invalid && clientForm.get('name')?.touched) {
+            <span class="text-xs text-status-error mt-1 block">El nombre es requerido (mínimo 3 letras).</span>
+          }
+        </div>
+
+        <div>
+          <label class="ui-label">Contacto Principal <span class="text-status-error">*</span></label>
+          <input type="text" formControlName="contact_name" class="ui-input" placeholder="Nombre de la persona">
+          @if (clientForm.get('contact_name')?.invalid && clientForm.get('contact_name')?.touched) {
+            <span class="text-xs text-status-error mt-1 block">El contacto es requerido.</span>
+          }
+        </div>
+
+        <div>
+          <label class="ui-label">Correo Electrónico <span class="text-status-error">*</span></label>
+          <input type="email" formControlName="email" class="ui-input" placeholder="contacto@empresa.com">
+          @if (clientForm.get('email')?.invalid && clientForm.get('email')?.touched) {
+            <span class="text-xs text-status-error mt-1 block">Ingresa un correo electrónico válido.</span>
+          }
+        </div>
+
+        <div>
+          <label class="ui-label">Teléfono (WhatsApp) <span class="text-status-error">*</span></label>
+          <input type="text" formControlName="phone_number" class="ui-input" placeholder="10 dígitos">
+          @if (clientForm.get('phone_number')?.invalid && clientForm.get('phone_number')?.touched) {
+            <span class="text-xs text-status-error mt-1 block">Ingresa un teléfono válido de 10 a 15 números.</span>
+          }
+        </div>
+
+      </div>
+
+      <div class="pt-6 border-t border-gray-100 dark:border-surface-border flex justify-end gap-4">
+        <button type="button" (click)="goBack()" class="px-6 py-2 rounded-lg text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-100 dark:hover:bg-surface-border transition-colors">
+          Cancelar
+        </button>
+        <button type="submit" [disabled]="clientForm.invalid || isSubmitting()" class="ui-btn-primary px-8">
+          @if (isSubmitting()) {
+            <mat-icon class="animate-spin scale-75 mr-2">sync</mat-icon> Guardando...
+          } @else {
+            <mat-icon class="scale-75 mr-2">save</mat-icon> Guardar Cliente
+          }
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>

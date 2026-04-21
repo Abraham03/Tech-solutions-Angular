@@ -10,12 +10,25 @@ export class ProjectService {
   private http = inject(HttpClient);
   private apiUrl = environment.apiUrl;
 
-  // En Laravel, un apiResource index responde en GET /projects
-  getProjects(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/admin/projects`);
+  getProjects(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/admin/projects`);
   }
 
-  // Preparando el terreno para eliminar (SoftDelete en Laravel)
+  // Para rellenar el formulario al editar
+  getProject(id: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/admin/projects/${id}`);
+  }
+
+  // Guardar en base de datos
+  createProject(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/admin/projects`, data);
+  }
+
+  // Actualizar cambios
+  updateProject(id: number, data: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/admin/projects/${id}`, data);
+  }
+
   deleteProject(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/admin/projects/${id}`);
   }

@@ -1,0 +1,120 @@
+<div class="max-w-4xl mx-auto space-y-6">
+  
+  <div class="flex items-center gap-4">
+    <button (click)="goBack()" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-surface-border transition-colors text-gray-500 dark:text-gray-400">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+        {{ isEditMode() ? 'Editar Servicio' : 'Nuevo Servicio' }}
+      </h1>
+      <p class="text-gray-500 dark:text-gray-400 text-sm">Registra dominios, VPS y mantén el control de tus costos y vencimientos.</p>
+    </div>
+  </div>
+
+  <div class="ui-card p-8">
+    
+    @if (serverError()) {
+      <div class="mb-6 p-4 bg-status-error/10 border border-status-error/20 text-status-error rounded-lg flex items-center gap-3">
+        <mat-icon class="scale-75">error_outline</mat-icon>
+        <span class="text-sm font-medium">{{ serverError() }}</span>
+      </div>
+    }
+
+    <form [formGroup]="serviceForm" (ngSubmit)="onSubmit()" class="space-y-6">
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label class="ui-label">Proyecto Asignado <span class="text-status-error">*</span></label>
+          <select formControlName="project_id" class="ui-input">
+            <option value="" disabled>Selecciona un proyecto...</option>
+            @for (project of projects(); track project.id) {
+              <option [value]="project.id">{{ project.name }}</option>
+            }
+          </select>
+          @if (serviceForm.get('project_id')?.invalid && serviceForm.get('project_id')?.touched) {
+            <span class="text-xs text-status-error mt-1 block">Debes seleccionar un proyecto.</span>
+          }
+        </div>
+
+        <div>
+          <label class="ui-label">Nombre / Dominio <span class="text-status-error">*</span></label>
+          <input type="text" formControlName="name" class="ui-input" placeholder="Ej. techsolutions.com">
+          @if (serviceForm.get('name')?.invalid && serviceForm.get('name')?.touched) {
+            <span class="text-xs text-status-error mt-1 block">Requerido (Mínimo 3 caracteres).</span>
+          }
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label class="ui-label">Tipo de Servicio <span class="text-status-error">*</span></label>
+          <select formControlName="type" class="ui-input">
+            @for (type of serviceTypes; track type.value) {
+              <option [value]="type.value">{{ type.label }}</option>
+            }
+          </select>
+        </div>
+
+        <div>
+          <label class="ui-label">Proveedor <span class="text-status-error">*</span></label>
+          <input type="text" formControlName="provider" class="ui-input" placeholder="Ej. Hostinger, AWS, Namecheap">
+          @if (serviceForm.get('provider')?.invalid && serviceForm.get('provider')?.touched) {
+            <span class="text-xs text-status-error mt-1 block">Debes indicar el proveedor.</span>
+          }
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label class="ui-label">Costo (Lo que tú pagas) <span class="text-status-error">*</span></label>
+          <input type="number" formControlName="cost_mxn" class="ui-input" placeholder="0.00" min="0" step="0.01">
+          @if (serviceForm.get('cost_mxn')?.invalid && serviceForm.get('cost_mxn')?.touched) {
+            <span class="text-xs text-status-error mt-1 block">Ingresa un costo válido.</span>
+          }
+        </div>
+
+        <div>
+          <label class="ui-label">Precio (Lo que le cobras al cliente) <span class="text-status-error">*</span></label>
+          <input type="number" formControlName="price_mxn" class="ui-input" placeholder="0.00" min="0" step="0.01">
+          @if (serviceForm.get('price_mxn')?.invalid && serviceForm.get('price_mxn')?.touched) {
+            <span class="text-xs text-status-error mt-1 block">Ingresa un precio válido.</span>
+          }
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label class="ui-label">Fecha de Vencimiento / Renovación <span class="text-status-error">*</span></label>
+          <input type="date" formControlName="expiration_date" class="ui-input">
+          @if (serviceForm.get('expiration_date')?.invalid && serviceForm.get('expiration_date')?.touched) {
+            <span class="text-xs text-status-error mt-1 block">La fecha de vencimiento es obligatoria.</span>
+          }
+        </div>
+
+        <div>
+          <label class="ui-label">Estado <span class="text-status-error">*</span></label>
+          <select formControlName="status" class="ui-input">
+            @for (status of serviceStatuses; track status.value) {
+              <option [value]="status.value">{{ status.label }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="pt-6 border-t border-gray-100 dark:border-surface-border flex justify-end gap-4">
+        <button type="button" (click)="goBack()" class="px-6 py-2 rounded-lg text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-100 dark:hover:bg-surface-border transition-colors">
+          Cancelar
+        </button>
+        <button type="submit" [disabled]="serviceForm.invalid || isSubmitting()" class="ui-btn-primary px-8">
+          @if (isSubmitting()) {
+            <mat-icon class="animate-spin scale-75 mr-2">sync</mat-icon> Guardando...
+          } @else {
+            <mat-icon class="scale-75 mr-2">save</mat-icon> Guardar Servicio
+          }
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>

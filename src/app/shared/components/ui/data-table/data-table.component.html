@@ -50,7 +50,7 @@
                 }
                 
                 @if (col.type === 'badge') {
-                  <span class="px-3 py-1 text-xs font-medium rounded-full"
+                  <span class="px-3 py-1 text-xs font-medium rounded-full whitespace-nowrap"
                         [ngClass]="col.badgeColors?.[row[col.key]] || 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'">
                     {{ row[col.key] | titlecase }}
                   </span>
@@ -61,12 +61,12 @@
 
             @if (actions().length > 0) {
               <td class="px-6 py-4 text-right">
-                <div class="table-actions flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div class="table-actions flex justify-end gap-1">
                   @for (action of actions(); track action.actionName) {
                     <button 
                       (click)="onAction(action.actionName, row)"
                       [title]="action.tooltip"
-                      class="p-1 rounded transition-colors"
+                      class="p-2 rounded-lg transition-all hover:bg-gray-200 dark:hover:bg-[#202433]"
                       [ngClass]="action.colorClass">
                       <mat-icon class="scale-75">{{ action.icon }}</mat-icon>
                     </button>

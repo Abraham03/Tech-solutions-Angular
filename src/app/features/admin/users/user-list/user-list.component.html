@@ -1,0 +1,11 @@
+<div class="space-y-6">
+
+  <app-data-table 
+    title="Directorio de Usuarios"
+    [data]="users()" 
+    [columns]="columns" 
+    [actions]="actions"
+    (actionClicked)="handleAction($event)"
+    (createClicked)="createNewUser()">
+  </app-data-table>
+</div>

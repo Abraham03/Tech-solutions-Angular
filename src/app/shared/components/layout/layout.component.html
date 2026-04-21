@@ -21,6 +21,16 @@
           <mat-icon>people</mat-icon>
           <span>Clientes</span>
         </a>
+
+        <a routerLink="/admin/services" routerLinkActive="bg-brand-primary text-white" class="flex items-center gap-3 px-4 py-3 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-surface-border transition-colors">
+          <mat-icon>dns</mat-icon>
+          <span>Infraestructura</span>
+        </a>
+
+        <a routerLink="/admin/users" routerLinkActive="bg-brand-primary text-white" class="flex items-center gap-3 px-4 py-3 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-surface-border transition-colors">
+          <mat-icon>manage_accounts</mat-icon>
+          <span>Usuarios</span>
+        </a>
       </ng-container>
 
       <ng-container *ngIf="user()?.role === 'client'">
