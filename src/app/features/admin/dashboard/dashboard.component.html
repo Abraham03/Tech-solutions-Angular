@@ -1,10 +1,11 @@
 <div class="space-y-6">
+  
   <div class="flex justify-between items-center">
     <div>
       <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Centro de Control</h1>
       <p class="text-gray-500 dark:text-gray-400 text-sm">Resumen financiero y operativo.</p>
     </div>
-    <button class="ui-btn-primary text-sm py-2 px-3">
+    <button routerLink="/admin/projects/new" class="ui-btn-primary text-sm py-2 px-3">
       <mat-icon class="scale-75">add</mat-icon> Nuevo Proyecto
     </button>
   </div>
@@ -30,7 +31,7 @@
         [value]="formatMoney(data.metrics.mrr)" 
         icon="payments" 
         iconContainerClass="bg-status-success/10 text-status-success"
-        trend="+15% este mes" 
+        trend="Ingreso recurrente" 
         trendColorClass="text-status-success">
       </app-metric-card>
 
@@ -39,7 +40,7 @@
         [value]="data.metrics.activeClients" 
         icon="people" 
         iconContainerClass="bg-brand-primary/10 text-brand-primary"
-        trend="2 nuevos" 
+        trend="Total de cuentas" 
         trendColorClass="text-brand-primary">
       </app-metric-card>
 
@@ -48,7 +49,7 @@
         [value]="data.metrics.activeProjects" 
         icon="rocket_launch" 
         iconContainerClass="bg-purple-500/10 text-purple-500"
-        trend="Operación estable" 
+        trend="En desarrollo" 
         trendColorClass="text-gray-500">
       </app-metric-card>
 
@@ -63,43 +64,14 @@
 
     </div>
 
-    <div class="ui-card overflow-hidden mt-6">
-      <div class="px-6 py-4 border-b border-gray-100 dark:border-surface-border">
-        <h3 class="font-bold text-gray-900 dark:text-white">Proyectos Recientes</h3>
-      </div>
-      <div class="overflow-x-auto">
-        <table class="w-full text-left text-sm text-gray-600 dark:text-gray-300">
-          <thead class="bg-gray-50 dark:bg-[#151822] text-xs uppercase text-gray-500 dark:text-gray-400">
-            <tr>
-              <th class="px-6 py-3 font-medium">Proyecto</th>
-              <th class="px-6 py-3 font-medium">Tipo</th>
-              <th class="px-6 py-3 font-medium">Estado</th>
-              <th class="px-6 py-3 font-medium">Mensualidad</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-100 dark:divide-surface-border">
-            
-            @for (project of data.recentProjects; track project.id) {
-              <tr class="hover:bg-gray-50 dark:hover:bg-[#151822] transition-colors">
-                <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">{{ project.name }}</td>
-                <td class="px-6 py-4">{{ project.type }}</td>
-                <td class="px-6 py-4">
-                  <span class="px-2 py-1 text-xs font-medium rounded-full"
-                    [ngClass]="{
-                      'bg-status-success/10 text-status-success': project.status === 'Activo',
-                      'bg-brand-primary/10 text-brand-primary': project.status === 'En Progreso',
-                      'bg-status-warning/10 text-status-warning': project.status === 'Mantenimiento'
-                    }">
-                    {{ project.status }}
-                  </span>
-                </td>
-                <td class="px-6 py-4 font-medium">{{ formatMoney(project.amount) }}</td>
-              </tr>
-            }
-
-          </tbody>
-        </table>
-      </div>
+    <div class="mt-8">
+      <app-data-table 
+        title="Proyectos Recientes"
+        [data]="data.recentProjects" 
+        [columns]="columns" 
+        [actions]="[]"
+        [showCreateButton]="false">
+      </app-data-table>
     </div>
   }
 </div>

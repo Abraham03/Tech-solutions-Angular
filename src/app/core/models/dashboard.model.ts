@@ -8,8 +8,8 @@ export interface DashboardMetrics {
 export interface ProjectSummary {
   id: number;
   name: string;
-  type: string;
-  status: 'Activo' | 'En Progreso' | 'Mantenimiento';
+  type: string; // 'web_app' | 'mobile_app' | 'ecommerce' | 'landing_page'
+  status: string; // 'pending' | 'development' | 'testing' | 'completed' | 'cancelled'
   amount: number;
 }
 

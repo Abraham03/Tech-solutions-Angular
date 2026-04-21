@@ -2,9 +2,9 @@
 @use '@angular/material' as mat;
 
 // 2. Importamos Tailwind de forma nativa
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 // 3. Configuración de tu Tema
 html {
@@ -18,36 +18,90 @@ html {
     typography: Inter,
     density: 0,
   ));
+  /* Desplazamiento suave nativo */
+  scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
   height: 100%;
+  /* Evita saltos en el layout cuando aparece/desaparece el scroll */
+  overflow-y: scroll; 
 }
 
 // ==========================================
-// 4. TECH SOLUTIONS DESIGN SYSTEM
-// Clases reutilizables para toda la app (Fase 3)
+// 4. TIPOGRAFÍA FLUIDA Y RESPONSIVA (DRY)
+// ==========================================
+@layer base {
+  /* El tamaño base del documento se adapta de 14px en móvil a 16px en escritorio */
+  html {
+    font-size: clamp(14px, 1vw + 10px, 16px);
+  }
+
+  /* Estandarizamos los encabezados para que escalen automáticamente en toda la app */
+  h1 { @apply text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight; }
+  h2 { @apply text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight; }
+  h3 { @apply text-lg sm:text-xl lg:text-2xl font-bold; }
+  p { @apply text-base leading-relaxed; }
+}
+
+// ==========================================
+// 5. TECH SOLUTIONS DESIGN SYSTEM
 // ==========================================
 @layer components {
   
-  /* Tarjetas (Para el Dashboard y Resumen) */
+  /* Tarjetas (Cards): Menos padding en móvil, normal en tablet, amplio en monitores */
   .ui-card {
-    @apply bg-white dark:bg-surface-paper rounded-xl border border-gray-100 dark:border-surface-border shadow-sm transition-colors duration-300;
+    @apply bg-white dark:bg-surface-paper rounded-xl border border-gray-100 dark:border-surface-border shadow-sm hover:shadow-md transition-shadow duration-300 p-4 sm:p-6 lg:p-8;
   }
 
+  /* --- BOTONES --- */
+  /* Ajustan su altura y espacio en pantallas grandes */
+  
   /* Botón Principal (Azul) */
   .ui-btn-primary {
-    @apply bg-brand-primary hover:bg-brand-primaryHover text-white font-medium py-3 px-4 rounded-lg transition-colors flex justify-center items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply bg-brand-primary hover:bg-brand-primaryHover text-white font-semibold py-2.5 px-4 sm:px-6 rounded-lg shadow-sm hover:shadow transition-all duration-200 flex justify-center items-center gap-2 active:scale-[0.98] focus:outline-none focus:ring-4 focus:ring-brand-primary/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100;
   }
 
-  /* Cajas de Texto (Inputs) */
+  /* Botón Secundario (Gris/Oscuro) */
+  .ui-btn-secondary {
+    @apply bg-gray-100 hover:bg-gray-200 dark:bg-[#202433] dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200 font-semibold py-2.5 px-4 sm:px-6 rounded-lg transition-all duration-200 flex justify-center items-center gap-2 active:scale-[0.98] focus:outline-none focus:ring-4 focus:ring-gray-500/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100;
+  }
+
+  /* Botón de Peligro (Para borrar) */
+  .ui-btn-danger {
+    @apply bg-status-error/10 hover:bg-status-error text-status-error hover:text-white font-semibold py-2.5 px-4 sm:px-6 rounded-lg transition-all duration-200 flex justify-center items-center gap-2 active:scale-[0.98] focus:outline-none focus:ring-4 focus:ring-status-error/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100;
+  }
+
+  /* --- FORMULARIOS --- */
+
+  /* Cajas de Texto (Inputs y Selects): Más fáciles de tocar en celular, estilizados en escritorio */
   .ui-input {
-    @apply w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-surface-border bg-white dark:bg-[#151822] text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-primary focus:border-transparent outline-none transition-all;
+    @apply w-full px-3 sm:px-4 py-3 md:py-2.5 text-base sm:text-sm rounded-lg border border-gray-200 dark:border-surface-border bg-gray-50/50 hover:bg-gray-50 dark:bg-[#151822] dark:hover:bg-[#1a1d27] text-gray-900 dark:text-white focus:bg-white dark:focus:bg-[#151822] focus:ring-4 focus:ring-brand-primary/20 focus:border-brand-primary dark:focus:border-brand-primary outline-none transition-all duration-200 disabled:opacity-60 disabled:bg-gray-100 dark:disabled:bg-gray-900 disabled:cursor-not-allowed;
   }
 
-  /* Etiquetas de Texto (Labels) */
+  /* Etiquetas de Texto (Labels): Ajuste sutil de tamaños */
   .ui-label {
-    @apply text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 block;
+    @apply text-sm sm:text-base md:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5 block tracking-tight;
   }
+}
+
+// ==========================================
+// 6. SCROLLBARS PERSONALIZADOS (Estilo Moderno)
+// ==========================================
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 dark:bg-gray-700 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-400 dark:bg-gray-600;
 }

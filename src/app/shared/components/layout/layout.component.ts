@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
@@ -16,6 +16,7 @@ import { AuthService } from '../../../core/services/auth.service';
 export class LayoutComponent implements OnInit {
   public authService = inject(AuthService);
   public isDarkMode = false;
+  isMobileMenuOpen = signal(false);
   
   // Usamos el Signal para obtener los datos del usuario logueado
   public user = this.authService.currentUser;
@@ -26,6 +27,15 @@ export class LayoutComponent implements OnInit {
       this.isDarkMode = true;
       document.documentElement.classList.add('dark');
     }
+  }
+
+  toggleMobileMenu() {
+    this.isMobileMenuOpen.update(val => !val);
+  }
+
+  // Cuando hagan clic en un enlace en celular, cerramos el menú
+  closeMobileMenu() {
+    this.isMobileMenuOpen.set(false);
   }
 
   toggleDarkMode() {
