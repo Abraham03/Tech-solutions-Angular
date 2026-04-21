@@ -11,6 +11,8 @@ import { UserListComponent } from './features/admin/users/user-list/user-list.co
 import { UserFormComponent } from './features/admin/users/user-form/user-form.component';
 import { ServiceListComponent } from './features/admin/services/service-list/service-list.component';
 import { ServiceFormComponent } from './features/admin/services/service-form/service-form.component';
+import { PaymentListComponent } from './features/admin/payments/payment-list/payment-list.component';
+import { PaymentFormComponent } from './features/admin/payments/payment-form/payment-form.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -50,6 +52,11 @@ export const routes: Routes = [
           { path: 'users', component: UserListComponent },
           { path: 'users/new', component: UserFormComponent },
           { path: 'users/edit/:id', component: UserFormComponent },
+
+          // En el bloque 'admin':
+          { path: 'payments', component: PaymentListComponent },
+          { path: 'payments/new', component: PaymentFormComponent },
+          { path: 'payments/edit/:id', component: PaymentFormComponent },
 
           // En el bloque 'admin':
           { path: 'services', component: ServiceListComponent },

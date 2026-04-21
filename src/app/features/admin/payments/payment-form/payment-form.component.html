@@ -1,0 +1,123 @@
+<div class="max-w-4xl mx-auto space-y-6">
+  
+  <div class="flex items-center gap-4">
+    <button (click)="goBack()" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-surface-border transition-colors text-gray-500 dark:text-gray-400">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+        {{ isEditMode() ? 'Editar Pago' : 'Registrar Pago' }}
+      </h1>
+      <p class="text-gray-500 dark:text-gray-400 text-sm">Controla los ingresos de tus proyectos y renovaciones.</p>
+    </div>
+  </div>
+
+  <div class="ui-card p-8">
+    
+    @if (serverError()) {
+      <div class="mb-6 p-4 bg-status-error/10 border border-status-error/20 text-status-error rounded-lg flex items-center gap-3">
+        <mat-icon class="scale-75">error_outline</mat-icon>
+        <span class="text-sm font-medium">{{ serverError() }}</span>
+      </div>
+    }
+
+    <form [formGroup]="paymentForm" (ngSubmit)="onSubmit()" class="space-y-6">
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label class="ui-label">Cliente <span class="text-status-error">*</span></label>
+          <select formControlName="client_id" class="ui-input">
+            <option value="" disabled>Selecciona quién paga...</option>
+            @for (client of clients(); track client.id) {
+              <option [value]="client.id">{{ client.company_name }} ({{ client.contact_name }})</option>
+            }
+          </select>
+          @if (paymentForm.get('client_id')?.invalid && paymentForm.get('client_id')?.touched) {
+            <span class="text-xs text-status-error mt-1 block">Debes seleccionar un cliente.</span>
+          }
+        </div>
+
+        <div>
+          <label class="ui-label">Monto (MXN) <span class="text-status-error">*</span></label>
+          <input type="number" formControlName="amount" class="ui-input" placeholder="0.00" min="0.01" step="0.01">
+          @if (paymentForm.get('amount')?.invalid && paymentForm.get('amount')?.touched) {
+            <span class="text-xs text-status-error mt-1 block">Ingresa un monto mayor a 0.</span>
+          }
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 bg-gray-50 dark:bg-[#151822] rounded-lg border border-gray-100 dark:border-surface-border">
+        <div>
+          <label class="ui-label">¿Abona a un Proyecto?</label>
+          <select formControlName="project_id" class="ui-input bg-white dark:bg-[#202433]">
+            <option value="">Ninguno / No aplica</option>
+            @for (project of projects(); track project.id) {
+              <option [value]="project.id">{{ project.name }}</option>
+            }
+          </select>
+        </div>
+
+        <div>
+          <label class="ui-label">¿Abona a un Servicio (Renovación)?</label>
+          <select formControlName="service_id" class="ui-input bg-white dark:bg-[#202433]">
+            <option value="">Ninguno / No aplica</option>
+            @for (service of services(); track service.id) {
+              <option [value]="service.id">{{ service.name }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label class="ui-label">Concepto <span class="text-status-error">*</span></label>
+          <select formControlName="payment_type" class="ui-input">
+            @for (type of paymentTypes; track type.value) {
+              <option [value]="type.value">{{ type.label }}</option>
+            }
+          </select>
+        </div>
+
+        <div>
+          <label class="ui-label">Método de Pago <span class="text-status-error">*</span></label>
+          <select formControlName="payment_method" class="ui-input">
+            @for (method of paymentMethods; track method.value) {
+              <option [value]="method.value">{{ method.label }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label class="ui-label">Estado <span class="text-status-error">*</span></label>
+          <select formControlName="status" class="ui-input">
+            @for (status of paymentStatuses; track status.value) {
+              <option [value]="status.value">{{ status.label }}</option>
+            }
+          </select>
+        </div>
+
+        <div>
+          <label class="ui-label">Fecha de Pago</label>
+          <input type="date" formControlName="paid_at" class="ui-input">
+          <span class="text-xs text-gray-500 mt-1 block">Déjalo vacío si el pago aún está pendiente.</span>
+        </div>
+      </div>
+
+      <div class="pt-6 border-t border-gray-100 dark:border-surface-border flex justify-end gap-4">
+        <button type="button" (click)="goBack()" class="px-6 py-2 rounded-lg text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-100 dark:hover:bg-surface-border transition-colors">
+          Cancelar
+        </button>
+        <button type="submit" [disabled]="paymentForm.invalid || isSubmitting()" class="ui-btn-primary px-8">
+          @if (isSubmitting()) {
+            <mat-icon class="animate-spin scale-75 mr-2">sync</mat-icon> Guardando...
+          } @else {
+            <mat-icon class="scale-75 mr-2">save</mat-icon> Registrar Pago
+          }
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
