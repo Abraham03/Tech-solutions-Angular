@@ -1,0 +1,41 @@
+name: Deploy Angular to Hostinger
+
+on:
+  push:
+    branches:
+      - main # Cambia esto si tu rama principal se llama 'master'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Puedes cambiarlo a 18 si usas esa versión localmente
+
+      - name: Instalar y Compilar
+        run: |
+          npm install
+          npm run build -- --configuration production
+
+      - name: Subir a Hostinger por FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          # ⚠️ IMPORTANTE: Ajusta el nombre de tu proyecto en esta ruta
+          local-dir: ./dist/techsolutions-frontend/browser/ 
+          server-dir: /public_html/
+          # Esta sección protege tus carpetas del backend y otras apps (vistas en tu captura)
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            api/**
+            apps/**
+            img/**
