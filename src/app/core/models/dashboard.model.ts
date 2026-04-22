@@ -32,6 +32,6 @@ export interface RevenuePoint {
 export interface DashboardData {
   metrics: DashboardMetrics;
   recentProjects: ProjectSummary[];
-  expiringServices: ExpiringService[];
-  revenueChart: RevenuePoint[];
+  expiringServices?: ExpiringService[];
+  revenueChart?: RevenuePoint[];
 }

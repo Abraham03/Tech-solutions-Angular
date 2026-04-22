@@ -91,7 +91,7 @@
                 <span class="text-[10px] bg-status-warning/10 text-status-warning px-2 py-0.5 rounded-full font-bold uppercase">Próximos 30 días</span>
             </div>
 
-            @if (data.expiringServices.length > 0) {
+            @if (data.expiringServices && data.expiringServices.length > 0) {
                 <div class="space-y-3">
                     @for (item of data.expiringServices; track item.id) {
                         <div class="p-3 rounded-lg bg-gray-50 dark:bg-surface-dark border border-gray-100 dark:border-surface-border group hover:border-brand-primary/50 transition-colors cursor-pointer">
