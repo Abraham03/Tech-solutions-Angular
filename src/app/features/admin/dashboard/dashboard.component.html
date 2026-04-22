@@ -1,11 +1,11 @@
 <div class="space-y-6">
   
-  <div class="flex justify-between items-center">
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
     <div>
       <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Centro de Control</h1>
-      <p class="text-gray-500 dark:text-gray-400 text-sm">Resumen financiero y operativo.</p>
+      <p class="text-gray-500 dark:text-gray-400 text-sm">Visión financiera y operativa de Tech Solutions.</p>
     </div>
-    <button routerLink="/admin/projects/new" class="ui-btn-primary text-sm py-2 px-3">
+    <button routerLink="/admin/projects/new" class="ui-btn-primary text-sm py-2 px-4 shadow-lg shadow-brand-primary/20">
       <mat-icon class="scale-75">add</mat-icon> Nuevo Proyecto
     </button>
   </div>
@@ -17,61 +17,105 @@
   }
 
   @if (isLoading()) {
-    <div class="flex justify-center items-center py-20 text-brand-primary">
-      <mat-icon class="animate-spin scale-150">sync</mat-icon>
+    <div class="flex flex-col justify-center items-center py-24 text-brand-primary">
+      <mat-icon class="animate-spin scale-[2]">sync</mat-icon>
+      <span class="mt-4 text-sm font-medium animate-pulse">Sincronizando datos...</span>
     </div>
   }
 
   @if (dashboardData(); as data) {
-    
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       
       <app-metric-card 
-        title="MRR (Mensual)" 
+        title="Ingreso Recurrente (MRR)" 
         [value]="formatMoney(data.metrics.mrr)" 
         icon="payments" 
         iconContainerClass="bg-status-success/10 text-status-success"
-        trend="Ingreso recurrente" 
+        trend="Proyección mensual" 
         trendColorClass="text-status-success">
       </app-metric-card>
 
       <app-metric-card 
-        title="Clientes Activos" 
-        [value]="data.metrics.activeClients" 
-        icon="people" 
-        iconContainerClass="bg-brand-primary/10 text-brand-primary"
-        trend="Total de cuentas" 
-        trendColorClass="text-brand-primary">
+        title="Utilidad Neta Mensual" 
+        [value]="formatMoney(data.metrics.monthlyProfit)" 
+        icon="trending_up" 
+        iconContainerClass="bg-blue-500/10 text-blue-500"
+        trend="Margen de servicios" 
+        trendColorClass="text-blue-500">
       </app-metric-card>
 
       <app-metric-card 
-        title="Proyectos Activos" 
-        [value]="data.metrics.activeProjects" 
-        icon="rocket_launch" 
-        iconContainerClass="bg-purple-500/10 text-purple-500"
-        trend="En desarrollo" 
-        trendColorClass="text-gray-500">
-      </app-metric-card>
-
-      <app-metric-card 
-        title="Facturas Pendientes" 
-        [value]="data.metrics.pendingInvoices" 
-        icon="warning" 
-        iconContainerClass="bg-status-error/10 text-status-error"
-        trend="Requiere atención" 
-        trendColorClass="text-status-error">
+        title="Por Cobrar (Proyectos)" 
+        [value]="formatMoney(data.metrics.totalReceivable)" 
+        icon="account_balance_wallet" 
+        iconContainerClass="bg-orange-500/10 text-orange-500"
+        trend="Pendiente en balances" 
+        trendColorClass="text-orange-500">
       </app-metric-card>
 
     </div>
 
-    <div class="mt-8">
-      <app-data-table 
-        title="Proyectos Recientes"
-        [data]="data.recentProjects" 
-        [columns]="columns" 
-        [actions]="[]"
-        [showCreateButton]="false">
-      </app-data-table>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2">
+        <div class="ui-card !p-4 flex items-center justify-between">
+            <span class="text-xs font-semibold text-gray-500 uppercase">Clientes</span>
+            <span class="text-lg font-bold text-gray-900 dark:text-white">{{data.metrics.activeClients}}</span>
+        </div>
+        <div class="ui-card !p-4 flex items-center justify-between">
+            <span class="text-xs font-semibold text-gray-500 uppercase">En Desarrollo</span>
+            <span class="text-lg font-bold text-brand-primary">{{data.metrics.activeProjects}}</span>
+        </div>
+        <div class="ui-card !p-4 flex items-center justify-between border-l-4 border-l-status-error">
+            <span class="text-xs font-semibold text-gray-500 uppercase">Pendientes Pago</span>
+            <span class="text-lg font-bold text-status-error">{{data.metrics.pendingInvoices}}</span>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-6">
+      
+      <div class="lg:col-span-2">
+        <app-data-table 
+          title="Seguimiento de Proyectos"
+          [data]="data.recentProjects" 
+          [columns]="columns" 
+          [actions]="[]"
+          [showCreateButton]="false">
+        </app-data-table>
+      </div>
+
+      <div class="space-y-4">
+        <div class="ui-card !p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <mat-icon class="text-status-warning">alarm</mat-icon> Vencimientos
+                </h3>
+                <span class="text-[10px] bg-status-warning/10 text-status-warning px-2 py-0.5 rounded-full font-bold uppercase">Próximos 30 días</span>
+            </div>
+
+            @if (data.expiringServices.length > 0) {
+                <div class="space-y-3">
+                    @for (item of data.expiringServices; track item.id) {
+                        <div class="p-3 rounded-lg bg-gray-50 dark:bg-surface-dark border border-gray-100 dark:border-surface-border group hover:border-brand-primary/50 transition-colors cursor-pointer">
+                            <div class="flex justify-between items-start">
+                                <span class="text-sm font-bold text-gray-900 dark:text-white">{{item.name}}</span>
+                                <span class="text-[10px] text-gray-500">{{item.expires_at}}</span>
+                            </div>
+                            <p class="text-[11px] text-gray-500 mt-1">{{item.client_name}}</p>
+                            <div class="mt-2 flex items-center justify-between">
+                                <span class="text-[10px] font-medium text-status-success">Margen: {{formatMoney(item.profit_margin)}}</span>
+                                <mat-icon class="text-gray-400 scale-75 group-hover:text-brand-primary">arrow_forward</mat-icon>
+                            </div>
+                        </div>
+                    }
+                </div>
+            } @else {
+                <div class="text-center py-8">
+                    <mat-icon class="text-gray-300 scale-150 mb-2">check_circle_outline</mat-icon>
+                    <p class="text-xs text-gray-500 italic">No hay vencimientos próximos.</p>
+                </div>
+            }
+        </div>
+      </div>
+
     </div>
   }
 </div>

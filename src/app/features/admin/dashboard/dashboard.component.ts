@@ -18,25 +18,13 @@ export class DashboardComponent implements OnInit {
   private dashboardService = inject(DashboardService);
   private currencyPipe = inject(CurrencyPipe);
 
-  // Estados Reactivos (Signals)
   dashboardData = signal<DashboardData | null>(null);
   isLoading = signal<boolean>(true);
   error = signal<string | null>(null);
 
-  // Configuración de la tabla para proyectos recientes
+  // Tabla: Proyectos con Balance
   columns: TableColumn[] = [
     { key: 'name', label: 'Proyecto' },
-    { 
-      key: 'type', 
-      label: 'Tipo',
-      type: 'badge',
-      badgeColors: {
-        'web_app': 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
-        'mobile_app': 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400',
-        'ecommerce': 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400',
-        'landing_page': 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400'
-      }
-    },
     { 
       key: 'status', 
       label: 'Estado',
@@ -45,11 +33,19 @@ export class DashboardComponent implements OnInit {
         'pending': 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300',
         'development': 'bg-brand-primary/10 text-brand-primary',
         'testing': 'bg-status-warning/10 text-status-warning',
-        'completed': 'bg-status-success/10 text-status-success',
-        'cancelled': 'bg-status-error/10 text-status-error'
+        'completed': 'bg-status-success/10 text-status-success'
       }
     },
-    { key: 'amount', label: 'Valor', type: 'currency' }
+    { key: 'amount', label: 'Total', type: 'currency' },
+    { key: 'balance', label: 'Resta', type: 'currency' }
+  ];
+
+  // Tabla: Alertas de Vencimiento
+  expiringColumns: TableColumn[] = [
+    { key: 'name', label: 'Servicio' },
+    { key: 'client_name', label: 'Cliente' },
+    { key: 'expires_at', label: 'Vence el' }, // Omitimos el type 'date' para evitar el error de TypeScript
+    { key: 'profit_margin', label: 'Margen', type: 'currency' }
   ];
 
   ngOnInit() {
@@ -57,38 +53,41 @@ export class DashboardComponent implements OnInit {
   }
 
   loadData() {
-    // 1. Corregimos el nombre del método a getDashboardSummary()
     this.dashboardService.getDashboardSummary().subscribe({
-      // 2. Le decimos a TypeScript que 'data' es de tipo DashboardData
       next: (data: DashboardData) => {
         this.dashboardData.set(data);
-        this.error.set(null);
         this.isLoading.set(false);
       },
-      // 3. Le decimos a TypeScript que 'err' puede ser cualquier error (any)
-      error: (err: any) => {
-        console.error('Error cargando métricas:', err);
-        this.loadMockDataFallback(); 
+      error: (err) => {
+        console.error('Error:', err);
+        this.loadMockDataFallback();
       }
     });
   }
 
-  // Utilidad para formatear dinero de forma limpia
   formatMoney(amount: number): string {
     return this.currencyPipe.transform(amount, 'MXN', 'symbol', '1.2-2') || '$0.00';
   }
 
-  // Fallback temporal si la API falla o está desconectada
   private loadMockDataFallback() {
     this.dashboardData.set({
-      metrics: { mrr: 14500.00, activeClients: 12, activeProjects: 15, pendingInvoices: 3 },
+      metrics: { 
+        mrr: 14500, activeClients: 12, activeProjects: 15, 
+        pendingInvoices: 3, monthlyProfit: 8200, totalReceivable: 45000 
+      },
       recentProjects: [
-        { id: 1, name: 'Basket Pro', type: 'mobile_app', status: 'development', amount: 3500 },
-        { id: 2, name: 'Sistema de Riego', type: 'web_app', status: 'testing', amount: 800 },
-        { id: 3, name: 'E-commerce Ropa', type: 'ecommerce', status: 'pending', amount: 15000 }
+        { id: 1, name: 'Basket Pro', type: 'mobile_app', status: 'development', amount: 12000, balance: 3000 },
+        { id: 2, name: 'E-commerce', type: 'ecommerce', status: 'pending', amount: 25000, balance: 25000 }
+      ],
+      expiringServices: [
+        { id: 1, name: 'Hosting Anual', client_name: 'Abraham Ch.', expires_at: '2026-05-10', profit_margin: 450 },
+        { id: 2, name: 'Mantenimiento', client_name: 'Tech Solutions', expires_at: '2026-05-15', profit_margin: 800 }
+      ],
+      revenueChart: [
+        { month: '2026-04', total: 12000 }, { month: '2026-03', total: 9500 }
       ]
     });
-    this.error.set('Modo Local: Mostrando datos de prueba porque la API no respondió.');
+    this.error.set('Modo Local: Datos de prueba activos.');
     this.isLoading.set(false);
   }
 }
