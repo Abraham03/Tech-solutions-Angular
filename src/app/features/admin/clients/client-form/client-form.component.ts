@@ -36,7 +36,7 @@ export class ClientFormComponent implements OnInit {
       name: ['', [Validators.required, Validators.minLength(3)]],
       contact_name: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
-      // Validamos que el teléfono tenga exactamente entre 10 y 15 dígitos
+      // Regex estricto: SÓLO números del 0 al 9. Entre 10 y 15 dígitos. (Ideal para el código 52 + teléfono)
       phone_number: ['', [Validators.required, Validators.pattern(/^[0-9]{10,15}$/)]]
     });
   }
