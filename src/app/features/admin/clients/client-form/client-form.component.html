@@ -27,8 +27,8 @@
         
         <div>
           <label class="ui-label">Razón Social o Nombre <span class="text-status-error">*</span></label>
-          <input type="text" formControlName="company_name" class="ui-input" placeholder="Ej. Tech Solutions S.A.">
-          @if (clientForm.get('company_name')?.invalid && clientForm.get('company_name')?.touched) {
+          <input type="text" formControlName="name" class="ui-input" placeholder="Ej. Tech Solutions S.A.">
+          @if (clientForm.get('name')?.invalid && clientForm.get('name')?.touched) {
             <span class="text-xs text-status-error mt-1 block">El nombre es requerido (mínimo 3 letras).</span>
           }
         </div>
@@ -51,8 +51,8 @@
 
         <div>
           <label class="ui-label">Teléfono (WhatsApp) <span class="text-status-error">*</span></label>
-          <input type="text" formControlName="phone" class="ui-input" placeholder="10 dígitos">
-          @if (clientForm.get('phone')?.invalid && clientForm.get('phone')?.touched) {
+          <input type="text" formControlName="phone_number" class="ui-input" placeholder="10 dígitos">
+          @if (clientForm.get('phone_number')?.invalid && clientForm.get('phone_number')?.touched) {
             <span class="text-xs text-status-error mt-1 block">Ingresa un teléfono válido de 10 a 15 números.</span>
           }
         </div>
