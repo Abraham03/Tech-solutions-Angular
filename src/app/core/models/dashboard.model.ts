@@ -20,7 +20,7 @@ export interface ExpiringService {
   id: number;
   name: string;
   client_name: string;
-  expires_at: string;
+  expiration_date: string;
   profit_margin: number;
 }
 

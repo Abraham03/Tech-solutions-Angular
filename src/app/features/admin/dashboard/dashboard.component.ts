@@ -44,7 +44,7 @@ export class DashboardComponent implements OnInit {
   expiringColumns: TableColumn[] = [
     { key: 'name', label: 'Servicio' },
     { key: 'client_name', label: 'Cliente' },
-    { key: 'expires_at', label: 'Vence el' }, // Omitimos el type 'date' para evitar el error de TypeScript
+    { key: 'expiration_date', label: 'Vence el' }, // <-- CAMBIADO DE expires_at A expiration_date
     { key: 'profit_margin', label: 'Margen', type: 'currency' }
   ];
 
@@ -80,8 +80,8 @@ export class DashboardComponent implements OnInit {
         { id: 2, name: 'E-commerce', type: 'ecommerce', status: 'pending', amount: 25000, balance: 25000 }
       ],
       expiringServices: [
-        { id: 1, name: 'Hosting Anual', client_name: 'Abraham Ch.', expires_at: '2026-05-10', profit_margin: 450 },
-        { id: 2, name: 'Mantenimiento', client_name: 'Tech Solutions', expires_at: '2026-05-15', profit_margin: 800 }
+        { id: 1, name: 'Hosting Anual', client_name: 'Abraham Ch.', expiration_date: '2026-05-10', profit_margin: 450 },
+        { id: 2, name: 'Mantenimiento', client_name: 'Tech Solutions', expiration_date: '2026-05-15', profit_margin: 800 }
       ],
       revenueChart: [
         { month: '2026-04', total: 12000 }, { month: '2026-03', total: 9500 }
