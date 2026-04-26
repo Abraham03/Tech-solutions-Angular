@@ -57,10 +57,10 @@ export class ClientFormComponent implements OnInit {
         const clientData = response.data || response;
         // Rellenamos el formulario con los datos de Laravel
         this.clientForm.patchValue({
-          name: clientData.name,
+          company_name: clientData.company_name,
           contact_name: clientData.contact_name,
           email: clientData.email,
-          phone_number: clientData.phone_number
+          phone: clientData.phone
         });
       },
       error: () => {
