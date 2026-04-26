@@ -72,7 +72,39 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-6">
       
-      <div class="lg:col-span-2">
+      <div class="lg:col-span-2 space-y-8">
+        
+        <div class="ui-card !p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <mat-icon class="text-brand-primary">bar_chart</mat-icon> Historial de Ingresos (Últimos 6 meses)
+                </h3>
+            </div>
+            
+            @if (data.revenueChart && data.revenueChart.length > 0) {
+              <div class="h-48 flex items-end gap-2 md:gap-4 justify-between border-b border-gray-100 dark:border-surface-border pb-2 px-2 mt-8">
+                  @for (point of data.revenueChart.slice().reverse(); track point.month) {
+                      <div class="flex flex-col items-center flex-1 group relative">
+                          <div class="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-8 bg-gray-900 dark:bg-black text-white text-[10px] px-2 py-1 rounded shadow-lg pointer-events-none whitespace-nowrap z-10">
+                              {{formatMoney(point.total)}}
+                          </div>
+                          <div 
+                            class="w-full max-w-[40px] bg-brand-primary/20 group-hover:bg-brand-primary/40 rounded-t-sm transition-all duration-300 relative"
+                            [style.height.%]="(point.total / maxRevenue()) * 100"
+                          >
+                            <div class="absolute top-0 w-full h-1 bg-brand-primary rounded-t-sm"></div>
+                          </div>
+                          <span class="text-[10px] font-medium text-gray-500 mt-2 rotate-45 md:rotate-0 origin-left">{{point.month}}</span>
+                      </div>
+                  }
+              </div>
+            } @else {
+              <div class="h-48 flex justify-center items-center text-gray-400 bg-gray-50 dark:bg-surface-dark rounded-lg">
+                <p class="text-sm italic flex items-center gap-2"><mat-icon>show_chart</mat-icon> No hay datos financieros registrados aún.</p>
+              </div>
+            }
+        </div>
+
         <app-data-table 
           title="Seguimiento de Proyectos"
           [data]="data.recentProjects" 
@@ -80,37 +112,51 @@
           [actions]="[]"
           [showCreateButton]="false">
         </app-data-table>
+
       </div>
 
-      <div class="space-y-4">
-        <div class="ui-card !p-6">
+      <div class="space-y-6">
+        
+        <div class="ui-card !p-6 sticky top-6">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="font-bold text-gray-900 dark:text-white flex items-center gap-2">
                     <mat-icon class="text-status-warning">alarm</mat-icon> Vencimientos
                 </h3>
-                <span class="text-[10px] bg-status-warning/10 text-status-warning px-2 py-0.5 rounded-full font-bold uppercase">Próximos 30 días</span>
+                <span class="text-[10px] bg-status-warning/10 text-status-warning px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">Próximos 30 días</span>
             </div>
 
             @if (data.expiringServices && data.expiringServices.length > 0) {
-                <div class="space-y-3">
+                <div class="space-y-3 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
                     @for (item of data.expiringServices; track item.id) {
-                        <div class="p-3 rounded-lg bg-gray-50 dark:bg-surface-dark border border-gray-100 dark:border-surface-border group hover:border-brand-primary/50 transition-colors cursor-pointer">
-                            <div class="flex justify-between items-start">
-                                <span class="text-sm font-bold text-gray-900 dark:text-white">{{item.name}}</span>
-                                <span class="text-[10px] text-gray-500">{{item.expiration_date}}</span> 
+                        <div class="p-4 rounded-xl bg-gray-50 dark:bg-surface-dark border border-gray-100 dark:border-surface-border group hover:border-status-warning/50 hover:shadow-lg transition-all cursor-pointer relative overflow-hidden">
+                            <div class="absolute left-0 top-0 bottom-0 w-1 bg-status-warning/50 group-hover:bg-status-warning transition-colors"></div>
+                            
+                            <div class="flex justify-between items-start ml-2">
+                                <span class="text-sm font-bold text-gray-900 dark:text-white truncate pr-2">{{item.name}}</span>
+                                <span class="text-[11px] font-mono font-medium text-gray-500 shrink-0">{{item.expiration_date}}</span> 
                             </div>
-                            <p class="text-[11px] text-gray-500 mt-1">{{item.client_name}}</p>
-                            <div class="mt-2 flex items-center justify-between">
-                                <span class="text-[10px] font-medium text-status-success">Margen: {{formatMoney(item.profit_margin)}}</span>
-                                <mat-icon class="text-gray-400 scale-75 group-hover:text-brand-primary">arrow_forward</mat-icon>
+                            <p class="text-xs text-gray-500 mt-1 ml-2 flex items-center gap-1">
+                                <mat-icon class="scale-[0.6] -ml-1 text-gray-400">person</mat-icon> {{item.client_name}}
+                            </p>
+                            <div class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-800 flex items-center justify-between ml-2">
+                                <div class="flex flex-col">
+                                    <span class="text-[9px] uppercase tracking-wider text-gray-400">Margen Retenido</span>
+                                    <span class="text-[12px] font-bold text-status-success">{{formatMoney(item.profit_margin)}}</span>
+                                </div>
+                                <div class="bg-gray-100 dark:bg-gray-800 p-1.5 rounded-md group-hover:bg-brand-primary/10 transition-colors">
+                                    <mat-icon class="text-gray-400 scale-75 group-hover:text-brand-primary">arrow_forward</mat-icon>
+                                </div>
                             </div>
                         </div>
                     }
                 </div>
             } @else {
-                <div class="text-center py-8">
-                    <mat-icon class="text-gray-300 scale-150 mb-2">check_circle_outline</mat-icon>
-                    <p class="text-xs text-gray-500 italic">No hay vencimientos próximos.</p>
+                <div class="text-center py-12 bg-gray-50 dark:bg-surface-dark rounded-xl border border-dashed border-gray-200 dark:border-gray-700">
+                    <div class="bg-status-success/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <mat-icon class="text-status-success">check</mat-icon>
+                    </div>
+                    <p class="text-sm font-medium text-gray-900 dark:text-white">Todo al día</p>
+                    <p class="text-xs text-gray-500 mt-1">No hay servicios próximos a vencer.</p>
                 </div>
             }
         </div>

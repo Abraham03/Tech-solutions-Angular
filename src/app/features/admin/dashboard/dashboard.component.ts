@@ -3,7 +3,7 @@ import { CommonModule, CurrencyPipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 import { DashboardService } from '../../../core/services/dashboard.service';
-import { DashboardData } from '../../../core/models/dashboard.model';
+import { DashboardData, RevenuePoint } from '../../../core/models/dashboard.model';
 import { MetricCardComponent } from '../../../shared/components/ui/metric-card/metric-card.component';
 import { DataTableComponent, TableColumn } from '../../../shared/components/ui/data-table/data-table.component';
 
@@ -21,6 +21,9 @@ export class DashboardComponent implements OnInit {
   dashboardData = signal<DashboardData | null>(null);
   isLoading = signal<boolean>(true);
   error = signal<string | null>(null);
+  
+  // Señal para calcular el tope de la gráfica dinámica de CSS
+  maxRevenue = signal<number>(0);
 
   // Tabla: Proyectos con Balance
   columns: TableColumn[] = [
@@ -44,7 +47,7 @@ export class DashboardComponent implements OnInit {
   expiringColumns: TableColumn[] = [
     { key: 'name', label: 'Servicio' },
     { key: 'client_name', label: 'Cliente' },
-    { key: 'expiration_date', label: 'Vence el' }, // <-- CAMBIADO DE expires_at A expiration_date
+    { key: 'expiration_date', label: 'Vence el' },
     { key: 'profit_margin', label: 'Margen', type: 'currency' }
   ];
 
@@ -55,6 +58,15 @@ export class DashboardComponent implements OnInit {
   loadData() {
     this.dashboardService.getDashboardSummary().subscribe({
       next: (data: DashboardData) => {
+        // Preparar datos para la gráfica asegurando que sean numéricos
+        if (data.revenueChart && data.revenueChart.length > 0) {
+          data.revenueChart = data.revenueChart.map(item => ({
+            ...item,
+            total: Number(item.total)
+          }));
+          this.calculateMaxRevenue(data.revenueChart);
+        }
+
         this.dashboardData.set(data);
         this.isLoading.set(false);
       },
@@ -65,12 +77,20 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  formatMoney(amount: number): string {
-    return this.currencyPipe.transform(amount, 'MXN', 'symbol', '1.2-2') || '$0.00';
+  // Calcula el valor máximo + 10% para la escala de la gráfica de barras
+  private calculateMaxRevenue(chartData: RevenuePoint[]) {
+    if (!chartData || chartData.length === 0) return;
+    const max = Math.max(...chartData.map(item => item.total));
+    this.maxRevenue.set(max * 1.1); 
+  }
+
+  formatMoney(amount: number | string): string {
+    const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
+    return this.currencyPipe.transform(numAmount, 'MXN', 'symbol', '1.2-2') || '$0.00';
   }
 
   private loadMockDataFallback() {
-    this.dashboardData.set({
+    const mockData: DashboardData = {
       metrics: { 
         mrr: 14500, activeClients: 12, activeProjects: 15, 
         pendingInvoices: 3, monthlyProfit: 8200, totalReceivable: 45000 
@@ -86,7 +106,10 @@ export class DashboardComponent implements OnInit {
       revenueChart: [
         { month: '2026-04', total: 12000 }, { month: '2026-03', total: 9500 }
       ]
-    });
+    };
+    
+    this.calculateMaxRevenue(mockData.revenueChart!);
+    this.dashboardData.set(mockData);
     this.error.set('Modo Local: Datos de prueba activos.');
     this.isLoading.set(false);
   }
