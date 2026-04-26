@@ -35,6 +35,18 @@ export class ServiceListComponent implements OnInit {
       }
     },
     { 
+      key: 'billing_cycle', // <-- AGREGADO A LA TABLA
+      label: 'Ciclo',
+      type: 'badge',
+      badgeColors: {
+        'monthly': 'bg-gray-100 text-gray-800',
+        'quarterly': 'bg-orange-100 text-orange-800',
+        'annually': 'bg-green-100 text-green-800',
+        'biennially': 'bg-blue-100 text-blue-800',
+        'one-time': 'bg-purple-100 text-purple-800'
+      }
+    },
+    { 
       key: 'status', 
       label: 'Estado', 
       type: 'badge',

@@ -29,6 +29,15 @@ export class ServiceFormComponent implements OnInit {
   serviceId: number | null = null;
   isEditMode = signal(false);
 
+  // Mapeo de Enums para Billing Cycle 
+  billingCycles = [
+    { value: 'monthly', label: 'Mensual' },
+    { value: 'quarterly', label: 'Trimestral' },
+    { value: 'annually', label: 'Anual' },
+    { value: 'biennially', label: 'Bianual (2 años)' },
+    { value: 'one-time', label: 'Pago Único' }
+  ];
+
   // Mapeo de Enums (ServiceTypeEnum)
   serviceTypes = [
     { value: 'domain', label: 'Dominio' },
@@ -61,6 +70,7 @@ export class ServiceFormComponent implements OnInit {
       type: ['domain', [Validators.required]],
       cost_mxn: [0, [Validators.required, Validators.min(0)]],
       price_mxn: [0, [Validators.required, Validators.min(0)]],
+      billing_cycle: ['monthly', [Validators.required]],
       expiration_date: ['', [Validators.required]],
       status: ['active', [Validators.required]]
     });
@@ -97,7 +107,7 @@ export class ServiceFormComponent implements OnInit {
           type: data.type,
           cost_mxn: data.cost_mxn,
           price_mxn: data.price_mxn,
-          // Formateamos la fecha para el input type="date"
+          billing_cycle: data.billing_cycle || 'monthly',
           expiration_date: data.expiration_date ? new Date(data.expiration_date).toISOString().split('T')[0] : '',
           status: data.status
         });
