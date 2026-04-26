@@ -10,12 +10,6 @@
     </button>
   </div>
 
-  @if (error()) {
-    <div class="bg-status-warning/10 text-status-warning p-4 rounded-lg text-sm border border-status-warning/20">
-      <mat-icon class="align-middle mr-2 scale-75">info</mat-icon> {{ error() }}
-    </div>
-  }
-
   @if (isLoading()) {
     <div class="flex flex-col justify-center items-center py-24 text-brand-primary">
       <mat-icon class="animate-spin scale-[2]">sync</mat-icon>
@@ -26,30 +20,38 @@
   @if (dashboardData(); as data) {
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       
+      <div class="ui-card !p-6 relative overflow-hidden">
+        <div class="flex justify-between items-start">
+            <div class="bg-status-success/10 text-status-success p-3 rounded-xl">
+                <mat-icon>payments</mat-icon>
+            </div>
+            <div class="flex bg-gray-100 dark:bg-surface-border rounded-lg p-1">
+                <button (click)="setRevenuePeriod('monthly')" [class.bg-white]="revenuePeriod() === 'monthly'" [class.dark:bg-surface-dark]="revenuePeriod() === 'monthly'" [class.shadow]="revenuePeriod() === 'monthly'" class="text-[10px] font-bold px-2 py-1 rounded transition-all text-gray-600 dark:text-gray-300">Mes</button>
+                <button (click)="setRevenuePeriod('annual')" [class.bg-white]="revenuePeriod() === 'annual'" [class.dark:bg-surface-dark]="revenuePeriod() === 'annual'" [class.shadow]="revenuePeriod() === 'annual'" class="text-[10px] font-bold px-2 py-1 rounded transition-all text-gray-600 dark:text-gray-300">Año</button>
+                <button (click)="setRevenuePeriod('total')" [class.bg-white]="revenuePeriod() === 'total'" [class.dark:bg-surface-dark]="revenuePeriod() === 'total'" [class.shadow]="revenuePeriod() === 'total'" class="text-[10px] font-bold px-2 py-1 rounded transition-all text-gray-600 dark:text-gray-300">Total</button>
+            </div>
+        </div>
+        <div class="mt-4">
+            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Ingresos (Facturado)</h3>
+            <p class="text-3xl font-bold text-gray-900 dark:text-white mt-1">{{ formatMoney(displayedRevenue()) }}</p>
+        </div>
+      </div>
+
       <app-metric-card 
         title="Ingreso Recurrente (MRR)" 
         [value]="formatMoney(data.metrics.mrr)" 
-        icon="payments" 
-        iconContainerClass="bg-status-success/10 text-status-success"
-        trend="Proyección mensual" 
-        trendColorClass="text-status-success">
+        icon="autorenew" 
+        iconContainerClass="bg-brand-primary/10 text-brand-primary"
+        trend="Proyección base mensual" 
+        trendColorClass="text-brand-primary">
       </app-metric-card>
 
       <app-metric-card 
-        title="Utilidad Neta Mensual" 
-        [value]="formatMoney(data.metrics.monthlyProfit)" 
-        icon="trending_up" 
-        iconContainerClass="bg-blue-500/10 text-blue-500"
-        trend="Margen de servicios" 
-        trendColorClass="text-blue-500">
-      </app-metric-card>
-
-      <app-metric-card 
-        title="Por Cobrar (Proyectos)" 
+        title="Por Cobrar (Balances)" 
         [value]="formatMoney(data.metrics.totalReceivable)" 
         icon="account_balance_wallet" 
         iconContainerClass="bg-orange-500/10 text-orange-500"
-        trend="Pendiente en balances" 
+        trend="Proyectos activos" 
         trendColorClass="text-orange-500">
       </app-metric-card>
 
@@ -63,6 +65,10 @@
         <div class="ui-card !p-4 flex items-center justify-between">
             <span class="text-xs font-semibold text-gray-500 uppercase">En Desarrollo</span>
             <span class="text-lg font-bold text-brand-primary">{{data.metrics.activeProjects}}</span>
+        </div>
+        <div class="ui-card !p-4 flex items-center justify-between">
+            <span class="text-xs font-semibold text-gray-500 uppercase">Utilidad Mensual</span>
+            <span class="text-lg font-bold text-blue-500">{{formatMoney(data.metrics.monthlyProfit)}}</span>
         </div>
         <div class="ui-card !p-4 flex items-center justify-between border-l-4 border-l-status-error">
             <span class="text-xs font-semibold text-gray-500 uppercase">Pendientes Pago</span>
@@ -80,7 +86,6 @@
                     <mat-icon class="text-brand-primary">bar_chart</mat-icon> Historial de Ingresos (Últimos 6 meses)
                 </h3>
             </div>
-            
             @if (data.revenueChart && data.revenueChart.length > 0) {
               <div class="h-48 flex items-end gap-2 md:gap-4 justify-between border-b border-gray-100 dark:border-surface-border pb-2 px-2 mt-8">
                   @for (point of data.revenueChart.slice().reverse(); track point.month) {
@@ -88,10 +93,7 @@
                           <div class="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-8 bg-gray-900 dark:bg-black text-white text-[10px] px-2 py-1 rounded shadow-lg pointer-events-none whitespace-nowrap z-10">
                               {{formatMoney(point.total)}}
                           </div>
-                          <div 
-                            class="w-full max-w-[40px] bg-brand-primary/20 group-hover:bg-brand-primary/40 rounded-t-sm transition-all duration-300 relative"
-                            [style.height.%]="(point.total / maxRevenue()) * 100"
-                          >
+                          <div class="w-full max-w-[40px] bg-brand-primary/20 group-hover:bg-brand-primary/40 rounded-t-sm transition-all duration-300 relative" [style.height.%]="(point.total / maxRevenue()) * 100">
                             <div class="absolute top-0 w-full h-1 bg-brand-primary rounded-t-sm"></div>
                           </div>
                           <span class="text-[10px] font-medium text-gray-500 mt-2 rotate-45 md:rotate-0 origin-left">{{point.month}}</span>
@@ -117,7 +119,7 @@
 
       <div class="space-y-6">
         
-        <div class="ui-card !p-6 sticky top-6">
+        <div class="ui-card !p-6">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="font-bold text-gray-900 dark:text-white flex items-center gap-2">
                     <mat-icon class="text-status-warning">alarm</mat-icon> Vencimientos
@@ -126,11 +128,10 @@
             </div>
 
             @if (data.expiringServices && data.expiringServices.length > 0) {
-                <div class="space-y-3 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+                <div class="space-y-3 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar">
                     @for (item of data.expiringServices; track item.id) {
                         <div class="p-4 rounded-xl bg-gray-50 dark:bg-surface-dark border border-gray-100 dark:border-surface-border group hover:border-status-warning/50 hover:shadow-lg transition-all cursor-pointer relative overflow-hidden">
                             <div class="absolute left-0 top-0 bottom-0 w-1 bg-status-warning/50 group-hover:bg-status-warning transition-colors"></div>
-                            
                             <div class="flex justify-between items-start ml-2">
                                 <span class="text-sm font-bold text-gray-900 dark:text-white truncate pr-2">{{item.name}}</span>
                                 <span class="text-[11px] font-mono font-medium text-gray-500 shrink-0">{{item.expiration_date}}</span> 
@@ -138,28 +139,58 @@
                             <p class="text-xs text-gray-500 mt-1 ml-2 flex items-center gap-1">
                                 <mat-icon class="scale-[0.6] -ml-1 text-gray-400">person</mat-icon> {{item.client_name}}
                             </p>
-                            <div class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-800 flex items-center justify-between ml-2">
-                                <div class="flex flex-col">
-                                    <span class="text-[9px] uppercase tracking-wider text-gray-400">Margen Retenido</span>
-                                    <span class="text-[12px] font-bold text-status-success">{{formatMoney(item.profit_margin)}}</span>
+                        </div>
+                    }
+                </div>
+            } @else {
+                <div class="text-center py-8 bg-gray-50 dark:bg-surface-dark rounded-xl border border-dashed border-gray-200 dark:border-gray-700">
+                    <div class="bg-status-success/10 w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <mat-icon class="text-status-success">check</mat-icon>
+                    </div>
+                    <p class="text-sm font-medium text-gray-900 dark:text-white">Todo al día</p>
+                </div>
+            }
+        </div>
+
+        <div class="ui-card !p-6 sticky top-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <mat-icon class="text-blue-500">send</mat-icon> Envíos Automáticos
+                </h3>
+            </div>
+
+            @if (data.recentNotifications && data.recentNotifications.length > 0) {
+                <div class="space-y-4">
+                    @for (log of data.recentNotifications; track log.id) {
+                        <div class="flex items-start gap-3">
+                            <div class="p-2 rounded-lg" 
+                                 [ngClass]="{'bg-green-100 text-green-600': log.channel === 'whatsapp', 'bg-blue-100 text-blue-600': log.channel === 'email', 'bg-gray-100 text-gray-600': log.channel !== 'whatsapp' && log.channel !== 'email'}">
+                                <mat-icon class="scale-75">{{ log.channel === 'whatsapp' ? 'chat' : 'mail' }}</mat-icon>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex justify-between items-baseline">
+                                    <p class="text-sm font-bold text-gray-900 dark:text-white truncate">{{ log.client_name }}</p>
+                                    <span class="text-[10px] text-gray-400 whitespace-nowrap ml-2">{{ log.sent_time_ago }}</span>
                                 </div>
-                                <div class="bg-gray-100 dark:bg-gray-800 p-1.5 rounded-md group-hover:bg-brand-primary/10 transition-colors">
-                                    <mat-icon class="text-gray-400 scale-75 group-hover:text-brand-primary">arrow_forward</mat-icon>
+                                <p class="text-xs text-gray-500 truncate">{{ log.service_name }}</p>
+                                <div class="mt-1 flex items-center gap-1">
+                                    <div class="w-1.5 h-1.5 rounded-full" [ngClass]="log.status === 'sent' ? 'bg-status-success' : (log.status === 'failed' ? 'bg-status-error' : 'bg-status-warning')"></div>
+                                    <span class="text-[10px] uppercase font-bold" [ngClass]="log.status === 'sent' ? 'text-status-success' : (log.status === 'failed' ? 'text-status-error' : 'text-status-warning')">
+                                        {{ log.status === 'sent' ? 'Entregado' : (log.status === 'failed' ? 'Error' : 'Pendiente') }}
+                                    </span>
                                 </div>
                             </div>
                         </div>
                     }
                 </div>
             } @else {
-                <div class="text-center py-12 bg-gray-50 dark:bg-surface-dark rounded-xl border border-dashed border-gray-200 dark:border-gray-700">
-                    <div class="bg-status-success/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <mat-icon class="text-status-success">check</mat-icon>
-                    </div>
-                    <p class="text-sm font-medium text-gray-900 dark:text-white">Todo al día</p>
-                    <p class="text-xs text-gray-500 mt-1">No hay servicios próximos a vencer.</p>
+                <div class="text-center py-6">
+                    <mat-icon class="text-gray-300 scale-150 mb-2">notifications_off</mat-icon>
+                    <p class="text-xs text-gray-500 italic">No hay registros de envíos recientes.</p>
                 </div>
             }
         </div>
+
       </div>
 
     </div>

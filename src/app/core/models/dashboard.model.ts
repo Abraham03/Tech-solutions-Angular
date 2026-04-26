@@ -5,6 +5,19 @@ export interface DashboardMetrics {
   pendingInvoices: number;
   monthlyProfit: number;
   totalReceivable: number;
+  monthlyRevenue: number;
+  annualRevenue: number;
+  totalRevenue: number;
+}
+
+export interface NotificationLog {
+  id: number;
+  client_name: string;
+  service_name: string;
+  type: string;
+  channel: string;
+  status: string;
+  sent_time_ago: string;
 }
 
 export interface ProjectSummary {
@@ -34,4 +47,5 @@ export interface DashboardData {
   recentProjects: ProjectSummary[];
   expiringServices?: ExpiringService[];
   revenueChart?: RevenuePoint[];
+  recentNotifications?: NotificationLog[];
 }

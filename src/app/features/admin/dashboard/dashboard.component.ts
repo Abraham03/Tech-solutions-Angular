@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
@@ -21,9 +21,18 @@ export class DashboardComponent implements OnInit {
   dashboardData = signal<DashboardData | null>(null);
   isLoading = signal<boolean>(true);
   error = signal<string | null>(null);
-  
   // Señal para calcular el tope de la gráfica dinámica de CSS
   maxRevenue = signal<number>(0);
+  revenuePeriod = signal<'monthly' | 'annual' | 'total'>('monthly');
+
+  // Calcula dinámicamente qué ingreso mostrar según la pestaña seleccionada
+  displayedRevenue = computed(() => {
+    const data = this.dashboardData();
+    if (!data) return 0;
+    if (this.revenuePeriod() === 'monthly') return data.metrics.monthlyRevenue;
+    if (this.revenuePeriod() === 'annual') return data.metrics.annualRevenue;
+    return data.metrics.totalRevenue;
+  });
 
   // Tabla: Proyectos con Balance
   columns: TableColumn[] = [
@@ -72,9 +81,14 @@ export class DashboardComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error:', err);
-        this.loadMockDataFallback();
+        this.error.set('Error al conectar con el servidor.');
       }
     });
+  }
+
+  // Permite cambiar la vista desde el HTML
+  setRevenuePeriod(period: 'monthly' | 'annual' | 'total') {
+    this.revenuePeriod.set(period);
   }
 
   // Calcula el valor máximo + 10% para la escala de la gráfica de barras
@@ -89,28 +103,5 @@ export class DashboardComponent implements OnInit {
     return this.currencyPipe.transform(numAmount, 'MXN', 'symbol', '1.2-2') || '$0.00';
   }
 
-  private loadMockDataFallback() {
-    const mockData: DashboardData = {
-      metrics: { 
-        mrr: 14500, activeClients: 12, activeProjects: 15, 
-        pendingInvoices: 3, monthlyProfit: 8200, totalReceivable: 45000 
-      },
-      recentProjects: [
-        { id: 1, name: 'Basket Pro', type: 'mobile_app', status: 'development', amount: 12000, balance: 3000 },
-        { id: 2, name: 'E-commerce', type: 'ecommerce', status: 'pending', amount: 25000, balance: 25000 }
-      ],
-      expiringServices: [
-        { id: 1, name: 'Hosting Anual', client_name: 'Abraham Ch.', expiration_date: '2026-05-10', profit_margin: 450 },
-        { id: 2, name: 'Mantenimiento', client_name: 'Tech Solutions', expiration_date: '2026-05-15', profit_margin: 800 }
-      ],
-      revenueChart: [
-        { month: '2026-04', total: 12000 }, { month: '2026-03', total: 9500 }
-      ]
-    };
-    
-    this.calculateMaxRevenue(mockData.revenueChart!);
-    this.dashboardData.set(mockData);
-    this.error.set('Modo Local: Datos de prueba activos.');
-    this.isLoading.set(false);
-  }
+
 }
