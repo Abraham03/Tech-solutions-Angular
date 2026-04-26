@@ -71,32 +71,41 @@ export class ClientFormComponent implements OnInit {
 
   // 3. Procesamiento del Formulario con Validación Backend
   onSubmit() {
-    this.serverError.set(null); // Limpiamos errores previos
+    this.serverError.set(null);
     
-    // Si el usuario manipuló el HTML para habilitar el botón, bloqueamos aquí
     if (this.clientForm.invalid) {
       this.clientForm.markAllAsTouched();
       return;
     }
 
     this.isSubmitting.set(true);
-    const formData = this.clientForm.value;
+    
+    // 1. Obtenemos los valores tal cual están en el formulario de Angular
+    const rawFormData = this.clientForm.value;
 
+    // 2. CREAMOS EL TRADUCTOR PARA LARAVEL
+    // Mapeamos los campos de Angular hacia lo que exigen tus Requests de Laravel
+    const payloadForLaravel = {
+      name: rawFormData.company_name,         // Laravel espera 'name'
+      contact_name: rawFormData.contact_name,
+      email: rawFormData.email,
+      phone_number: rawFormData.phone         // Laravel espera 'phone_number'
+    };
+
+    // 3. Enviamos el Payload traducido
     const request$ = this.isEditMode() 
-      ? this.clientService.updateClient(this.clientId!, formData)
-      : this.clientService.createClient(formData);
+      ? this.clientService.updateClient(this.clientId!, payloadForLaravel)
+      : this.clientService.createClient(payloadForLaravel);
 
     request$.subscribe({
       next: () => {
-        // Éxito: Regresamos a la tabla
         this.router.navigate(['/admin/clients']);
       },
       error: (err) => {
         this.isSubmitting.set(false);
-        // Manejo del error 422 de Laravel (Validación fallida en BD)
         if (err.status === 422 && err.error?.errors) {
           const firstErrorKey = Object.keys(err.error.errors)[0];
-          this.serverError.set(err.error.errors[firstErrorKey][0]); // Ej: "El correo ya ha sido registrado."
+          this.serverError.set(err.error.errors[firstErrorKey][0]);
         } else {
           this.serverError.set('Ocurrió un error inesperado al guardar el cliente.');
         }
