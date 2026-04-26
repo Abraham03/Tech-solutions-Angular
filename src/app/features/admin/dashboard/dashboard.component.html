@@ -2,76 +2,74 @@
   
   <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
     <div>
-      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Centro de Control</h1>
-      <p class="text-gray-500 dark:text-gray-400 text-sm">Visión financiera y operativa de Tech Solutions.</p>
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Panel Principal</h1>
+      <p class="text-gray-500 dark:text-gray-400 text-sm">Resumen financiero y operativo.</p>
     </div>
-    <button routerLink="/admin/projects/new" class="ui-btn-primary text-sm py-2 px-4 shadow-lg shadow-brand-primary/20">
-      <mat-icon class="scale-75">add</mat-icon> Nuevo Proyecto
-    </button>
   </div>
 
   @if (isLoading()) {
     <div class="flex flex-col justify-center items-center py-24 text-brand-primary">
       <mat-icon class="animate-spin scale-[2]">sync</mat-icon>
-      <span class="mt-4 text-sm font-medium animate-pulse">Sincronizando datos...</span>
+      <span class="mt-4 text-sm font-medium animate-pulse">Cargando datos...</span>
     </div>
   }
 
   @if (dashboardData(); as data) {
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       
-      <div class="ui-card !p-6 relative overflow-hidden">
+      <div class="ui-card !p-6 relative overflow-hidden lg:col-span-2 bg-gradient-to-r from-gray-900 to-gray-800 dark:from-black dark:to-gray-900">
         <div class="flex justify-between items-start">
-            <div class="bg-status-success/10 text-status-success p-3 rounded-xl">
-                <mat-icon>payments</mat-icon>
+            <div class="bg-white/10 text-white p-3 rounded-xl">
+                <mat-icon>account_balance</mat-icon>
             </div>
-            <div class="flex bg-gray-100 dark:bg-surface-border rounded-lg p-1">
-                <button (click)="setRevenuePeriod('monthly')" [class.bg-white]="revenuePeriod() === 'monthly'" [class.dark:bg-surface-dark]="revenuePeriod() === 'monthly'" [class.shadow]="revenuePeriod() === 'monthly'" class="text-[10px] font-bold px-2 py-1 rounded transition-all text-gray-600 dark:text-gray-300">Mes</button>
-                <button (click)="setRevenuePeriod('annual')" [class.bg-white]="revenuePeriod() === 'annual'" [class.dark:bg-surface-dark]="revenuePeriod() === 'annual'" [class.shadow]="revenuePeriod() === 'annual'" class="text-[10px] font-bold px-2 py-1 rounded transition-all text-gray-600 dark:text-gray-300">Año</button>
-                <button (click)="setRevenuePeriod('total')" [class.bg-white]="revenuePeriod() === 'total'" [class.dark:bg-surface-dark]="revenuePeriod() === 'total'" [class.shadow]="revenuePeriod() === 'total'" class="text-[10px] font-bold px-2 py-1 rounded transition-all text-gray-600 dark:text-gray-300">Total</button>
+            <div class="flex bg-black/40 rounded-lg p-1 border border-white/10">
+                <button (click)="setRevenueView('month')" [class.bg-brand-primary]="revenueView() === 'month'" class="text-[10px] font-bold px-3 py-1.5 rounded transition-all text-white">Mes</button>
+                <button (click)="setRevenueView('year')" [class.bg-brand-primary]="revenueView() === 'year'" class="text-[10px] font-bold px-3 py-1.5 rounded transition-all text-white">Año</button>
+                <button (click)="setRevenueView('total')" [class.bg-brand-primary]="revenueView() === 'total'" class="text-[10px] font-bold px-3 py-1.5 rounded transition-all text-white">Total Histórico</button>
             </div>
         </div>
         <div class="mt-4">
-            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Ingresos (Facturado)</h3>
-            <p class="text-3xl font-bold text-gray-900 dark:text-white mt-1">{{ formatMoney(displayedRevenue()) }}</p>
+            <h3 class="text-sm font-medium text-gray-400">Ingresos Cobrados</h3>
+            <p class="text-3xl font-bold text-white mt-1">{{ formatMoney(displayedRevenue()) }}</p>
         </div>
+        <mat-icon class="absolute -bottom-4 -right-4 text-white/5 scale-[4] rotate-12">trending_up</mat-icon>
       </div>
 
       <app-metric-card 
         title="Ingreso Recurrente (MRR)" 
         [value]="formatMoney(data.metrics.mrr)" 
         icon="autorenew" 
-        iconContainerClass="bg-brand-primary/10 text-brand-primary"
-        trend="Proyección base mensual" 
-        trendColorClass="text-brand-primary">
+        iconContainerClass="bg-status-success/10 text-status-success"
+        [trend]="'Proyección Anual: ' + formatMoney(data.metrics.annualProjection)" 
+        trendColorClass="text-status-success">
       </app-metric-card>
 
       <app-metric-card 
-        title="Por Cobrar (Balances)" 
-        [value]="formatMoney(data.metrics.totalReceivable)" 
-        icon="account_balance_wallet" 
-        iconContainerClass="bg-orange-500/10 text-orange-500"
-        trend="Proyectos activos" 
-        trendColorClass="text-orange-500">
+        title="Utilidad Neta Mensual" 
+        [value]="formatMoney(data.metrics.monthlyProfit)" 
+        icon="diamond" 
+        iconContainerClass="bg-blue-500/10 text-blue-500"
+        trend="Margen de servicios" 
+        trendColorClass="text-blue-500">
       </app-metric-card>
 
     </div>
 
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2">
-        <div class="ui-card !p-4 flex items-center justify-between">
-            <span class="text-xs font-semibold text-gray-500 uppercase">Clientes</span>
-            <span class="text-lg font-bold text-gray-900 dark:text-white">{{data.metrics.activeClients}}</span>
+        <div class="ui-card !p-4 flex justify-between items-center">
+            <span class="text-xs font-semibold text-gray-500 uppercase">Clientes Totales</span>
+            <span class="text-lg font-bold text-gray-900 dark:text-white">{{data.metrics.totalClients}}</span>
         </div>
-        <div class="ui-card !p-4 flex items-center justify-between">
-            <span class="text-xs font-semibold text-gray-500 uppercase">En Desarrollo</span>
+        <div class="ui-card !p-4 flex justify-between items-center">
+            <span class="text-xs font-semibold text-gray-500 uppercase">Proyectos Activos</span>
             <span class="text-lg font-bold text-brand-primary">{{data.metrics.activeProjects}}</span>
         </div>
-        <div class="ui-card !p-4 flex items-center justify-between">
-            <span class="text-xs font-semibold text-gray-500 uppercase">Utilidad Mensual</span>
-            <span class="text-lg font-bold text-blue-500">{{formatMoney(data.metrics.monthlyProfit)}}</span>
+        <div class="ui-card !p-4 flex justify-between items-center">
+            <span class="text-xs font-semibold text-gray-500 uppercase">Por Cobrar</span>
+            <span class="text-lg font-bold text-orange-500">{{formatMoney(data.metrics.totalReceivable)}}</span>
         </div>
-        <div class="ui-card !p-4 flex items-center justify-between border-l-4 border-l-status-error">
-            <span class="text-xs font-semibold text-gray-500 uppercase">Pendientes Pago</span>
+        <div class="ui-card !p-4 flex justify-between items-center border-l-4 border-l-status-error">
+            <span class="text-xs font-semibold text-gray-500 uppercase">Facturas Pendientes</span>
             <span class="text-lg font-bold text-status-error">{{data.metrics.pendingInvoices}}</span>
         </div>
     </div>
@@ -81,118 +79,108 @@
       <div class="lg:col-span-2 space-y-8">
         
         <div class="ui-card !p-6">
-            <div class="flex items-center justify-between mb-6">
-                <h3 class="font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                    <mat-icon class="text-brand-primary">bar_chart</mat-icon> Historial de Ingresos (Últimos 6 meses)
-                </h3>
-            </div>
-            @if (data.revenueChart && data.revenueChart.length > 0) {
-              <div class="h-48 flex items-end gap-2 md:gap-4 justify-between border-b border-gray-100 dark:border-surface-border pb-2 px-2 mt-8">
+            <h3 class="font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-8">
+                <mat-icon class="text-brand-primary">bar_chart</mat-icon> Tendencia de Ingresos (12 Meses)
+            </h3>
+            
+            @if (data.revenueChart.length > 0) {
+              <div class="h-56 flex items-end gap-2 justify-between border-b border-gray-100 dark:border-surface-border pb-2">
                   @for (point of data.revenueChart.slice().reverse(); track point.month) {
                       <div class="flex flex-col items-center flex-1 group relative">
-                          <div class="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-8 bg-gray-900 dark:bg-black text-white text-[10px] px-2 py-1 rounded shadow-lg pointer-events-none whitespace-nowrap z-10">
+                          <div class="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-8 bg-gray-900 text-white text-[10px] px-2 py-1 rounded shadow pointer-events-none z-10">
                               {{formatMoney(point.total)}}
                           </div>
-                          <div class="w-full max-w-[40px] bg-brand-primary/20 group-hover:bg-brand-primary/40 rounded-t-sm transition-all duration-300 relative" [style.height.%]="(point.total / maxRevenue()) * 100">
-                            <div class="absolute top-0 w-full h-1 bg-brand-primary rounded-t-sm"></div>
+                          <div class="w-full max-w-[30px] bg-brand-primary/20 group-hover:bg-brand-primary/40 rounded-t transition-all relative" [style.height.%]="(point.total / maxRevenue()) * 100">
+                            <div class="absolute top-0 w-full h-1 bg-brand-primary rounded-t"></div>
                           </div>
-                          <span class="text-[10px] font-medium text-gray-500 mt-2 rotate-45 md:rotate-0 origin-left">{{point.month}}</span>
+                          <span class="text-[9px] text-gray-400 mt-2">{{point.month.substring(5,7)}}/{{point.month.substring(2,4)}}</span>
                       </div>
                   }
-              </div>
-            } @else {
-              <div class="h-48 flex justify-center items-center text-gray-400 bg-gray-50 dark:bg-surface-dark rounded-lg">
-                <p class="text-sm italic flex items-center gap-2"><mat-icon>show_chart</mat-icon> No hay datos financieros registrados aún.</p>
               </div>
             }
         </div>
 
-        <app-data-table 
-          title="Seguimiento de Proyectos"
-          [data]="data.recentProjects" 
-          [columns]="columns" 
-          [actions]="[]"
-          [showCreateButton]="false">
-        </app-data-table>
+        <div class="ui-card !p-6">
+            <h3 class="font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-4">
+                <mat-icon class="text-yellow-500">star</mat-icon> Clientes de Mayor Valor (LTV)
+            </h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-gray-100 dark:border-surface-border text-xs uppercase text-gray-500">
+                            <th class="py-3 px-2">Cliente</th>
+                            <th class="py-3 px-2">Contacto</th>
+                            <th class="py-3 px-2 text-right">Valor Histórico</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (client of data.clientLTV.slice(0, 5); track client.id) {
+                            <tr class="border-b border-gray-50 dark:border-surface-border/50 hover:bg-gray-50 dark:hover:bg-surface-dark transition-colors">
+                                <td class="py-3 px-2 font-bold text-sm text-gray-900 dark:text-white">{{client.name}}</td>
+                                <td class="py-3 px-2 text-sm text-gray-500">{{client.contact_name}}</td>
+                                <td class="py-3 px-2 text-right font-medium text-status-success">{{formatMoney(client.ltv)}}</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
       </div>
 
       <div class="space-y-6">
         
         <div class="ui-card !p-6">
-            <div class="flex items-center justify-between mb-4">
+            <div class="flex justify-between items-center mb-4">
                 <h3 class="font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                    <mat-icon class="text-status-warning">alarm</mat-icon> Vencimientos
+                    <mat-icon class="text-status-warning">alarm</mat-icon> Urgentes
                 </h3>
-                <span class="text-[10px] bg-status-warning/10 text-status-warning px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">Próximos 30 días</span>
+                <span class="text-[10px] bg-status-error/10 text-status-error px-2 py-0.5 rounded-full font-bold">30 Días</span>
             </div>
 
-            @if (data.expiringServices && data.expiringServices.length > 0) {
-                <div class="space-y-3 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar">
-                    @for (item of data.expiringServices; track item.id) {
-                        <div class="p-4 rounded-xl bg-gray-50 dark:bg-surface-dark border border-gray-100 dark:border-surface-border group hover:border-status-warning/50 hover:shadow-lg transition-all cursor-pointer relative overflow-hidden">
-                            <div class="absolute left-0 top-0 bottom-0 w-1 bg-status-warning/50 group-hover:bg-status-warning transition-colors"></div>
-                            <div class="flex justify-between items-start ml-2">
+            <div class="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                @for (item of data.expiringServices; track item.id) {
+                    <div class="p-3 rounded-lg border border-gray-100 dark:border-surface-border relative overflow-hidden" [ngClass]="item.urgency === 'expired' ? 'bg-status-error/5 border-status-error/30' : 'bg-gray-50 dark:bg-surface-dark'">
+                        <div class="absolute left-0 top-0 bottom-0 w-1" [ngClass]="item.urgency === 'expired' ? 'bg-status-error' : (item.urgency === 'critical' ? 'bg-orange-500' : 'bg-status-warning')"></div>
+                        <div class="ml-2">
+                            <div class="flex justify-between">
                                 <span class="text-sm font-bold text-gray-900 dark:text-white truncate pr-2">{{item.name}}</span>
-                                <span class="text-[11px] font-mono font-medium text-gray-500 shrink-0">{{item.expiration_date}}</span> 
+                                <span class="text-[10px] font-mono" [ngClass]="item.urgency === 'expired' ? 'text-status-error font-bold' : 'text-gray-500'">{{item.days_left < 0 ? 'Vencido' : item.days_left + ' días'}}</span>
                             </div>
-                            <p class="text-xs text-gray-500 mt-1 ml-2 flex items-center gap-1">
-                                <mat-icon class="scale-[0.6] -ml-1 text-gray-400">person</mat-icon> {{item.client_name}}
-                            </p>
+                            <p class="text-xs text-gray-500 mt-1">{{item.client_name}}</p>
                         </div>
-                    }
-                </div>
-            } @else {
-                <div class="text-center py-8 bg-gray-50 dark:bg-surface-dark rounded-xl border border-dashed border-gray-200 dark:border-gray-700">
-                    <div class="bg-status-success/10 w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-2">
-                        <mat-icon class="text-status-success">check</mat-icon>
                     </div>
-                    <p class="text-sm font-medium text-gray-900 dark:text-white">Todo al día</p>
-                </div>
-            }
+                }
+            </div>
         </div>
 
         <div class="ui-card !p-6 sticky top-6">
-            <div class="flex items-center justify-between mb-4">
+            <div class="flex justify-between items-center mb-4">
                 <h3 class="font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                    <mat-icon class="text-blue-500">send</mat-icon> Envíos Automáticos
+                    <mat-icon class="text-blue-500">history</mat-icon> Envíos Recientes
                 </h3>
             </div>
 
-            @if (data.recentNotifications && data.recentNotifications.length > 0) {
-                <div class="space-y-4">
-                    @for (log of data.recentNotifications; track log.id) {
-                        <div class="flex items-start gap-3">
-                            <div class="p-2 rounded-lg" 
-                                 [ngClass]="{'bg-green-100 text-green-600': log.channel === 'whatsapp', 'bg-blue-100 text-blue-600': log.channel === 'email', 'bg-gray-100 text-gray-600': log.channel !== 'whatsapp' && log.channel !== 'email'}">
-                                <mat-icon class="scale-75">{{ log.channel === 'whatsapp' ? 'chat' : 'mail' }}</mat-icon>
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <div class="flex justify-between items-baseline">
-                                    <p class="text-sm font-bold text-gray-900 dark:text-white truncate">{{ log.client_name }}</p>
-                                    <span class="text-[10px] text-gray-400 whitespace-nowrap ml-2">{{ log.sent_time_ago }}</span>
-                                </div>
-                                <p class="text-xs text-gray-500 truncate">{{ log.service_name }}</p>
-                                <div class="mt-1 flex items-center gap-1">
-                                    <div class="w-1.5 h-1.5 rounded-full" [ngClass]="log.status === 'sent' ? 'bg-status-success' : (log.status === 'failed' ? 'bg-status-error' : 'bg-status-warning')"></div>
-                                    <span class="text-[10px] uppercase font-bold" [ngClass]="log.status === 'sent' ? 'text-status-success' : (log.status === 'failed' ? 'text-status-error' : 'text-status-warning')">
-                                        {{ log.status === 'sent' ? 'Entregado' : (log.status === 'failed' ? 'Error' : 'Pendiente') }}
-                                    </span>
-                                </div>
-                            </div>
+            <div class="relative border-l border-gray-200 dark:border-gray-800 ml-3 space-y-6 pb-2">
+                @for (log of data.recentNotifications; track log.id) {
+                    <div class="relative pl-6">
+                        <div class="absolute -left-[5px] top-1 w-2.5 h-2.5 rounded-full bg-brand-primary ring-4 ring-white dark:ring-surface-card"></div>
+                        
+                        <div class="flex justify-between items-start mb-0.5">
+                            <span class="text-xs font-bold text-gray-900 dark:text-white">{{log.client_name}}</span>
+                            <span class="text-[9px] text-gray-400 whitespace-nowrap">{{log.sent_ago}}</span>
                         </div>
-                    }
-                </div>
-            } @else {
-                <div class="text-center py-6">
-                    <mat-icon class="text-gray-300 scale-150 mb-2">notifications_off</mat-icon>
-                    <p class="text-xs text-gray-500 italic">No hay registros de envíos recientes.</p>
-                </div>
-            }
+                        <p class="text-[11px] text-gray-500 leading-tight">{{log.type}} - {{log.service_name}}</p>
+                        <div class="mt-1 flex items-center gap-1">
+                            <mat-icon class="scale-[0.5] text-gray-400 -ml-1" *ngIf="log.message_body.includes('whatsapp')">chat</mat-icon>
+                            <mat-icon class="scale-[0.5] text-gray-400 -ml-1" *ngIf="!log.message_body.includes('whatsapp')">mail</mat-icon>
+                        </div>
+                    </div>
+                }
+            </div>
         </div>
 
       </div>
-
     </div>
   }
 </div>

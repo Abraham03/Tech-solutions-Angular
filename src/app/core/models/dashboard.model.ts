@@ -1,23 +1,37 @@
 export interface DashboardMetrics {
-  mrr: number;
-  activeClients: number;
+  totalClients: number;
   activeProjects: number;
   pendingInvoices: number;
+  mrr: number;
   monthlyProfit: number;
   totalReceivable: number;
-  monthlyRevenue: number;
-  annualRevenue: number;
-  totalRevenue: number;
+  annualProjection: number;
+  totalCollected: number;
+  servicesExpiringSoon: number;
 }
 
 export interface NotificationLog {
   id: number;
+  type: string;
   client_name: string;
   service_name: string;
-  type: string;
-  channel: string;
-  status: string;
-  sent_time_ago: string;
+  message_body: string;
+  sent_at: string;
+  sent_ago: string;
+}
+
+export interface NotificationsSummary {
+  whatsapp: number;
+  email: number;
+  push: number;
+  total: number;
+}
+
+export interface ClientLTV {
+  id: number;
+  name: string;
+  contact_name: string;
+  ltv: number;
 }
 
 export interface ProjectSummary {
@@ -42,10 +56,28 @@ export interface RevenuePoint {
   month: string;
 }
 
+export interface RevenuePeriod {
+  total: number;
+  count: number;
+  period: string;
+}
+
+export interface RevenueYear {
+  year: number;
+  total: number;
+  payments_count: number;
+}
+
 export interface DashboardData {
   metrics: DashboardMetrics;
-  recentProjects: ProjectSummary[];
-  expiringServices?: ExpiringService[];
-  revenueChart?: RevenuePoint[];
-  recentNotifications?: NotificationLog[];
+  recentProjects: any[]; 
+  expiringServices: any[]; 
+  revenueChart: any[]; 
+  revenueByYear: RevenueYear[];
+  revenueThisMonth: RevenuePeriod;
+  revenueThisYear: RevenuePeriod;
+  recentNotifications: NotificationLog[];
+  notificationsSummary: NotificationsSummary;
+  serviceMargins: any[];
+  clientLTV: ClientLTV[];
 }
