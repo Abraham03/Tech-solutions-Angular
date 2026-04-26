@@ -33,7 +33,7 @@ export class ClientFormComponent implements OnInit {
   // 1. Configuración Estricta del Formulario (Validaciones Frontend)
   private initForm() {
     this.clientForm = this.fb.group({
-      nacompany_nameme: ['', [Validators.required, Validators.minLength(3)]],
+      company_name: ['', [Validators.required, Validators.minLength(3)]],
       contact_name: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       // Regex estricto: SÓLO números del 0 al 9. Entre 10 y 15 dígitos. (Ideal para el código 52 + teléfono)
