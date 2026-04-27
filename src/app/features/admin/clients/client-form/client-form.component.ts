@@ -21,7 +21,6 @@ export class ClientFormComponent implements OnInit {
   isSubmitting = signal(false);
   serverError = signal<string | null>(null);
   
-  // Variables para saber si estamos en modo Edición o Creación
   clientId: number | null = null;
   isEditMode = signal(false);
 
@@ -30,18 +29,16 @@ export class ClientFormComponent implements OnInit {
     this.checkIfEditMode();
   }
 
-  // 1. Configuración Estricta del Formulario (Validaciones Frontend)
   private initForm() {
     this.clientForm = this.fb.group({
+      // Se llaman 'name' y 'phone_number', igual que en Laravel
       name: ['', [Validators.required, Validators.minLength(3)]],
       contact_name: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
-      // Regex estricto: SÓLO números del 0 al 9. Entre 10 y 15 dígitos. (Ideal para el código 52 + teléfono)
       phone_number: ['', [Validators.required, Validators.pattern(/^[0-9]{10,15}$/)]]
     });
   }
 
-  // 2. Comprobar si la URL tiene un ID (Ej: /admin/clients/edit/5)
   private checkIfEditMode() {
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
@@ -55,12 +52,13 @@ export class ClientFormComponent implements OnInit {
     this.clientService.getClient(id).subscribe({
       next: (response: any) => {
         const clientData = response.data || response;
-        // Rellenamos el formulario con los datos de Laravel
+        
+        // Traducimos DE la base de datos (company_name/phone) HACIA el formulario (name/phone_number)
         this.clientForm.patchValue({
-          name: clientData.name,
+          name: clientData.company_name, 
           contact_name: clientData.contact_name,
           email: clientData.email,
-          phphone_numberone: clientData.phone_number
+          phone_number: clientData.phone
         });
       },
       error: () => {
@@ -69,7 +67,6 @@ export class ClientFormComponent implements OnInit {
     });
   }
 
-  // 3. Procesamiento del Formulario con Validación Backend
   onSubmit() {
     this.serverError.set(null);
     
@@ -80,22 +77,13 @@ export class ClientFormComponent implements OnInit {
 
     this.isSubmitting.set(true);
     
-    // 1. Obtenemos los valores tal cual están en el formulario de Angular
-    const rawFormData = this.clientForm.value;
+    // Obtenemos los valores del formulario. 
+    // Como ya se llaman 'name' y 'phone_number', están listos para Laravel.
+    const formData = this.clientForm.value;
 
-    // 2. CREAMOS EL TRADUCTOR PARA LARAVEL
-    // Mapeamos los campos de Angular hacia lo que exigen tus Requests de Laravel
-    const payloadForLaravel = {
-      name: rawFormData.company_name,         // Laravel espera 'name'
-      contact_name: rawFormData.contact_name,
-      email: rawFormData.email,
-      phone_number: rawFormData.phone         // Laravel espera 'phone_number'
-    };
-
-    // 3. Enviamos el Payload traducido
     const request$ = this.isEditMode() 
-      ? this.clientService.updateClient(this.clientId!, payloadForLaravel)
-      : this.clientService.createClient(payloadForLaravel);
+      ? this.clientService.updateClient(this.clientId!, formData)
+      : this.clientService.createClient(formData);
 
     request$.subscribe({
       next: () => {
