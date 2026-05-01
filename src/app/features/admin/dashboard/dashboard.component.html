@@ -1,5 +1,6 @@
-<div class="space-y-6">
-  
+<div class="space-y-6 p-4 md:p-6">
+
+  <!-- HEADER -->
   <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
     <div>
       <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Panel Principal</h1>
@@ -7,6 +8,7 @@
     </div>
   </div>
 
+  <!-- LOADING -->
   @if (isLoading()) {
     <div class="flex flex-col justify-center items-center py-24 text-brand-primary">
       <mat-icon class="animate-spin scale-[2]">sync</mat-icon>
@@ -14,173 +16,387 @@
     </div>
   }
 
+  <!-- ERROR -->
+  @if (error()) {
+    <div class="flex items-center gap-3 p-4 rounded-xl bg-status-error/10 border border-status-error/30 text-status-error">
+      <mat-icon>error_outline</mat-icon>
+      <span class="text-sm font-medium">{{ error() }}</span>
+    </div>
+  }
+
   @if (dashboardData(); as data) {
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      
-      <div class="ui-card !p-6 relative overflow-hidden lg:col-span-2 bg-gradient-to-r from-gray-900 to-gray-800 dark:from-black dark:to-gray-900">
-        <div class="flex justify-between items-start">
-            <div class="bg-white/10 text-white p-3 rounded-xl">
-                <mat-icon>account_balance</mat-icon>
-            </div>
-            <div class="flex bg-black/40 rounded-lg p-1 border border-white/10">
-                <button (click)="setRevenueView('month')" [class.bg-brand-primary]="revenueView() === 'month'" class="text-[10px] font-bold px-3 py-1.5 rounded transition-all text-white">Mes</button>
-                <button (click)="setRevenueView('year')" [class.bg-brand-primary]="revenueView() === 'year'" class="text-[10px] font-bold px-3 py-1.5 rounded transition-all text-white">Año</button>
-                <button (click)="setRevenueView('total')" [class.bg-brand-primary]="revenueView() === 'total'" class="text-[10px] font-bold px-3 py-1.5 rounded transition-all text-white">Total Histórico</button>
-            </div>
+
+    <!-- ── FILA 1: INGRESOS + MRR + UTILIDAD ─────────────────────────────── -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+      <!-- Ingresos cobrados (wide) -->
+      <div class="ui-card !p-6 relative overflow-hidden md:col-span-2 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 dark:from-black dark:to-gray-900">
+        <div class="flex justify-between items-start gap-3 flex-wrap">
+          <div class="bg-white/10 text-white p-3 rounded-xl shrink-0">
+            <mat-icon>account_balance</mat-icon>
+          </div>
+          <!-- Selector de período -->
+          <div class="flex bg-black/40 rounded-lg p-1 border border-white/10 shrink-0">
+            <button
+              (click)="setRevenueView('month')"
+              [class.bg-brand-primary]="revenueView() === 'month'"
+              class="text-[10px] font-bold px-3 py-1.5 rounded transition-all text-white">
+              Mes
+            </button>
+            <button
+              (click)="setRevenueView('year')"
+              [class.bg-brand-primary]="revenueView() === 'year'"
+              class="text-[10px] font-bold px-3 py-1.5 rounded transition-all text-white">
+              Año
+            </button>
+            <button
+              (click)="setRevenueView('total')"
+              [class.bg-brand-primary]="revenueView() === 'total'"
+              class="text-[10px] font-bold px-3 py-1.5 rounded transition-all text-white">
+              Histórico
+            </button>
+          </div>
         </div>
-        <div class="mt-4">
-            <h3 class="text-sm font-medium text-gray-400">Ingresos Cobrados</h3>
-            <p class="text-3xl font-bold text-white mt-1">{{ formatMoney(displayedRevenue()) }}</p>
+        <div class="mt-5">
+          <h3 class="text-sm font-medium text-gray-400">Ingresos Cobrados</h3>
+          <p class="text-4xl font-bold text-white mt-1 tabular-nums">{{ formatMoney(displayedRevenue()) }}</p>
+          <p class="text-xs text-gray-500 mt-2">
+            @if (revenueView() === 'month') { {{ data.revenueThisMonth.count }} pago(s) este mes }
+            @if (revenueView() === 'year')  { {{ data.revenueThisYear.count }} pago(s) este año }
+            @if (revenueView() === 'total') { Acumulado histórico }
+          </p>
         </div>
-        <mat-icon class="absolute -bottom-4 -right-4 text-white/5 scale-[4] rotate-12">trending_up</mat-icon>
+        <mat-icon class="absolute -bottom-4 -right-4 text-white/5 scale-[4] rotate-12 pointer-events-none">trending_up</mat-icon>
       </div>
 
-      <app-metric-card 
-        title="Ingreso Recurrente (MRR)" 
-        [value]="formatMoney(data.metrics.mrr)" 
-        icon="autorenew" 
+      <!-- MRR -->
+      <app-metric-card
+        title="Ingreso Recurrente (MRR)"
+        [value]="formatMoney(data.metrics.mrr)"
+        icon="autorenew"
         iconContainerClass="bg-status-success/10 text-status-success"
-        [trend]="'Proyección Anual: ' + formatMoney(data.metrics.annualProjection)" 
+        [trend]="'Proyección: ' + formatMoney(data.metrics.annualProjection) + '/año'"
         trendColorClass="text-status-success">
       </app-metric-card>
 
-      <app-metric-card 
-        title="Utilidad Neta Mensual" 
-        [value]="formatMoney(data.metrics.monthlyProfit)" 
-        icon="diamond" 
+      <!-- Utilidad -->
+      <app-metric-card
+        title="Utilidad Neta Mensual"
+        [value]="formatMoney(data.metrics.monthlyProfit)"
+        icon="diamond"
         iconContainerClass="bg-blue-500/10 text-blue-500"
-        trend="Margen de servicios" 
+        trend="Margen neto de servicios"
         trendColorClass="text-blue-500">
       </app-metric-card>
 
     </div>
 
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2">
-        <div class="ui-card !p-4 flex justify-between items-center">
-            <span class="text-xs font-semibold text-gray-500 uppercase">Clientes Totales</span>
-            <span class="text-lg font-bold text-gray-900 dark:text-white">{{data.metrics.totalClients}}</span>
+    <!-- ── FILA 2: KPIs PEQUEÑOS ──────────────────────────────────────────── -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+
+      <div class="ui-card !p-4 flex justify-between items-center gap-2">
+        <div>
+          <p class="text-[10px] font-semibold text-gray-500 uppercase tracking-wide">Clientes</p>
+          <p class="text-xl font-bold text-gray-900 dark:text-white mt-0.5">{{ data.metrics.totalClients }}</p>
         </div>
-        <div class="ui-card !p-4 flex justify-between items-center">
-            <span class="text-xs font-semibold text-gray-500 uppercase">Proyectos Activos</span>
-            <span class="text-lg font-bold text-brand-primary">{{data.metrics.activeProjects}}</span>
+        <div class="p-2 rounded-lg bg-gray-100 dark:bg-white/5">
+          <mat-icon class="text-gray-500 scale-90">group</mat-icon>
         </div>
-        <div class="ui-card !p-4 flex justify-between items-center">
-            <span class="text-xs font-semibold text-gray-500 uppercase">Por Cobrar</span>
-            <span class="text-lg font-bold text-orange-500">{{formatMoney(data.metrics.totalReceivable)}}</span>
+      </div>
+
+      <div class="ui-card !p-4 flex justify-between items-center gap-2">
+        <div>
+          <p class="text-[10px] font-semibold text-gray-500 uppercase tracking-wide">Proyectos activos</p>
+          <p class="text-xl font-bold text-brand-primary mt-0.5">{{ data.metrics.activeProjects }}</p>
         </div>
-        <div class="ui-card !p-4 flex justify-between items-center border-l-4 border-l-status-error">
-            <span class="text-xs font-semibold text-gray-500 uppercase">Facturas Pendientes</span>
-            <span class="text-lg font-bold text-status-error">{{data.metrics.pendingInvoices}}</span>
+        <div class="p-2 rounded-lg bg-brand-primary/10">
+          <mat-icon class="text-brand-primary scale-90">code</mat-icon>
         </div>
+      </div>
+
+      <div class="ui-card !p-4 flex justify-between items-center gap-2">
+        <div>
+          <p class="text-[10px] font-semibold text-gray-500 uppercase tracking-wide">Por cobrar</p>
+          <p class="text-xl font-bold text-orange-500 mt-0.5">{{ formatMoney(data.metrics.totalReceivable) }}</p>
+        </div>
+        <div class="p-2 rounded-lg bg-orange-500/10">
+          <mat-icon class="text-orange-500 scale-90">pending_actions</mat-icon>
+        </div>
+      </div>
+
+      <div class="ui-card !p-4 flex justify-between items-center gap-2 border-l-4 border-l-status-error">
+        <div>
+          <p class="text-[10px] font-semibold text-gray-500 uppercase tracking-wide">Facturas pendientes</p>
+          <p class="text-xl font-bold text-status-error mt-0.5">{{ data.metrics.pendingInvoices }}</p>
+        </div>
+        <div class="p-2 rounded-lg bg-status-error/10">
+          <mat-icon class="text-status-error scale-90">receipt_long</mat-icon>
+        </div>
+      </div>
+
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-6">
-      
-      <div class="lg:col-span-2 space-y-8">
-        
+    <!-- ── FILA 3: GRÁFICA + SIDEBAR ─────────────────────────────────────── -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+      <!-- Columna principal (2/3) -->
+      <div class="lg:col-span-2 space-y-6">
+
+        <!-- Gráfica de ingresos -->
         <div class="ui-card !p-6">
-            <h3 class="font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-8">
-                <mat-icon class="text-brand-primary">bar_chart</mat-icon> Tendencia de Ingresos (12 Meses)
-            </h3>
-            
-            @if (data.revenueChart.length > 0) {
-              <div class="h-56 flex items-end gap-2 justify-between border-b border-gray-100 dark:border-surface-border pb-2">
-                  @for (point of data.revenueChart.slice().reverse(); track point.month) {
-                      <div class="flex flex-col items-center flex-1 group relative">
-                          <div class="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-8 bg-gray-900 text-white text-[10px] px-2 py-1 rounded shadow pointer-events-none z-10">
-                              {{formatMoney(point.total)}}
-                          </div>
-                          <div class="w-full max-w-[30px] bg-brand-primary/20 group-hover:bg-brand-primary/40 rounded-t transition-all relative" [style.height.%]="(point.total / maxRevenue()) * 100">
-                            <div class="absolute top-0 w-full h-1 bg-brand-primary rounded-t"></div>
-                          </div>
-                          <span class="text-[9px] text-gray-400 mt-2">{{point.month.substring(5,7)}}/{{point.month.substring(2,4)}}</span>
-                      </div>
+          <h3 class="font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-6">
+            <mat-icon class="text-brand-primary">bar_chart</mat-icon>
+            Tendencia de Ingresos
+          </h3>
+
+          @if (data.revenueChart.length > 0) {
+            <div class="h-48 flex items-end gap-1.5 justify-between border-b border-gray-100 dark:border-surface-border pb-2">
+              @for (point of data.revenueChart.slice().reverse(); track point.month) {
+                <div class="flex flex-col items-center flex-1 group relative">
+                  <!-- Tooltip -->
+                  <div class="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-9 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[10px] px-2 py-1 rounded shadow-lg whitespace-nowrap pointer-events-none z-10">
+                    {{ formatMoney(point.total) }}
+                  </div>
+                  <!-- Barra -->
+                  <div
+                    class="w-full rounded-t-md transition-all duration-300 relative cursor-pointer"
+                    [style.height.%]="(point.total / maxRevenue()) * 100"
+                    style="min-height: 4px; background: linear-gradient(180deg, rgba(var(--color-brand-primary-rgb), 0.5), rgba(var(--color-brand-primary-rgb), 0.15))">
+                    <div class="absolute top-0 w-full h-[3px] bg-brand-primary rounded-t-md"></div>
+                  </div>
+                  <!-- Etiqueta -->
+                  <span class="text-[9px] text-gray-400 mt-2 font-medium">
+                    {{ point.month.substring(5,7) }}/{{ point.month.substring(2,4) }}
+                  </span>
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="h-48 flex items-center justify-center text-gray-400 text-sm">
+              Sin datos de ingresos aún.
+            </div>
+          }
+        </div>
+
+        <!-- Tabla LTV -->
+        <div class="ui-card !p-6">
+          <h3 class="font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-4">
+            <mat-icon class="text-yellow-500">star</mat-icon>
+            Clientes de Mayor Valor (LTV)
+          </h3>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="border-b border-gray-100 dark:border-surface-border">
+                  <th class="py-3 px-2 text-[10px] font-semibold uppercase tracking-wide text-gray-500">#</th>
+                  <th class="py-3 px-2 text-[10px] font-semibold uppercase tracking-wide text-gray-500">Cliente</th>
+                  <th class="py-3 px-2 text-[10px] font-semibold uppercase tracking-wide text-gray-500">Contacto</th>
+                  <th class="py-3 px-2 text-[10px] font-semibold uppercase tracking-wide text-gray-500 text-right">Valor Histórico</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (client of data.clientLTV.slice(0, 5); track client.id; let i = $index) {
+                  <tr class="border-b border-gray-50 dark:border-surface-border/50 hover:bg-gray-50 dark:hover:bg-surface-dark transition-colors">
+                    <td class="py-3 px-2 text-sm text-gray-400 font-mono">{{ i + 1 }}</td>
+                    <td class="py-3 px-2">
+                      <span class="text-sm font-bold text-gray-900 dark:text-white">{{ client.name }}</span>
+                    </td>
+                    <td class="py-3 px-2 text-sm text-gray-500">{{ client.contact_name }}</td>
+                    <td class="py-3 px-2 text-right">
+                      <span class="text-sm font-bold text-status-success tabular-nums">{{ formatMoney(client.ltv) }}</span>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Proyectos recientes -->
+        <div class="ui-card !p-6">
+          <h3 class="font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-4">
+            <mat-icon class="text-brand-primary">folder_open</mat-icon>
+            Proyectos Recientes
+          </h3>
+          <div class="space-y-3">
+            @for (project of data.recentProjects; track project.id) {
+              <div class="flex items-center justify-between gap-4 p-3 rounded-lg bg-gray-50 dark:bg-surface-dark hover:bg-gray-100 dark:hover:bg-surface-border/20 transition-colors">
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">{{ project.name }}</p>
+                  <p class="text-xs text-gray-500 mt-0.5">{{ project.type }} · {{ formatMoney(project.amount) }}</p>
+                  <!-- Barra de progreso -->
+                  <div class="mt-2 h-1.5 w-full bg-gray-200 dark:bg-surface-border rounded-full overflow-hidden">
+                    <div
+                      class="h-full rounded-full transition-all duration-500"
+                      [style.width.%]="project.paid_pct"
+                      [class]="project.paid_pct === 100 ? 'bg-status-success' : 'bg-brand-primary'">
+                    </div>
+                  </div>
+                  <p class="text-[10px] text-gray-400 mt-1">{{ project.paid_pct }}% cobrado</p>
+                </div>
+                <div class="text-right shrink-0">
+                  <span
+                    class="text-[10px] font-bold px-2 py-1 rounded-full"
+                    [ngClass]="{
+                      'bg-status-success/10 text-status-success': project.status === 'completed',
+                      'bg-brand-primary/10 text-brand-primary': project.status === 'development',
+                      'bg-gray-100 text-gray-600 dark:bg-white/10 dark:text-gray-400': project.status === 'quoted'
+                    }">
+                    {{ project.status === 'completed' ? 'Completado' : project.status === 'development' ? 'En desarrollo' : 'Cotizado' }}
+                  </span>
+                  @if (project.balance > 0) {
+                    <p class="text-xs text-orange-500 font-semibold mt-1.5">
+                      Resta {{ formatMoney(project.balance) }}
+                    </p>
                   }
+                </div>
               </div>
             }
-        </div>
-
-        <div class="ui-card !p-6">
-            <h3 class="font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-4">
-                <mat-icon class="text-yellow-500">star</mat-icon> Clientes de Mayor Valor (LTV)
-            </h3>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="border-b border-gray-100 dark:border-surface-border text-xs uppercase text-gray-500">
-                            <th class="py-3 px-2">Cliente</th>
-                            <th class="py-3 px-2">Contacto</th>
-                            <th class="py-3 px-2 text-right">Valor Histórico</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @for (client of data.clientLTV.slice(0, 5); track client.id) {
-                            <tr class="border-b border-gray-50 dark:border-surface-border/50 hover:bg-gray-50 dark:hover:bg-surface-dark transition-colors">
-                                <td class="py-3 px-2 font-bold text-sm text-gray-900 dark:text-white">{{client.name}}</td>
-                                <td class="py-3 px-2 text-sm text-gray-500">{{client.contact_name}}</td>
-                                <td class="py-3 px-2 text-right font-medium text-status-success">{{formatMoney(client.ltv)}}</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
+          </div>
         </div>
 
       </div>
 
+      <!-- ── SIDEBAR (1/3) ──────────────────────────────────────────────── -->
       <div class="space-y-6">
-        
-        <div class="ui-card !p-6">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                    <mat-icon class="text-status-warning">alarm</mat-icon> Urgentes
-                </h3>
-                <span class="text-[10px] bg-status-error/10 text-status-error px-2 py-0.5 rounded-full font-bold">30 Días</span>
-            </div>
 
-            <div class="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
-                @for (item of data.expiringServices; track item.id) {
-                    <div class="p-3 rounded-lg border border-gray-100 dark:border-surface-border relative overflow-hidden" [ngClass]="item.urgency === 'expired' ? 'bg-status-error/5 border-status-error/30' : 'bg-gray-50 dark:bg-surface-dark'">
-                        <div class="absolute left-0 top-0 bottom-0 w-1" [ngClass]="item.urgency === 'expired' ? 'bg-status-error' : (item.urgency === 'critical' ? 'bg-orange-500' : 'bg-status-warning')"></div>
-                        <div class="ml-2">
-                            <div class="flex justify-between">
-                                <span class="text-sm font-bold text-gray-900 dark:text-white truncate pr-2">{{item.name}}</span>
-                                <span class="text-[10px] font-mono" [ngClass]="item.urgency === 'expired' ? 'text-status-error font-bold' : 'text-gray-500'">{{item.days_left < 0 ? 'Vencido' : item.days_left + ' días'}}</span>
-                            </div>
-                            <p class="text-xs text-gray-500 mt-1">{{item.client_name}}</p>
-                        </div>
-                    </div>
-                }
+        <!-- Servicios urgentes -->
+        <div class="ui-card !p-6">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="font-bold text-gray-900 dark:text-white flex items-center gap-2">
+              <mat-icon class="text-status-warning">alarm</mat-icon>
+              Urgentes
+            </h3>
+            <span class="text-[10px] bg-status-error/10 text-status-error px-2 py-0.5 rounded-full font-bold border border-status-error/20">
+              {{ data.metrics.servicesExpiringSoon }} · 30 días
+            </span>
+          </div>
+
+          @if (data.expiringServices.length === 0) {
+            <div class="flex flex-col items-center py-6 text-gray-400">
+              <mat-icon class="scale-150 mb-3 text-status-success">check_circle</mat-icon>
+              <p class="text-sm">Sin servicios urgentes</p>
             </div>
+          } @else {
+            <div class="space-y-3 max-h-[300px] overflow-y-auto pr-1 custom-scrollbar">
+              @for (item of data.expiringServices; track item.id) {
+                <div
+                  class="p-3 rounded-lg border relative overflow-hidden transition-colors"
+                  [ngClass]="{
+                    'bg-status-error/5 border-status-error/30':   item.urgency === 'expired',
+                    'bg-orange-500/5 border-orange-500/30':        item.urgency === 'critical',
+                    'bg-status-warning/5 border-status-warning/30':item.urgency === 'warning',
+                    'bg-gray-50 dark:bg-surface-dark border-gray-100 dark:border-surface-border': item.urgency === 'ok'
+                  }">
+                  <!-- Borde izquierdo de color -->
+                  <div
+                    class="absolute left-0 top-0 bottom-0 w-1 rounded-l-lg"
+                    [ngClass]="{
+                      'bg-status-error':   item.urgency === 'expired',
+                      'bg-orange-500':     item.urgency === 'critical',
+                      'bg-status-warning': item.urgency === 'warning',
+                      'bg-status-success': item.urgency === 'ok'
+                    }">
+                  </div>
+                  <div class="ml-3">
+                    <div class="flex justify-between items-start gap-2">
+                      <span class="text-sm font-bold text-gray-900 dark:text-white truncate">{{ item.name }}</span>
+                      <span
+                        class="text-[10px] font-mono font-bold shrink-0"
+                        [ngClass]="{
+                          'text-status-error':   item.urgency === 'expired' || item.urgency === 'critical',
+                          'text-status-warning': item.urgency === 'warning',
+                          'text-gray-500':       item.urgency === 'ok'
+                        }">
+                        {{ item.days_left < 0 ? 'Vencido' : item.days_left + 'd' }}
+                      </span>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-0.5">{{ item.client_name }}</p>
+                    <p class="text-xs text-gray-400 mt-0.5">{{ item.expiration_date }}</p>
+                  </div>
+                </div>
+              }
+            </div>
+          }
         </div>
 
-        <div class="ui-card !p-6 sticky top-6">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                    <mat-icon class="text-blue-500">history</mat-icon> Envíos Recientes
-                </h3>
+        <!-- Notificaciones recientes -->
+        <div class="ui-card !p-6">
+          <div class="flex justify-between items-center mb-5">
+            <h3 class="font-bold text-gray-900 dark:text-white flex items-center gap-2">
+              <mat-icon class="text-blue-500">history</mat-icon>
+              Envíos Recientes
+            </h3>
+            <!-- Resumen por canal -->
+            <div class="flex items-center gap-2">
+              @if (data.notificationsSummary.whatsapp > 0) {
+                <span class="text-[10px] bg-green-500/10 text-green-600 dark:text-green-400 px-2 py-0.5 rounded-full font-bold">
+                  💬 {{ data.notificationsSummary.whatsapp }}
+                </span>
+              }
+              @if (data.notificationsSummary.email > 0) {
+                <span class="text-[10px] bg-blue-500/10 text-blue-500 px-2 py-0.5 rounded-full font-bold">
+                  ✉️ {{ data.notificationsSummary.email }}
+                </span>
+              }
+              @if (data.notificationsSummary.push > 0) {
+                <span class="text-[10px] bg-purple-500/10 text-purple-500 px-2 py-0.5 rounded-full font-bold">
+                  🔔 {{ data.notificationsSummary.push }}
+                </span>
+              }
             </div>
+          </div>
 
-            <div class="relative border-l border-gray-200 dark:border-gray-800 ml-3 space-y-6 pb-2">
-                @for (log of data.recentNotifications; track log.id) {
-                    <div class="relative pl-6">
-                        <div class="absolute -left-[5px] top-1 w-2.5 h-2.5 rounded-full bg-brand-primary ring-4 ring-white dark:ring-surface-card"></div>
-                        
-                        <div class="flex justify-between items-start mb-0.5">
-                            <span class="text-xs font-bold text-gray-900 dark:text-white">{{log.client_name}}</span>
-                            <span class="text-[9px] text-gray-400 whitespace-nowrap">{{log.sent_ago}}</span>
-                        </div>
-                        <p class="text-[11px] text-gray-500 leading-tight">{{log.type}} - {{log.service_name}}</p>
-                        <div class="mt-1 flex items-center gap-1">
-                            <mat-icon class="scale-[0.5] text-gray-400 -ml-1" *ngIf="log.message_body.includes('whatsapp')">chat</mat-icon>
-                            <mat-icon class="scale-[0.5] text-gray-400 -ml-1" *ngIf="!log.message_body.includes('whatsapp')">mail</mat-icon>
-                        </div>
-                    </div>
-                }
+          @if (data.recentNotifications.length === 0) {
+            <div class="flex flex-col items-center py-6 text-gray-400">
+              <mat-icon class="scale-150 mb-3">notifications_none</mat-icon>
+              <p class="text-sm">Sin notificaciones aún</p>
             </div>
+          } @else {
+            <div class="relative border-l-2 border-gray-100 dark:border-gray-800 ml-3 space-y-5 pb-1 max-h-[420px] overflow-y-auto pr-1 custom-scrollbar">
+              @for (log of data.recentNotifications; track log.id) {
+                <div class="relative pl-5">
+                  <!-- Punto de timeline -->
+                  <div
+                    class="absolute -left-[5px] top-1 w-2.5 h-2.5 rounded-full ring-[3px] ring-white dark:ring-surface-card"
+                    [ngClass]="{
+                      'bg-green-500':  log.type === 'whatsapp_reminder',
+                      'bg-blue-500':   log.type === 'email_invoice',
+                      'bg-purple-500': log.type === 'push_alert'
+                    }">
+                  </div>
+
+                  <div class="flex justify-between items-start gap-2">
+                    <span class="text-xs font-bold text-gray-900 dark:text-white leading-tight">{{ log.client_name }}</span>
+                    <span class="text-[9px] text-gray-400 whitespace-nowrap shrink-0">{{ log.sent_ago }}</span>
+                  </div>
+
+                  <div class="flex items-center gap-1.5 mt-0.5">
+                    <!-- Tipo con color -->
+                    <span
+                      class="text-[9px] font-bold px-1.5 py-0.5 rounded"
+                      [ngClass]="{
+                        'bg-green-500/10 text-green-600 dark:text-green-400': log.type === 'whatsapp_reminder',
+                        'bg-blue-500/10 text-blue-500':                        log.type === 'email_invoice',
+                        'bg-purple-500/10 text-purple-500':                    log.type === 'push_alert'
+                      }">
+                      {{ log.type === 'whatsapp_reminder' ? 'WhatsApp' : log.type === 'email_invoice' ? 'Email' : 'Push' }}
+                    </span>
+                    @if (log.service_name) {
+                      <span class="text-[10px] text-gray-400 truncate">· {{ log.service_name }}</span>
+                    }
+                  </div>
+
+                  <p class="text-[11px] text-gray-500 leading-snug mt-1 line-clamp-2">{{ log.message_body }}</p>
+                </div>
+              }
+            </div>
+          }
         </div>
 
       </div>
     </div>
-  }
+
+  } <!-- end @if dashboardData -->
+
 </div>

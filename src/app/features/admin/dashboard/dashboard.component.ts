@@ -5,80 +5,110 @@ import { RouterModule } from '@angular/router';
 import { DashboardService } from '../../../core/services/dashboard.service';
 import { DashboardData } from '../../../core/models/dashboard.model';
 import { MetricCardComponent } from '../../../shared/components/ui/metric-card/metric-card.component';
-import { DataTableComponent, TableColumn } from '../../../shared/components/ui/data-table/data-table.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, MatIconModule, RouterModule, MetricCardComponent, DataTableComponent],
+  imports: [CommonModule, MatIconModule, RouterModule, MetricCardComponent],
   providers: [CurrencyPipe],
   templateUrl: './dashboard.component.html'
 })
 export class DashboardComponent implements OnInit {
   private dashboardService = inject(DashboardService);
-  private currencyPipe = inject(CurrencyPipe);
+  private currencyPipe     = inject(CurrencyPipe);
 
+  // ── State ──────────────────────────────────────────────────────────────
   dashboardData = signal<DashboardData | null>(null);
-  isLoading = signal<boolean>(true);
-  error = signal<string | null>(null);
-  
-  // Altura de gráfica
+  isLoading     = signal<boolean>(true);
+  error         = signal<string | null>(null);
+
+  /** Valor máximo para escalar las barras de la gráfica (con 10% de padding) */
   maxRevenue = signal<number>(0);
 
-  // Control para vista de ingresos
+  /** Período seleccionado para la tarjeta de ingresos */
   revenueView = signal<'month' | 'year' | 'total'>('month');
 
-  // Computed para mostrar el ingreso según el botón seleccionado
+  // ── Computed ───────────────────────────────────────────────────────────
+
+  /** Ingreso mostrado según el botón activo */
   displayedRevenue = computed(() => {
     const data = this.dashboardData();
     if (!data) return 0;
-    if (this.revenueView() === 'month') return data.revenueThisMonth.total;
-    if (this.revenueView() === 'year') return data.revenueThisYear.total;
-    return data.metrics.totalCollected;
+    switch (this.revenueView()) {
+      case 'month': return data.revenueThisMonth.total;
+      case 'year':  return data.revenueThisYear.total;
+      default:      return data.metrics.totalCollected;
+    }
   });
 
-  // Tablas
-  columns: TableColumn[] = [
-    { key: 'name', label: 'Proyecto' },
-    { 
-      key: 'status', label: 'Estado', type: 'badge',
-      badgeColors: {
-        'pending': 'bg-gray-100 text-gray-800',
-        'development': 'bg-brand-primary/10 text-brand-primary',
-        'completed': 'bg-status-success/10 text-status-success'
-      }
-    },
-    { key: 'amount', label: 'Total', type: 'currency' },
-    { key: 'balance', label: 'Resta', type: 'currency' }
-  ];
-
-  ngOnInit() {
+  // ── Lifecycle ──────────────────────────────────────────────────────────
+  ngOnInit(): void {
     this.loadData();
   }
 
-  loadData() {
+  // ── Methods ────────────────────────────────────────────────────────────
+  loadData(): void {
+    this.isLoading.set(true);
+    this.error.set(null);
+
     this.dashboardService.getDashboardSummary().subscribe({
       next: (data: DashboardData) => {
-        if (data.revenueChart && data.revenueChart.length > 0) {
-          this.maxRevenue.set(Math.max(...data.revenueChart.map(item => Number(item.total))) * 1.1);
+        // Calcular techo de la gráfica
+        if (data.revenueChart?.length) {
+          const max = Math.max(...data.revenueChart.map(p => Number(p.total)));
+          this.maxRevenue.set(max * 1.1);
         }
         this.dashboardData.set(data);
         this.isLoading.set(false);
       },
       error: (err) => {
-        console.error('Error:', err);
-        this.error.set('No se pudo cargar el dashboard. Revisa la conexión.');
+        console.error('[Dashboard] Error al cargar datos:', err);
+        this.error.set('No se pudo cargar el dashboard. Revisa tu conexión.');
         this.isLoading.set(false);
       }
     });
   }
 
-  setRevenueView(view: 'month' | 'year' | 'total') {
+  setRevenueView(view: 'month' | 'year' | 'total'): void {
     this.revenueView.set(view);
   }
 
   formatMoney(amount: number | string): string {
     const num = typeof amount === 'string' ? parseFloat(amount) : amount;
-    return this.currencyPipe.transform(num, 'MXN', 'symbol', '1.2-2') || '$0.00';
+    return this.currencyPipe.transform(num, 'MXN', 'symbol', '1.2-2') ?? '$0.00';
+  }
+
+  /**
+   * Helper para la gráfica: calcula el alto en % de cada barra.
+   * Evita divisiones por cero.
+   */
+  barHeight(total: number): number {
+    const max = this.maxRevenue();
+    return max > 0 ? Math.max((total / max) * 100, 2) : 2;
+  }
+
+  /**
+   * Devuelve la clase de color del punto de timeline
+   * según el tipo de notificación.
+   */
+  notifDotClass(type: string): string {
+    const map: Record<string, string> = {
+      whatsapp_reminder: 'bg-green-500',
+      email_invoice:     'bg-blue-500',
+      push_alert:        'bg-purple-500',
+    };
+    return map[type] ?? 'bg-gray-400';
+  }
+
+  /**
+   * Devuelve la etiqueta legible del tipo de notificación.
+   */
+  notifLabel(type: string): string {
+    const map: Record<string, string> = {
+      whatsapp_reminder: 'WhatsApp',
+      email_invoice:     'Email',
+      push_alert:        'Push',
+    };
+    return map[type] ?? type;
   }
 }
