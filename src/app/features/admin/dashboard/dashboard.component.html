@@ -1,402 +1,418 @@
-<div class="space-y-6 p-4 md:p-6">
+<div class="min-h-screen bg-[#0d1117] text-slate-100 font-sans">
 
-  <!-- HEADER -->
-  <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-    <div>
-      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Panel Principal</h1>
-      <p class="text-gray-500 dark:text-gray-400 text-sm">Resumen financiero y operativo.</p>
+  <!-- ══ TOPBAR ══════════════════════════════════════════════════════════ -->
+  <div class="sticky top-0 z-50 bg-[#0d1117]/90 backdrop-blur-md border-b border-[#1e2235] px-4 md:px-6 py-3 flex items-center justify-between gap-4">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center shrink-0">
+        <mat-icon class="text-white scale-75">bolt</mat-icon>
+      </div>
+      <div>
+        <p class="text-sm font-bold text-white leading-none">TechSolutions</p>
+        <p class="text-[10px] text-slate-500 mt-0.5">Panel de administración</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-3">
+      @if (dashboardData()?.metrics?.servicesExpiringSoon) {
+        <div class="flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold px-3 py-1.5 rounded-lg">
+          <mat-icon class="scale-75 leading-none">warning</mat-icon>
+          {{ dashboardData()!.metrics.servicesExpiringSoon }} por vencer
+        </div>
+      }
+      <p class="text-xs text-slate-500 hidden md:block">{{ today }}</p>
     </div>
   </div>
 
-  <!-- LOADING -->
-  @if (isLoading()) {
-    <div class="flex flex-col justify-center items-center py-24 text-brand-primary">
-      <mat-icon class="animate-spin scale-[2]">sync</mat-icon>
-      <span class="mt-4 text-sm font-medium animate-pulse">Cargando datos...</span>
-    </div>
-  }
+  <!-- ══ NAV TABS ═════════════════════════════════════════════════════════ -->
+  <div class="border-b border-[#1e2235] px-4 md:px-6 flex gap-1 overflow-x-auto">
+    @for (tab of tabs; track tab.id) {
+      <button
+        (click)="activeTab.set(tab.id)"
+        class="flex items-center gap-2 px-4 py-3 text-sm font-semibold whitespace-nowrap border-b-2 transition-all"
+        [class.border-blue-500]="activeTab() === tab.id"
+        [class.text-blue-400]="activeTab() === tab.id"
+        [class.border-transparent]="activeTab() !== tab.id"
+        [class.text-slate-500]="activeTab() !== tab.id">
+        <mat-icon class="scale-75 leading-none">{{ tab.icon }}</mat-icon>
+        {{ tab.label }}
+      </button>
+    }
+  </div>
 
-  <!-- ERROR -->
-  @if (error()) {
-    <div class="flex items-center gap-3 p-4 rounded-xl bg-status-error/10 border border-status-error/30 text-status-error">
-      <mat-icon>error_outline</mat-icon>
-      <span class="text-sm font-medium">{{ error() }}</span>
-    </div>
-  }
+  <!-- ══ CONTENT ══════════════════════════════════════════════════════════ -->
+  <div class="max-w-[1100px] mx-auto px-4 md:px-6 py-6 pb-16">
 
-  @if (dashboardData(); as data) {
+    <!-- LOADING -->
+    @if (isLoading()) {
+      <div class="flex flex-col items-center justify-center py-32 text-blue-400">
+        <mat-icon class="animate-spin scale-[2]">sync</mat-icon>
+        <p class="mt-5 text-sm font-medium animate-pulse">Cargando datos...</p>
+      </div>
+    }
 
-    <!-- ── FILA 1: INGRESOS + MRR + UTILIDAD ─────────────────────────────── -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <!-- ERROR -->
+    @if (error()) {
+      <div class="flex items-center gap-3 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400">
+        <mat-icon>error_outline</mat-icon>
+        <span class="text-sm font-medium">{{ error() }}</span>
+      </div>
+    }
 
-      <!-- Ingresos cobrados (wide) -->
-      <div class="ui-card !p-6 relative overflow-hidden md:col-span-2 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 dark:from-black dark:to-gray-900">
-        <div class="flex justify-between items-start gap-3 flex-wrap">
-          <div class="bg-white/10 text-white p-3 rounded-xl shrink-0">
-            <mat-icon>account_balance</mat-icon>
+    @if (dashboardData(); as data) {
+
+      <!-- ══════════════════════════════════════════════════════════════════
+           TAB: RESUMEN
+      ══════════════════════════════════════════════════════════════════ -->
+      @if (activeTab() === 'overview') {
+
+        <!-- KPIs -->
+        <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
+
+          <div class="dash-card col-span-2 md:col-span-1">
+            <p class="kpi-label">Total cobrado</p>
+            <p class="kpi-value text-blue-400">{{ formatMoney(data.metrics.totalCollected) }}</p>
+            <p class="kpi-sub text-emerald-400">Histórico acumulado</p>
           </div>
-          <!-- Selector de período -->
-          <div class="flex bg-black/40 rounded-lg p-1 border border-white/10 shrink-0">
-            <button
-              (click)="setRevenueView('month')"
-              [class.bg-brand-primary]="revenueView() === 'month'"
-              class="text-[10px] font-bold px-3 py-1.5 rounded transition-all text-white">
-              Mes
-            </button>
-            <button
-              (click)="setRevenueView('year')"
-              [class.bg-brand-primary]="revenueView() === 'year'"
-              class="text-[10px] font-bold px-3 py-1.5 rounded transition-all text-white">
-              Año
-            </button>
-            <button
-              (click)="setRevenueView('total')"
-              [class.bg-brand-primary]="revenueView() === 'total'"
-              class="text-[10px] font-bold px-3 py-1.5 rounded transition-all text-white">
-              Histórico
-            </button>
+
+          <div class="dash-card">
+            <p class="kpi-label">MRR</p>
+            <p class="kpi-value text-emerald-400">{{ formatMoney(data.metrics.mrr) }}</p>
+            <p class="kpi-sub text-blue-400">↑ Ingreso mensual recurrente</p>
           </div>
-        </div>
-        <div class="mt-5">
-          <h3 class="text-sm font-medium text-gray-400">Ingresos Cobrados</h3>
-          <p class="text-4xl font-bold text-white mt-1 tabular-nums">{{ formatMoney(displayedRevenue()) }}</p>
-          <p class="text-xs text-gray-500 mt-2">
-            @if (revenueView() === 'month') { {{ data.revenueThisMonth.count }} pago(s) este mes }
-            @if (revenueView() === 'year')  { {{ data.revenueThisYear.count }} pago(s) este año }
-            @if (revenueView() === 'total') { Acumulado histórico }
-          </p>
-        </div>
-        <mat-icon class="absolute -bottom-4 -right-4 text-white/5 scale-[4] rotate-12 pointer-events-none">trending_up</mat-icon>
-      </div>
 
-      <!-- MRR -->
-      <app-metric-card
-        title="Ingreso Recurrente (MRR)"
-        [value]="formatMoney(data.metrics.mrr)"
-        icon="autorenew"
-        iconContainerClass="bg-status-success/10 text-status-success"
-        [trend]="'Proyección: ' + formatMoney(data.metrics.annualProjection) + '/año'"
-        trendColorClass="text-status-success">
-      </app-metric-card>
-
-      <!-- Utilidad -->
-      <app-metric-card
-        title="Utilidad Neta Mensual"
-        [value]="formatMoney(data.metrics.monthlyProfit)"
-        icon="diamond"
-        iconContainerClass="bg-blue-500/10 text-blue-500"
-        trend="Margen neto de servicios"
-        trendColorClass="text-blue-500">
-      </app-metric-card>
-
-    </div>
-
-    <!-- ── FILA 2: KPIs PEQUEÑOS ──────────────────────────────────────────── -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-
-      <div class="ui-card !p-4 flex justify-between items-center gap-2">
-        <div>
-          <p class="text-[10px] font-semibold text-gray-500 uppercase tracking-wide">Clientes</p>
-          <p class="text-xl font-bold text-gray-900 dark:text-white mt-0.5">{{ data.metrics.totalClients }}</p>
-        </div>
-        <div class="p-2 rounded-lg bg-gray-100 dark:bg-white/5">
-          <mat-icon class="text-gray-500 scale-90">group</mat-icon>
-        </div>
-      </div>
-
-      <div class="ui-card !p-4 flex justify-between items-center gap-2">
-        <div>
-          <p class="text-[10px] font-semibold text-gray-500 uppercase tracking-wide">Proyectos activos</p>
-          <p class="text-xl font-bold text-brand-primary mt-0.5">{{ data.metrics.activeProjects }}</p>
-        </div>
-        <div class="p-2 rounded-lg bg-brand-primary/10">
-          <mat-icon class="text-brand-primary scale-90">code</mat-icon>
-        </div>
-      </div>
-
-      <div class="ui-card !p-4 flex justify-between items-center gap-2">
-        <div>
-          <p class="text-[10px] font-semibold text-gray-500 uppercase tracking-wide">Por cobrar</p>
-          <p class="text-xl font-bold text-orange-500 mt-0.5">{{ formatMoney(data.metrics.totalReceivable) }}</p>
-        </div>
-        <div class="p-2 rounded-lg bg-orange-500/10">
-          <mat-icon class="text-orange-500 scale-90">pending_actions</mat-icon>
-        </div>
-      </div>
-
-      <div class="ui-card !p-4 flex justify-between items-center gap-2 border-l-4 border-l-status-error">
-        <div>
-          <p class="text-[10px] font-semibold text-gray-500 uppercase tracking-wide">Facturas pendientes</p>
-          <p class="text-xl font-bold text-status-error mt-0.5">{{ data.metrics.pendingInvoices }}</p>
-        </div>
-        <div class="p-2 rounded-lg bg-status-error/10">
-          <mat-icon class="text-status-error scale-90">receipt_long</mat-icon>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- ── FILA 3: GRÁFICA + SIDEBAR ─────────────────────────────────────── -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-      <!-- Columna principal (2/3) -->
-      <div class="lg:col-span-2 space-y-6">
-
-        <!-- Gráfica de ingresos -->
-        <div class="ui-card !p-6">
-          <h3 class="font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-6">
-            <mat-icon class="text-brand-primary">bar_chart</mat-icon>
-            Tendencia de Ingresos
-          </h3>
-
-          @if (data.revenueChart.length > 0) {
-            <div class="h-48 flex items-end gap-1.5 justify-between border-b border-gray-100 dark:border-surface-border pb-2">
-              @for (point of data.revenueChart.slice().reverse(); track point.month) {
-                <div class="flex flex-col items-center flex-1 group relative">
-                  <!-- Tooltip -->
-                  <div class="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-9 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[10px] px-2 py-1 rounded shadow-lg whitespace-nowrap pointer-events-none z-10">
-                    {{ formatMoney(point.total) }}
-                  </div>
-                  <!-- Barra -->
-                  <div
-                    class="w-full rounded-t-md transition-all duration-300 relative cursor-pointer"
-                    [style.height.%]="(point.total / maxRevenue()) * 100"
-                    style="min-height: 4px; background: linear-gradient(180deg, rgba(var(--color-brand-primary-rgb), 0.5), rgba(var(--color-brand-primary-rgb), 0.15))">
-                    <div class="absolute top-0 w-full h-[3px] bg-brand-primary rounded-t-md"></div>
-                  </div>
-                  <!-- Etiqueta -->
-                  <span class="text-[9px] text-gray-400 mt-2 font-medium">
-                    {{ point.month.substring(5,7) }}/{{ point.month.substring(2,4) }}
-                  </span>
-                </div>
-              }
-            </div>
-          } @else {
-            <div class="h-48 flex items-center justify-center text-gray-400 text-sm">
-              Sin datos de ingresos aún.
-            </div>
-          }
-        </div>
-
-        <!-- Tabla LTV -->
-        <div class="ui-card !p-6">
-          <h3 class="font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-4">
-            <mat-icon class="text-yellow-500">star</mat-icon>
-            Clientes de Mayor Valor (LTV)
-          </h3>
-          <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-              <thead>
-                <tr class="border-b border-gray-100 dark:border-surface-border">
-                  <th class="py-3 px-2 text-[10px] font-semibold uppercase tracking-wide text-gray-500">#</th>
-                  <th class="py-3 px-2 text-[10px] font-semibold uppercase tracking-wide text-gray-500">Cliente</th>
-                  <th class="py-3 px-2 text-[10px] font-semibold uppercase tracking-wide text-gray-500">Contacto</th>
-                  <th class="py-3 px-2 text-[10px] font-semibold uppercase tracking-wide text-gray-500 text-right">Valor Histórico</th>
-                </tr>
-              </thead>
-              <tbody>
-                @for (client of data.clientLTV.slice(0, 5); track client.id; let i = $index) {
-                  <tr class="border-b border-gray-50 dark:border-surface-border/50 hover:bg-gray-50 dark:hover:bg-surface-dark transition-colors">
-                    <td class="py-3 px-2 text-sm text-gray-400 font-mono">{{ i + 1 }}</td>
-                    <td class="py-3 px-2">
-                      <span class="text-sm font-bold text-gray-900 dark:text-white">{{ client.name }}</span>
-                    </td>
-                    <td class="py-3 px-2 text-sm text-gray-500">{{ client.contact_name }}</td>
-                    <td class="py-3 px-2 text-right">
-                      <span class="text-sm font-bold text-status-success tabular-nums">{{ formatMoney(client.ltv) }}</span>
-                    </td>
-                  </tr>
-                }
-              </tbody>
-            </table>
+          <div class="dash-card">
+            <p class="kpi-label">Margen mensual</p>
+            <p class="kpi-value text-violet-400">{{ formatMoney(data.metrics.monthlyProfit) }}</p>
+            <p class="kpi-sub text-violet-400">{{ marginPct() }}% de rentabilidad</p>
           </div>
+
+          <div class="dash-card">
+            <p class="kpi-label">Por cobrar</p>
+            <p class="kpi-value text-amber-400">{{ formatMoney(data.metrics.totalReceivable) }}</p>
+            <p class="kpi-sub text-amber-400">Gestor Basketball</p>
+          </div>
+
+          <div class="dash-card">
+            <p class="kpi-label">Proyección anual</p>
+            <p class="kpi-value text-emerald-400">{{ formatMoney(data.metrics.annualProjection) }}</p>
+            <p class="kpi-sub text-emerald-400">Basado en MRR activo</p>
+          </div>
+
+          <div class="dash-card">
+            <p class="kpi-label">Clientes</p>
+            <p class="kpi-value">{{ data.metrics.totalClients }}</p>
+            <p class="kpi-sub text-slate-500">{{ data.metrics.activeProjects }} proyecto activo</p>
+          </div>
+
         </div>
 
-        <!-- Proyectos recientes -->
-        <div class="ui-card !p-6">
-          <h3 class="font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-4">
-            <mat-icon class="text-brand-primary">folder_open</mat-icon>
-            Proyectos Recientes
-          </h3>
-          <div class="space-y-3">
-            @for (project of data.recentProjects; track project.id) {
-              <div class="flex items-center justify-between gap-4 p-3 rounded-lg bg-gray-50 dark:bg-surface-dark hover:bg-gray-100 dark:hover:bg-surface-border/20 transition-colors">
-                <div class="flex-1 min-w-0">
-                  <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">{{ project.name }}</p>
-                  <p class="text-xs text-gray-500 mt-0.5">{{ project.type }} · {{ formatMoney(project.amount) }}</p>
-                  <!-- Barra de progreso -->
-                  <div class="mt-2 h-1.5 w-full bg-gray-200 dark:bg-surface-border rounded-full overflow-hidden">
-                    <div
-                      class="h-full rounded-full transition-all duration-500"
-                      [style.width.%]="project.paid_pct"
-                      [class]="project.paid_pct === 100 ? 'bg-status-success' : 'bg-brand-primary'">
+        <!-- Proyectos + LTV -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+
+          <!-- Proyectos recientes -->
+          <div>
+            <p class="section-title">Proyectos recientes</p>
+            <div class="dash-card !p-0 divide-y divide-[#1a1f2e]">
+              @for (project of data.recentProjects; track project.id) {
+                <div class="p-4 flex flex-col gap-2">
+                  <div class="flex justify-between items-start gap-2">
+                    <div>
+                      <p class="text-sm font-semibold text-white">{{ project.name }}</p>
+                      <p class="text-xs text-slate-500 mt-0.5">{{ project.type }} · {{ formatMoney(project.amount) }}</p>
                     </div>
+                    <span class="status-badge" [ngClass]="statusBadgeClass(project.status)">
+                      {{ statusLabel(project.status) }}
+                    </span>
                   </div>
-                  <p class="text-[10px] text-gray-400 mt-1">{{ project.paid_pct }}% cobrado</p>
-                </div>
-                <div class="text-right shrink-0">
-                  <span
-                    class="text-[10px] font-bold px-2 py-1 rounded-full"
-                    [ngClass]="{
-                      'bg-status-success/10 text-status-success': project.status === 'completed',
-                      'bg-brand-primary/10 text-brand-primary': project.status === 'development',
-                      'bg-gray-100 text-gray-600 dark:bg-white/10 dark:text-gray-400': project.status === 'quoted'
-                    }">
-                    {{ project.status === 'completed' ? 'Completado' : project.status === 'development' ? 'En desarrollo' : 'Cotizado' }}
-                  </span>
+                  <div class="flex items-center gap-2">
+                    <div class="flex-1 h-1.5 bg-[#1e2235] rounded-full overflow-hidden">
+                      <div
+                        class="h-full rounded-full transition-all duration-500"
+                        [style.width.%]="project.paid_pct"
+                        [class.bg-emerald-400]="project.paid_pct === 100"
+                        [class.bg-gradient-to-r]="project.paid_pct < 100"
+                        [class.from-blue-500]="project.paid_pct < 100"
+                        [class.to-violet-500]="project.paid_pct < 100">
+                      </div>
+                    </div>
+                    <span class="text-[10px] text-slate-500 min-w-[28px] text-right">{{ project.paid_pct }}%</span>
+                  </div>
                   @if (project.balance > 0) {
-                    <p class="text-xs text-orange-500 font-semibold mt-1.5">
-                      Resta {{ formatMoney(project.balance) }}
-                    </p>
+                    <p class="text-xs text-amber-400 font-semibold">Pendiente: {{ formatMoney(project.balance) }}</p>
                   }
                 </div>
-              </div>
-            }
+              }
+            </div>
+          </div>
+
+          <!-- LTV -->
+          <div>
+            <p class="section-title">Valor de vida por cliente (LTV)</p>
+            <div class="dash-card space-y-4">
+              @for (client of data.clientLTV; track client.id) {
+                <div>
+                  <div class="flex justify-between items-start mb-1.5">
+                    <div>
+                      <p class="text-sm font-semibold text-white">{{ client.name }}</p>
+                      <p class="text-xs text-slate-500">{{ client.contact_name }}</p>
+                    </div>
+                    <p class="text-sm font-bold text-white tabular-nums">{{ formatMoney(client.ltv) }}</p>
+                  </div>
+                  <div class="h-1.5 bg-[#1e2235] rounded-full overflow-hidden">
+                    <div
+                      class="h-full rounded-full bg-gradient-to-r from-blue-500 to-violet-500 transition-all duration-500"
+                      [style.width.%]="ltvPct(client.ltv, data.clientLTV)">
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+        </div>
+      }
+
+      <!-- ══════════════════════════════════════════════════════════════════
+           TAB: INGRESOS
+      ══════════════════════════════════════════════════════════════════ -->
+      @if (activeTab() === 'revenue') {
+
+        <!-- Tarjetas período -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div class="dash-card">
+            <p class="kpi-label">Este mes</p>
+            <p class="kpi-value text-white">{{ formatMoney(data.revenueThisMonth.total) }}</p>
+            <p class="kpi-sub text-blue-400">{{ data.revenueThisMonth.count }} pago(s)</p>
+          </div>
+          <div class="dash-card">
+            <p class="kpi-label">Este año</p>
+            <p class="kpi-value text-white">{{ formatMoney(data.revenueThisYear.total) }}</p>
+            <p class="kpi-sub text-violet-400">{{ data.revenueThisYear.count }} pago(s)</p>
+          </div>
+          <div class="dash-card">
+            <p class="kpi-label">Histórico total</p>
+            <p class="kpi-value text-white">{{ formatMoney(data.metrics.totalCollected) }}</p>
+            <p class="kpi-sub text-emerald-400">Todos los tiempos</p>
           </div>
         </div>
 
-      </div>
+        <!-- Gráfica + Por año -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
 
-      <!-- ── SIDEBAR (1/3) ──────────────────────────────────────────────── -->
-      <div class="space-y-6">
+          <!-- Gráfica mensual -->
+          <div class="lg:col-span-2">
+            <p class="section-title">Ingresos por mes</p>
+            <div class="dash-card">
+              <div class="flex items-end gap-2 h-[120px] border-b border-[#1e2235] pb-2">
+                @for (point of data.revenueChart.slice().reverse(); track point.month) {
+                  <div class="flex flex-col items-center flex-1 group relative cursor-pointer">
+                    <!-- Tooltip -->
+                    <div class="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[10px] px-2 py-1 rounded shadow-lg whitespace-nowrap z-10 pointer-events-none border border-[#2a3040]">
+                      {{ formatMoney(point.total) }}
+                    </div>
+                    <!-- Barra -->
+                    <div class="w-full flex-1 flex items-end">
+                      <div
+                        class="w-full rounded-t-sm transition-all duration-300"
+                        [style.height.%]="barHeight(point.total)"
+                        style="min-height:4px"
+                        [class.bg-blue-500]="point.total === maxRevenue() / 1.1"
+                        [class.bg-gradient-to-t]="point.total === maxRevenue() / 1.1"
+                        [style.background]="point.total > 0 ? (point.total === maxChartRevenue(data.revenueChart) ? 'linear-gradient(180deg,#818cf8,#3b82f6)' : '#1e2a3a') : 'transparent'">
+                      </div>
+                    </div>
+                    <span class="text-[9px] text-slate-500 mt-1.5 font-medium">
+                      {{ point.month.substring(5,7) }}/{{ point.month.substring(2,4) }}
+                    </span>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+
+          <!-- Por año -->
+          <div>
+            <p class="section-title">Por año</p>
+            <div class="dash-card !p-0 divide-y divide-[#1a1f2e]">
+              @for (yr of data.revenueByYear; track yr.year) {
+                <div class="flex justify-between items-center p-4">
+                  <div>
+                    <p class="text-sm font-bold text-white">{{ yr.year }}</p>
+                    <p class="text-xs text-slate-500">{{ yr.payments_count }} pago(s)</p>
+                  </div>
+                  <p class="text-base font-bold text-blue-400 tabular-nums">{{ formatMoney(yr.total) }}</p>
+                </div>
+              }
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Márgenes por servicio -->
+        <p class="section-title mt-2">Márgenes por servicio</p>
+        <div class="dash-card !p-0">
+          <!-- Header -->
+          <div class="grid grid-cols-[1fr_auto_auto_auto] gap-x-4 px-4 py-2 border-b border-[#1e2235]">
+            <span class="col-label">Servicio</span>
+            <span class="col-label text-right">MRR</span>
+            <span class="col-label text-right">Margen/mes</span>
+            <span class="col-label text-right">%</span>
+          </div>
+          @for (s of data.serviceMargins; track s.id) {
+            <div class="grid grid-cols-[1fr_auto_auto_auto] gap-x-4 px-4 py-3 border-b border-[#1a1f2e] last:border-0 items-center hover:bg-white/[0.02] transition-colors">
+              <div class="min-w-0">
+                <p class="text-sm font-semibold text-white truncate">{{ s.name }}</p>
+                <p class="text-xs text-slate-500">{{ s.client_name }} · {{ cycleLabel(s.billing_cycle) }}</p>
+              </div>
+              <p class="text-sm font-bold text-blue-400 tabular-nums text-right">{{ formatMoney(s.mrr) }}</p>
+              <p class="text-sm font-bold tabular-nums text-right" [class.text-emerald-400]="s.margin_monthly > 0" [class.text-red-400]="s.margin_monthly <= 0">
+                {{ formatMoney(s.margin_monthly) }}
+              </p>
+              <p class="text-sm font-bold tabular-nums text-right" [class.text-amber-400]="marginPctSvc(s) < 30 && marginPctSvc(s) > 0" [class.text-emerald-400]="marginPctSvc(s) >= 30">
+                {{ marginPctSvc(s) }}%
+              </p>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- ══════════════════════════════════════════════════════════════════
+           TAB: SERVICIOS
+      ══════════════════════════════════════════════════════════════════ -->
+      @if (activeTab() === 'services') {
+
+        <!-- Alerta banner -->
+        @if (data.expiringServices.length > 0) {
+          <div class="flex items-center gap-3 p-4 rounded-xl bg-amber-500/8 border border-amber-500/25 mb-4">
+            <mat-icon class="text-amber-400 shrink-0">warning</mat-icon>
+            <div>
+              <p class="text-sm font-bold text-amber-400">{{ data.expiringServices.length }} servicio(s) próximos a vencer</p>
+              <p class="text-xs text-slate-400 mt-0.5">Revisa y envía recordatorios a tus clientes</p>
+            </div>
+          </div>
+        }
 
         <!-- Servicios urgentes -->
-        <div class="ui-card !p-6">
-          <div class="flex justify-between items-center mb-4">
-            <h3 class="font-bold text-gray-900 dark:text-white flex items-center gap-2">
-              <mat-icon class="text-status-warning">alarm</mat-icon>
-              Urgentes
-            </h3>
-            <span class="text-[10px] bg-status-error/10 text-status-error px-2 py-0.5 rounded-full font-bold border border-status-error/20">
-              {{ data.metrics.servicesExpiringSoon }} · 30 días
-            </span>
+        <p class="section-title">Servicios por vencer (30 días)</p>
+        @if (data.expiringServices.length === 0) {
+          <div class="dash-card flex flex-col items-center py-8 text-slate-500">
+            <mat-icon class="scale-150 mb-3 text-emerald-400">check_circle</mat-icon>
+            <p class="text-sm">🎉 Sin servicios urgentes por vencer</p>
           </div>
-
-          @if (data.expiringServices.length === 0) {
-            <div class="flex flex-col items-center py-6 text-gray-400">
-              <mat-icon class="scale-150 mb-3 text-status-success">check_circle</mat-icon>
-              <p class="text-sm">Sin servicios urgentes</p>
-            </div>
-          } @else {
-            <div class="space-y-3 max-h-[300px] overflow-y-auto pr-1 custom-scrollbar">
-              @for (item of data.expiringServices; track item.id) {
-                <div
-                  class="p-3 rounded-lg border relative overflow-hidden transition-colors"
-                  [ngClass]="{
-                    'bg-status-error/5 border-status-error/30':   item.urgency === 'expired',
-                    'bg-orange-500/5 border-orange-500/30':        item.urgency === 'critical',
-                    'bg-status-warning/5 border-status-warning/30':item.urgency === 'warning',
-                    'bg-gray-50 dark:bg-surface-dark border-gray-100 dark:border-surface-border': item.urgency === 'ok'
-                  }">
-                  <!-- Borde izquierdo de color -->
-                  <div
-                    class="absolute left-0 top-0 bottom-0 w-1 rounded-l-lg"
-                    [ngClass]="{
-                      'bg-status-error':   item.urgency === 'expired',
-                      'bg-orange-500':     item.urgency === 'critical',
-                      'bg-status-warning': item.urgency === 'warning',
-                      'bg-status-success': item.urgency === 'ok'
-                    }">
-                  </div>
-                  <div class="ml-3">
-                    <div class="flex justify-between items-start gap-2">
-                      <span class="text-sm font-bold text-gray-900 dark:text-white truncate">{{ item.name }}</span>
-                      <span
-                        class="text-[10px] font-mono font-bold shrink-0"
-                        [ngClass]="{
-                          'text-status-error':   item.urgency === 'expired' || item.urgency === 'critical',
-                          'text-status-warning': item.urgency === 'warning',
-                          'text-gray-500':       item.urgency === 'ok'
-                        }">
-                        {{ item.days_left < 0 ? 'Vencido' : item.days_left + 'd' }}
-                      </span>
-                    </div>
-                    <p class="text-xs text-gray-500 mt-0.5">{{ item.client_name }}</p>
-                    <p class="text-xs text-gray-400 mt-0.5">{{ item.expiration_date }}</p>
-                  </div>
+        }
+        @for (s of data.expiringServices; track s.id) {
+          <div class="dash-card mb-3">
+            <div class="flex flex-col md:flex-row justify-between gap-4">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 flex-wrap mb-1">
+                  <span class="w-2.5 h-2.5 rounded-full shrink-0" [class.bg-red-400]="s.urgency === 'expired' || s.urgency === 'critical'" [class.animate-pulse]="s.urgency === 'critical'" [class.bg-amber-400]="s.urgency === 'warning'" [class.bg-emerald-400]="s.urgency === 'ok'"></span>
+                  <span class="text-base font-bold text-white">{{ s.name }}</span>
+                  <span class="status-badge" [ngClass]="urgencyBadgeClass(s.urgency)">{{ urgencyLabel(s.urgency) }}</span>
                 </div>
-              }
+                <p class="text-xs text-slate-400">
+                  Cliente: <strong class="text-slate-200">{{ s.client_name }}</strong>
+                  · Proveedor: {{ s.provider }}
+                  · {{ cycleLabel(s.billing_cycle) }}
+                </p>
+                <p class="text-xs text-slate-500 mt-1">
+                  Vence: <strong class="text-amber-400">{{ s.expiration_date }}</strong>
+                  · <span [class.text-red-400]="s.urgency === 'expired' || s.urgency === 'critical'" [class.text-amber-400]="s.urgency === 'warning'">En {{ s.days_left }} días</span>
+                </p>
+              </div>
+              <div class="flex flex-col items-end gap-2 shrink-0">
+                <p class="text-lg font-bold text-white">{{ formatMoney(s.price_mxn) }}</p>
+                <p class="text-xs text-emerald-400">Margen: {{ formatMoney(s.profit_margin) }}</p>
+                <button
+                  (click)="openWhatsApp(s)"
+                  class="flex items-center gap-1.5 bg-gradient-to-r from-[#25D366] to-[#128C7E] text-white text-xs font-bold px-3 py-2 rounded-lg hover:opacity-90 transition-opacity cursor-pointer">
+                  <mat-icon class="scale-75 leading-none">chat</mat-icon>
+                  Enviar WA
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Todos los servicios -->
+        <p class="section-title mt-2">Todos los servicios activos</p>
+        <div class="dash-card !p-0">
+          <div class="grid grid-cols-[1fr_auto_auto_auto] gap-x-4 px-4 py-2 border-b border-[#1e2235]">
+            <span class="col-label">Servicio</span>
+            <span class="col-label text-right">Precio</span>
+            <span class="col-label text-right">MRR</span>
+            <span class="col-label text-right">Margen</span>
+          </div>
+          @for (s of data.serviceMargins; track s.id) {
+            <div class="grid grid-cols-[1fr_auto_auto_auto] gap-x-4 px-4 py-3 border-b border-[#1a1f2e] last:border-0 items-center hover:bg-white/[0.02] transition-colors">
+              <div class="min-w-0">
+                <p class="text-sm font-semibold text-white truncate">{{ s.name }}</p>
+                <p class="text-xs text-slate-500">{{ s.client_name }} · {{ cycleLabel(s.billing_cycle) }}</p>
+              </div>
+              <p class="text-sm text-slate-300 tabular-nums text-right">{{ formatMoney(s.price_mxn) }}</p>
+              <p class="text-sm font-bold text-blue-400 tabular-nums text-right">{{ formatMoney(s.mrr) }}</p>
+              <p class="text-sm font-bold tabular-nums text-right" [class.text-amber-400]="marginPctSvc(s) < 30 && marginPctSvc(s) > 0" [class.text-emerald-400]="marginPctSvc(s) >= 30">
+                {{ marginPctSvc(s) }}%
+              </p>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- ══════════════════════════════════════════════════════════════════
+           TAB: NOTIFICACIONES
+      ══════════════════════════════════════════════════════════════════ -->
+      @if (activeTab() === 'notifs') {
+
+        <!-- Contadores por canal -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+          @for (ch of notifChannels(data.notificationsSummary); track ch.key) {
+            <div
+              class="dash-card cursor-pointer transition-all"
+              [class.ring-1]="notifFilter() === ch.key"
+              [class.ring-blue-500]="notifFilter() === ch.key"
+              (click)="notifFilter.set(ch.key)">
+              <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">{{ ch.icon }} {{ ch.label }}</p>
+              <p class="text-3xl font-bold" [style.color]="ch.color">{{ ch.val }}</p>
             </div>
           }
         </div>
 
-        <!-- Notificaciones recientes -->
-        <div class="ui-card !p-6">
-          <div class="flex justify-between items-center mb-5">
-            <h3 class="font-bold text-gray-900 dark:text-white flex items-center gap-2">
-              <mat-icon class="text-blue-500">history</mat-icon>
-              Envíos Recientes
-            </h3>
-            <!-- Resumen por canal -->
-            <div class="flex items-center gap-2">
-              @if (data.notificationsSummary.whatsapp > 0) {
-                <span class="text-[10px] bg-green-500/10 text-green-600 dark:text-green-400 px-2 py-0.5 rounded-full font-bold">
-                  💬 {{ data.notificationsSummary.whatsapp }}
-                </span>
-              }
-              @if (data.notificationsSummary.email > 0) {
-                <span class="text-[10px] bg-blue-500/10 text-blue-500 px-2 py-0.5 rounded-full font-bold">
-                  ✉️ {{ data.notificationsSummary.email }}
-                </span>
-              }
-              @if (data.notificationsSummary.push > 0) {
-                <span class="text-[10px] bg-purple-500/10 text-purple-500 px-2 py-0.5 rounded-full font-bold">
-                  🔔 {{ data.notificationsSummary.push }}
-                </span>
-              }
+        <!-- Historial -->
+        <p class="section-title">Historial de notificaciones</p>
+        <div class="dash-card !p-0 divide-y divide-[#1a1f2e]">
+          @for (log of filteredNotifs(data.recentNotifications); track log.id) {
+            <div class="flex gap-3 p-4 hover:bg-white/[0.02] transition-colors">
+              <!-- Ícono canal -->
+              <div
+                class="w-9 h-9 rounded-full flex items-center justify-center text-base shrink-0 border"
+                [ngClass]="notifIconClass(log.type)">
+                {{ notifIcon(log.type) }}
+              </div>
+              <!-- Cuerpo -->
+              <div class="flex-1 min-w-0">
+                <div class="flex justify-between items-start gap-3">
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <span class="text-sm font-bold text-white">{{ log.client_name }}</span>
+                    <span class="status-badge" [ngClass]="notifBadgeClass(log.type)">{{ notifLabel(log.type) }}</span>
+                  </div>
+                  <span class="text-[10px] text-slate-500 shrink-0 whitespace-nowrap">{{ log.sent_ago }}</span>
+                </div>
+                @if (log.service_name) {
+                  <p class="text-xs text-slate-500 mt-0.5">🔧 {{ log.service_name }}</p>
+                }
+                <p class="text-xs text-slate-400 mt-1 leading-relaxed line-clamp-2">{{ log.message_body }}</p>
+                <p class="text-[10px] text-slate-600 mt-1">{{ log.sent_at }}</p>
+              </div>
             </div>
-          </div>
-
-          @if (data.recentNotifications.length === 0) {
-            <div class="flex flex-col items-center py-6 text-gray-400">
+          }
+          @if (filteredNotifs(data.recentNotifications).length === 0) {
+            <div class="flex flex-col items-center py-12 text-slate-500">
               <mat-icon class="scale-150 mb-3">notifications_none</mat-icon>
-              <p class="text-sm">Sin notificaciones aún</p>
-            </div>
-          } @else {
-            <div class="relative border-l-2 border-gray-100 dark:border-gray-800 ml-3 space-y-5 pb-1 max-h-[420px] overflow-y-auto pr-1 custom-scrollbar">
-              @for (log of data.recentNotifications; track log.id) {
-                <div class="relative pl-5">
-                  <!-- Punto de timeline -->
-                  <div
-                    class="absolute -left-[5px] top-1 w-2.5 h-2.5 rounded-full ring-[3px] ring-white dark:ring-surface-card"
-                    [ngClass]="{
-                      'bg-green-500':  log.type === 'whatsapp_reminder',
-                      'bg-blue-500':   log.type === 'email_invoice',
-                      'bg-purple-500': log.type === 'push_alert'
-                    }">
-                  </div>
-
-                  <div class="flex justify-between items-start gap-2">
-                    <span class="text-xs font-bold text-gray-900 dark:text-white leading-tight">{{ log.client_name }}</span>
-                    <span class="text-[9px] text-gray-400 whitespace-nowrap shrink-0">{{ log.sent_ago }}</span>
-                  </div>
-
-                  <div class="flex items-center gap-1.5 mt-0.5">
-                    <!-- Tipo con color -->
-                    <span
-                      class="text-[9px] font-bold px-1.5 py-0.5 rounded"
-                      [ngClass]="{
-                        'bg-green-500/10 text-green-600 dark:text-green-400': log.type === 'whatsapp_reminder',
-                        'bg-blue-500/10 text-blue-500':                        log.type === 'email_invoice',
-                        'bg-purple-500/10 text-purple-500':                    log.type === 'push_alert'
-                      }">
-                      {{ log.type === 'whatsapp_reminder' ? 'WhatsApp' : log.type === 'email_invoice' ? 'Email' : 'Push' }}
-                    </span>
-                    @if (log.service_name) {
-                      <span class="text-[10px] text-gray-400 truncate">· {{ log.service_name }}</span>
-                    }
-                  </div>
-
-                  <p class="text-[11px] text-gray-500 leading-snug mt-1 line-clamp-2">{{ log.message_body }}</p>
-                </div>
-              }
+              <p class="text-sm">Sin notificaciones para este filtro</p>
             </div>
           }
         </div>
+      }
 
-      </div>
-    </div>
-
-  } <!-- end @if dashboardData -->
-
+    } <!-- end dashboardData -->
+  </div>
 </div>
