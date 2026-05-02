@@ -93,14 +93,12 @@ export const routes: Routes = [
       },
 
       // ZONA EXCLUSIVA PARA LOS CLIENTES
+      // ZONA EXCLUSIVA PARA LOS CLIENTES
       { 
         path: 'client', 
         data: { role: 'client' },
-        children: [
-          // Mantenemos tu Lazy Loading original para el cliente
-          { path: 'lazy', loadChildren: () => import('./features/client/client.routes').then(m => m.CLIENT_ROUTES) },
-          // Aquí agregaremos { path: 'portal', component: ClientPortalComponent }
-        ]
+        // Quitamos el array 'children' y cargamos las rutas directamente
+        loadChildren: () => import('./features/client/client.routes').then(m => m.CLIENT_ROUTES)
       }
     ]
   },

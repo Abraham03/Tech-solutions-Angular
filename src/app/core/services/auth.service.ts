@@ -116,7 +116,7 @@ export class AuthService {
     if (role === 'admin') {
       this.router.navigate(['/admin/dashboard']);
     } else {
-      this.router.navigate(['/client/portal']);
+      this.router.navigate(['/client/dashboard']);
     }
   }
 }

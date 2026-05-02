@@ -1,1 +1,87 @@
-<p>portal works!</p>
+<div class="space-y-6">
+  <!-- Encabezado -->
+  <div class="flex justify-between items-end">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+        ¡Bienvenido, {{ dashboardData()?.profile?.contact_name || 'Cliente' }}!
+      </h1>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+        Este es el resumen de tus servicios y proyectos con Tech Solutions.
+      </p>
+    </div>
+  </div>
+
+  @if (isLoading()) {
+    <div class="flex justify-center items-center h-64">
+      <mat-icon class="animate-spin text-primary scale-150">sync</mat-icon>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="p-4 bg-status-error/10 border border-status-error/20 text-status-error rounded-lg">
+      {{ error() }}
+    </div>
+  }
+
+  @if (!isLoading() && !error() && dashboardData()) {
+    
+    <!-- Tarjetas de Métricas -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <app-metric-card 
+        title="Proyectos Activos" 
+        [value]="dashboardData().metrics.active_projects" 
+        icon="rocket_launch" 
+        colorClass="text-blue-600 bg-blue-100 dark:bg-blue-900/30">
+      </app-metric-card>
+      
+      <app-metric-card 
+        title="Servicios Activos" 
+        [value]="dashboardData().metrics.active_services" 
+        icon="dns" 
+        colorClass="text-purple-600 bg-purple-100 dark:bg-purple-900/30">
+      </app-metric-card>
+      
+      <app-metric-card 
+        title="Saldo Pendiente" 
+        [value]="(dashboardData().metrics.pending_balance | currency:'MXN') || '$0.00'" 
+        icon="account_balance_wallet" 
+        colorClass="text-orange-600 bg-orange-100 dark:bg-orange-900/30">
+      </app-metric-card>
+    </div>
+
+    <!-- Servicios y Fechas de Vencimiento -->
+    <div class="ui-card p-6">
+      <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center">
+        <mat-icon class="mr-2 text-primary">event_available</mat-icon> Tus Servicios Activos
+      </h2>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left">
+          <thead class="text-xs text-gray-500 uppercase bg-gray-50 dark:bg-gray-800 dark:text-gray-400">
+            <tr>
+              <th class="px-4 py-3">Servicio</th>
+              <th class="px-4 py-3">Proyecto</th>
+              <th class="px-4 py-3">Ciclo</th>
+              <th class="px-4 py-3 text-right">Vencimiento</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (service of dashboardData().active_services; track service.id) {
+              <tr class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">{{ service.name }}</td>
+                <td class="px-4 py-3 text-gray-500">{{ service.project?.name || 'N/A' }}</td>
+                <td class="px-4 py-3">
+                  <span class="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-600 dark:bg-gray-700">{{ service.billing_cycle }}</span>
+                </td>
+                <td class="px-4 py-3 text-right font-medium text-gray-900 dark:text-white">
+                  {{ service.expiration_date | date:'dd/MM/yyyy' }}
+                </td>
+              </tr>
+            } @empty {
+              <tr><td colspan="4" class="px-4 py-8 text-center text-gray-500">No tienes servicios activos.</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</div>

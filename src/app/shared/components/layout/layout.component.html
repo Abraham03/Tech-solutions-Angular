@@ -52,6 +52,15 @@
         </a>
       </ng-container>
 
+      <!-- ZONA DEL CLIENTE -->
+      <ng-container *ngIf="user()?.role === 'client'">
+        <a routerLink="/client/dashboard" routerLinkActive="bg-brand-primary text-white" class="flex items-center gap-3 px-4 py-3 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-[#202433] transition-colors">
+          <mat-icon>dashboard</mat-icon>
+          <span>Mi Resumen</span>
+        </a>
+      </ng-container>
+      <!-- FIN ZONA DEL CLIENTE -->
+
     </nav>
   </aside>
 
