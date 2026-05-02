@@ -1,41 +1,29 @@
-<div class="min-h-screen bg-[#0d1117] text-slate-100 font-sans">
-
-  <!-- ══ TOPBAR ══════════════════════════════════════════════════════════ -->
-  <div class="sticky top-0 z-50 bg-[#0d1117]/90 backdrop-blur-md border-b border-[#1e2235] px-4 md:px-6 py-3 flex items-center justify-between gap-4">
-    <div class="flex items-center gap-3">
-      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center shrink-0">
-        <mat-icon class="text-white scale-75">bolt</mat-icon>
-      </div>
-      <div>
-        <p class="text-sm font-bold text-white leading-none">TechSolutions</p>
-        <p class="text-[10px] text-slate-500 mt-0.5">Panel de administración</p>
-      </div>
-    </div>
-    <div class="flex items-center gap-3">
-      @if (dashboardData()?.metrics?.servicesExpiringSoon) {
-        <div class="flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold px-3 py-1.5 rounded-lg">
-          <mat-icon class="scale-75 leading-none">warning</mat-icon>
-          {{ dashboardData()!.metrics.servicesExpiringSoon }} por vencer
-        </div>
-      }
-      <p class="text-xs text-slate-500 hidden md:block">{{ today }}</p>
-    </div>
-  </div>
+<!-- Hereda el fondo del layout, solo definimos texto base -->
+<div class="text-gray-900 dark:text-slate-100">
 
   <!-- ══ NAV TABS ═════════════════════════════════════════════════════════ -->
-  <div class="border-b border-[#1e2235] px-4 md:px-6 flex gap-1 overflow-x-auto">
+  <div class="border-b border-gray-200 dark:border-[#1e2235] bg-white dark:bg-[#0d1117] px-4 md:px-6 flex gap-1 overflow-x-auto sticky top-0 z-10">
     @for (tab of tabs; track tab.id) {
       <button
         (click)="activeTab.set(tab.id)"
         class="flex items-center gap-2 px-4 py-3 text-sm font-semibold whitespace-nowrap border-b-2 transition-all"
         [class.border-blue-500]="activeTab() === tab.id"
-        [class.text-blue-400]="activeTab() === tab.id"
+        [class.text-blue-500]="activeTab() === tab.id"
         [class.border-transparent]="activeTab() !== tab.id"
-        [class.text-slate-500]="activeTab() !== tab.id">
-        <mat-icon class="scale-75 leading-none">{{ tab.icon }}</mat-icon>
+        [class.text-gray-400]="activeTab() !== tab.id">
+        <span class="material-symbols-outlined text-[18px] leading-none">{{ tab.icon }}</span>
         {{ tab.label }}
       </button>
     }
+    <!-- Badge urgente -->
+    <div class="ml-auto flex items-center px-2">
+      @if (dashboardData()?.metrics?.servicesExpiringSoon) {
+        <div class="flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/30 text-amber-500 text-xs font-semibold px-3 py-1.5 rounded-lg">
+          <span class="material-symbols-outlined text-[14px]">warning</span>
+          {{ dashboardData()!.metrics.servicesExpiringSoon }} por vencer
+        </div>
+      }
+    </div>
   </div>
 
   <!-- ══ CONTENT ══════════════════════════════════════════════════════════ -->
@@ -43,64 +31,82 @@
 
     <!-- LOADING -->
     @if (isLoading()) {
-      <div class="flex flex-col items-center justify-center py-32 text-blue-400">
-        <mat-icon class="animate-spin scale-[2]">sync</mat-icon>
+      <div class="flex flex-col items-center justify-center py-32 text-blue-500">
+        <span class="material-symbols-outlined text-[48px] animate-spin">sync</span>
         <p class="mt-5 text-sm font-medium animate-pulse">Cargando datos...</p>
       </div>
     }
 
     <!-- ERROR -->
     @if (error()) {
-      <div class="flex items-center gap-3 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400">
-        <mat-icon>error_outline</mat-icon>
+      <div class="flex items-center gap-3 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-500">
+        <span class="material-symbols-outlined">error</span>
         <span class="text-sm font-medium">{{ error() }}</span>
       </div>
     }
 
     @if (dashboardData(); as data) {
 
-      <!-- ══════════════════════════════════════════════════════════════════
+      <!-- ════════════════════════════════════════════════════════════════
            TAB: RESUMEN
-      ══════════════════════════════════════════════════════════════════ -->
+      ════════════════════════════════════════════════════════════════ -->
       @if (activeTab() === 'overview') {
 
         <!-- KPIs -->
         <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
 
           <div class="dash-card col-span-2 md:col-span-1">
+            <div class="p-1.5 rounded-lg bg-blue-500/10 w-fit mb-3">
+              <span class="material-symbols-outlined text-blue-500 text-[18px]">account_balance</span>
+            </div>
             <p class="kpi-label">Total cobrado</p>
-            <p class="kpi-value text-blue-400">{{ formatMoney(data.metrics.totalCollected) }}</p>
-            <p class="kpi-sub text-emerald-400">Histórico acumulado</p>
+            <p class="kpi-value text-blue-500">{{ formatMoney(data.metrics.totalCollected) }}</p>
+            <p class="kpi-sub text-emerald-500">Histórico acumulado</p>
           </div>
 
           <div class="dash-card">
+            <div class="p-1.5 rounded-lg bg-emerald-500/10 w-fit mb-3">
+              <span class="material-symbols-outlined text-emerald-500 text-[18px]">autorenew</span>
+            </div>
             <p class="kpi-label">MRR</p>
-            <p class="kpi-value text-emerald-400">{{ formatMoney(data.metrics.mrr) }}</p>
-            <p class="kpi-sub text-blue-400">↑ Ingreso mensual recurrente</p>
+            <p class="kpi-value text-emerald-500">{{ formatMoney(data.metrics.mrr) }}</p>
+            <p class="kpi-sub text-blue-500">↑ Ingreso mensual recurrente</p>
           </div>
 
           <div class="dash-card">
+            <div class="p-1.5 rounded-lg bg-violet-500/10 w-fit mb-3">
+              <span class="material-symbols-outlined text-violet-500 text-[18px]">diamond</span>
+            </div>
             <p class="kpi-label">Margen mensual</p>
-            <p class="kpi-value text-violet-400">{{ formatMoney(data.metrics.monthlyProfit) }}</p>
-            <p class="kpi-sub text-violet-400">{{ marginPct() }}% de rentabilidad</p>
+            <p class="kpi-value text-violet-500">{{ formatMoney(data.metrics.monthlyProfit) }}</p>
+            <p class="kpi-sub text-violet-500">{{ marginPct() }}% de rentabilidad</p>
           </div>
 
           <div class="dash-card">
+            <div class="p-1.5 rounded-lg bg-amber-500/10 w-fit mb-3">
+              <span class="material-symbols-outlined text-amber-500 text-[18px]">pending_actions</span>
+            </div>
             <p class="kpi-label">Por cobrar</p>
-            <p class="kpi-value text-amber-400">{{ formatMoney(data.metrics.totalReceivable) }}</p>
-            <p class="kpi-sub text-amber-400">Gestor Basketball</p>
+            <p class="kpi-value text-amber-500">{{ formatMoney(data.metrics.totalReceivable) }}</p>
+            <p class="kpi-sub text-amber-500">Gestor Basketball</p>
           </div>
 
           <div class="dash-card">
+            <div class="p-1.5 rounded-lg bg-emerald-500/10 w-fit mb-3">
+              <span class="material-symbols-outlined text-emerald-500 text-[18px]">rocket_launch</span>
+            </div>
             <p class="kpi-label">Proyección anual</p>
-            <p class="kpi-value text-emerald-400">{{ formatMoney(data.metrics.annualProjection) }}</p>
-            <p class="kpi-sub text-emerald-400">Basado en MRR activo</p>
+            <p class="kpi-value text-emerald-500">{{ formatMoney(data.metrics.annualProjection) }}</p>
+            <p class="kpi-sub text-emerald-500">Basado en MRR activo</p>
           </div>
 
           <div class="dash-card">
+            <div class="p-1.5 rounded-lg bg-slate-500/10 w-fit mb-3">
+              <span class="material-symbols-outlined text-gray-400 text-[18px]">group</span>
+            </div>
             <p class="kpi-label">Clientes</p>
             <p class="kpi-value">{{ data.metrics.totalClients }}</p>
-            <p class="kpi-sub text-slate-500">{{ data.metrics.activeProjects }} proyecto activo</p>
+            <p class="kpi-sub text-gray-400">{{ data.metrics.activeProjects }} proyecto activo</p>
           </div>
 
         </div>
@@ -110,34 +116,37 @@
 
           <!-- Proyectos recientes -->
           <div>
-            <p class="section-title">Proyectos recientes</p>
-            <div class="dash-card !p-0 divide-y divide-[#1a1f2e]">
+            <p class="section-title">
+              <span class="material-symbols-outlined text-[14px] mr-1">folder_open</span>
+              Proyectos recientes
+            </p>
+            <div class="dash-card !p-0 divide-y divide-gray-100 dark:divide-[#1a1f2e]">
               @for (project of data.recentProjects; track project.id) {
                 <div class="p-4 flex flex-col gap-2">
                   <div class="flex justify-between items-start gap-2">
                     <div>
-                      <p class="text-sm font-semibold text-white">{{ project.name }}</p>
-                      <p class="text-xs text-slate-500 mt-0.5">{{ project.type }} · {{ formatMoney(project.amount) }}</p>
+                      <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ project.name }}</p>
+                      <p class="text-xs text-gray-400 mt-0.5">{{ project.type }} · {{ formatMoney(project.amount) }}</p>
                     </div>
                     <span class="status-badge" [ngClass]="statusBadgeClass(project.status)">
                       {{ statusLabel(project.status) }}
                     </span>
                   </div>
                   <div class="flex items-center gap-2">
-                    <div class="flex-1 h-1.5 bg-[#1e2235] rounded-full overflow-hidden">
+                    <div class="flex-1 h-1.5 bg-gray-200 dark:bg-[#1e2235] rounded-full overflow-hidden">
                       <div
                         class="h-full rounded-full transition-all duration-500"
                         [style.width.%]="project.paid_pct"
-                        [class.bg-emerald-400]="project.paid_pct === 100"
+                        [class.bg-emerald-500]="project.paid_pct === 100"
                         [class.bg-gradient-to-r]="project.paid_pct < 100"
                         [class.from-blue-500]="project.paid_pct < 100"
                         [class.to-violet-500]="project.paid_pct < 100">
                       </div>
                     </div>
-                    <span class="text-[10px] text-slate-500 min-w-[28px] text-right">{{ project.paid_pct }}%</span>
+                    <span class="text-[10px] text-gray-400 min-w-[28px] text-right">{{ project.paid_pct }}%</span>
                   </div>
                   @if (project.balance > 0) {
-                    <p class="text-xs text-amber-400 font-semibold">Pendiente: {{ formatMoney(project.balance) }}</p>
+                    <p class="text-xs text-amber-500 font-semibold">Pendiente: {{ formatMoney(project.balance) }}</p>
                   }
                 </div>
               }
@@ -146,18 +155,21 @@
 
           <!-- LTV -->
           <div>
-            <p class="section-title">Valor de vida por cliente (LTV)</p>
+            <p class="section-title">
+              <span class="material-symbols-outlined text-[14px] mr-1">workspace_premium</span>
+              Valor de vida por cliente (LTV)
+            </p>
             <div class="dash-card space-y-4">
               @for (client of data.clientLTV; track client.id) {
                 <div>
                   <div class="flex justify-between items-start mb-1.5">
                     <div>
-                      <p class="text-sm font-semibold text-white">{{ client.name }}</p>
-                      <p class="text-xs text-slate-500">{{ client.contact_name }}</p>
+                      <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ client.name }}</p>
+                      <p class="text-xs text-gray-400">{{ client.contact_name }}</p>
                     </div>
-                    <p class="text-sm font-bold text-white tabular-nums">{{ formatMoney(client.ltv) }}</p>
+                    <p class="text-sm font-bold text-gray-900 dark:text-white tabular-nums">{{ formatMoney(client.ltv) }}</p>
                   </div>
-                  <div class="h-1.5 bg-[#1e2235] rounded-full overflow-hidden">
+                  <div class="h-1.5 bg-gray-200 dark:bg-[#1e2235] rounded-full overflow-hidden">
                     <div
                       class="h-full rounded-full bg-gradient-to-r from-blue-500 to-violet-500 transition-all duration-500"
                       [style.width.%]="ltvPct(client.ltv, data.clientLTV)">
@@ -171,56 +183,67 @@
         </div>
       }
 
-      <!-- ══════════════════════════════════════════════════════════════════
+      <!-- ════════════════════════════════════════════════════════════════
            TAB: INGRESOS
-      ══════════════════════════════════════════════════════════════════ -->
+      ════════════════════════════════════════════════════════════════ -->
       @if (activeTab() === 'revenue') {
 
-        <!-- Tarjetas período -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
           <div class="dash-card">
-            <p class="kpi-label">Este mes</p>
-            <p class="kpi-value text-white">{{ formatMoney(data.revenueThisMonth.total) }}</p>
-            <p class="kpi-sub text-blue-400">{{ data.revenueThisMonth.count }} pago(s)</p>
+            <div class="flex justify-between items-start mb-3">
+              <p class="kpi-label">Este mes</p>
+              <div class="p-1.5 rounded-lg bg-blue-500/10">
+                <span class="material-symbols-outlined text-blue-500 text-[18px]">calendar_month</span>
+              </div>
+            </div>
+            <p class="kpi-value text-gray-900 dark:text-white">{{ formatMoney(data.revenueThisMonth.total) }}</p>
+            <p class="kpi-sub text-blue-500">{{ data.revenueThisMonth.count }} pago(s)</p>
           </div>
           <div class="dash-card">
-            <p class="kpi-label">Este año</p>
-            <p class="kpi-value text-white">{{ formatMoney(data.revenueThisYear.total) }}</p>
-            <p class="kpi-sub text-violet-400">{{ data.revenueThisYear.count }} pago(s)</p>
+            <div class="flex justify-between items-start mb-3">
+              <p class="kpi-label">Este año</p>
+              <div class="p-1.5 rounded-lg bg-violet-500/10">
+                <span class="material-symbols-outlined text-violet-500 text-[18px]">date_range</span>
+              </div>
+            </div>
+            <p class="kpi-value text-gray-900 dark:text-white">{{ formatMoney(data.revenueThisYear.total) }}</p>
+            <p class="kpi-sub text-violet-500">{{ data.revenueThisYear.count }} pago(s)</p>
           </div>
           <div class="dash-card">
-            <p class="kpi-label">Histórico total</p>
-            <p class="kpi-value text-white">{{ formatMoney(data.metrics.totalCollected) }}</p>
-            <p class="kpi-sub text-emerald-400">Todos los tiempos</p>
+            <div class="flex justify-between items-start mb-3">
+              <p class="kpi-label">Histórico total</p>
+              <div class="p-1.5 rounded-lg bg-emerald-500/10">
+                <span class="material-symbols-outlined text-emerald-500 text-[18px]">savings</span>
+              </div>
+            </div>
+            <p class="kpi-value text-gray-900 dark:text-white">{{ formatMoney(data.metrics.totalCollected) }}</p>
+            <p class="kpi-sub text-emerald-500">Todos los tiempos</p>
           </div>
         </div>
 
-        <!-- Gráfica + Por año -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
-
           <!-- Gráfica mensual -->
           <div class="lg:col-span-2">
-            <p class="section-title">Ingresos por mes</p>
+            <p class="section-title">
+              <span class="material-symbols-outlined text-[14px] mr-1">bar_chart</span>
+              Ingresos por mes
+            </p>
             <div class="dash-card">
-              <div class="flex items-end gap-2 h-[120px] border-b border-[#1e2235] pb-2">
+              <div class="flex items-end gap-2 h-[120px] border-b border-gray-200 dark:border-[#1e2235] pb-2">
                 @for (point of data.revenueChart.slice().reverse(); track point.month) {
                   <div class="flex flex-col items-center flex-1 group relative cursor-pointer">
-                    <!-- Tooltip -->
-                    <div class="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[10px] px-2 py-1 rounded shadow-lg whitespace-nowrap z-10 pointer-events-none border border-[#2a3040]">
+                    <div class="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[10px] px-2 py-1 rounded shadow-lg whitespace-nowrap z-10 pointer-events-none">
                       {{ formatMoney(point.total) }}
                     </div>
-                    <!-- Barra -->
                     <div class="w-full flex-1 flex items-end">
                       <div
                         class="w-full rounded-t-sm transition-all duration-300"
                         [style.height.%]="barHeight(point.total)"
                         style="min-height:4px"
-                        [class.bg-blue-500]="point.total === maxRevenue() / 1.1"
-                        [class.bg-gradient-to-t]="point.total === maxRevenue() / 1.1"
                         [style.background]="point.total > 0 ? (point.total === maxChartRevenue(data.revenueChart) ? 'linear-gradient(180deg,#818cf8,#3b82f6)' : '#1e2a3a') : 'transparent'">
                       </div>
                     </div>
-                    <span class="text-[9px] text-slate-500 mt-1.5 font-medium">
+                    <span class="text-[9px] text-gray-400 mt-1.5 font-medium">
                       {{ point.month.substring(5,7) }}/{{ point.month.substring(2,4) }}
                     </span>
                   </div>
@@ -231,43 +254,51 @@
 
           <!-- Por año -->
           <div>
-            <p class="section-title">Por año</p>
-            <div class="dash-card !p-0 divide-y divide-[#1a1f2e]">
+            <p class="section-title">
+              <span class="material-symbols-outlined text-[14px] mr-1">event_note</span>
+              Por año
+            </p>
+            <div class="dash-card !p-0 divide-y divide-gray-100 dark:divide-[#1a1f2e]">
               @for (yr of data.revenueByYear; track yr.year) {
                 <div class="flex justify-between items-center p-4">
                   <div>
-                    <p class="text-sm font-bold text-white">{{ yr.year }}</p>
-                    <p class="text-xs text-slate-500">{{ yr.payments_count }} pago(s)</p>
+                    <p class="text-sm font-bold text-gray-900 dark:text-white">{{ yr.year }}</p>
+                    <p class="text-xs text-gray-400">{{ yr.payments_count }} pago(s)</p>
                   </div>
-                  <p class="text-base font-bold text-blue-400 tabular-nums">{{ formatMoney(yr.total) }}</p>
+                  <p class="text-base font-bold text-blue-500 tabular-nums">{{ formatMoney(yr.total) }}</p>
                 </div>
               }
             </div>
           </div>
-
         </div>
 
-        <!-- Márgenes por servicio -->
-        <p class="section-title mt-2">Márgenes por servicio</p>
+        <!-- Márgenes -->
+        <p class="section-title mt-2">
+          <span class="material-symbols-outlined text-[14px] mr-1">analytics</span>
+          Márgenes por servicio
+        </p>
         <div class="dash-card !p-0">
-          <!-- Header -->
-          <div class="grid grid-cols-[1fr_auto_auto_auto] gap-x-4 px-4 py-2 border-b border-[#1e2235]">
+          <div class="grid grid-cols-[1fr_auto_auto_auto] gap-x-4 px-4 py-2 border-b border-gray-200 dark:border-[#1e2235]">
             <span class="col-label">Servicio</span>
             <span class="col-label text-right">MRR</span>
             <span class="col-label text-right">Margen/mes</span>
             <span class="col-label text-right">%</span>
           </div>
           @for (s of data.serviceMargins; track s.id) {
-            <div class="grid grid-cols-[1fr_auto_auto_auto] gap-x-4 px-4 py-3 border-b border-[#1a1f2e] last:border-0 items-center hover:bg-white/[0.02] transition-colors">
+            <div class="grid grid-cols-[1fr_auto_auto_auto] gap-x-4 px-4 py-3 border-b border-gray-100 dark:border-[#1a1f2e] last:border-0 items-center hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
               <div class="min-w-0">
-                <p class="text-sm font-semibold text-white truncate">{{ s.name }}</p>
-                <p class="text-xs text-slate-500">{{ s.client_name }} · {{ cycleLabel(s.billing_cycle) }}</p>
+                <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">{{ s.name }}</p>
+                <p class="text-xs text-gray-400">{{ s.client_name }} · {{ cycleLabel(s.billing_cycle) }}</p>
               </div>
-              <p class="text-sm font-bold text-blue-400 tabular-nums text-right">{{ formatMoney(s.mrr) }}</p>
-              <p class="text-sm font-bold tabular-nums text-right" [class.text-emerald-400]="s.margin_monthly > 0" [class.text-red-400]="s.margin_monthly <= 0">
+              <p class="text-sm font-bold text-blue-500 tabular-nums text-right">{{ formatMoney(s.mrr) }}</p>
+              <p class="text-sm font-bold tabular-nums text-right"
+                [class.text-emerald-500]="s.margin_monthly > 0"
+                [class.text-red-500]="s.margin_monthly <= 0">
                 {{ formatMoney(s.margin_monthly) }}
               </p>
-              <p class="text-sm font-bold tabular-nums text-right" [class.text-amber-400]="marginPctSvc(s) < 30 && marginPctSvc(s) > 0" [class.text-emerald-400]="marginPctSvc(s) >= 30">
+              <p class="text-sm font-bold tabular-nums text-right"
+                [class.text-amber-500]="marginPctSvc(s) < 30 && marginPctSvc(s) > 0"
+                [class.text-emerald-500]="marginPctSvc(s) >= 30">
                 {{ marginPctSvc(s) }}%
               </p>
             </div>
@@ -275,56 +306,68 @@
         </div>
       }
 
-      <!-- ══════════════════════════════════════════════════════════════════
+      <!-- ════════════════════════════════════════════════════════════════
            TAB: SERVICIOS
-      ══════════════════════════════════════════════════════════════════ -->
+      ════════════════════════════════════════════════════════════════ -->
       @if (activeTab() === 'services') {
 
-        <!-- Alerta banner -->
         @if (data.expiringServices.length > 0) {
-          <div class="flex items-center gap-3 p-4 rounded-xl bg-amber-500/8 border border-amber-500/25 mb-4">
-            <mat-icon class="text-amber-400 shrink-0">warning</mat-icon>
+          <div class="flex items-center gap-3 p-4 rounded-xl bg-amber-500/10 border border-amber-500/25 mb-4">
+            <span class="material-symbols-outlined text-amber-500 shrink-0">warning</span>
             <div>
-              <p class="text-sm font-bold text-amber-400">{{ data.expiringServices.length }} servicio(s) próximos a vencer</p>
-              <p class="text-xs text-slate-400 mt-0.5">Revisa y envía recordatorios a tus clientes</p>
+              <p class="text-sm font-bold text-amber-500">{{ data.expiringServices.length }} servicio(s) próximos a vencer</p>
+              <p class="text-xs text-gray-400 mt-0.5">Revisa y envía recordatorios a tus clientes</p>
             </div>
           </div>
         }
 
-        <!-- Servicios urgentes -->
-        <p class="section-title">Servicios por vencer (30 días)</p>
+        <p class="section-title">
+          <span class="material-symbols-outlined text-[14px] mr-1">alarm</span>
+          Servicios por vencer (30 días)
+        </p>
+
         @if (data.expiringServices.length === 0) {
-          <div class="dash-card flex flex-col items-center py-8 text-slate-500">
-            <mat-icon class="scale-150 mb-3 text-emerald-400">check_circle</mat-icon>
+          <div class="dash-card flex flex-col items-center py-8 text-gray-400">
+            <span class="material-symbols-outlined text-emerald-500 text-[48px] mb-3">check_circle</span>
             <p class="text-sm">🎉 Sin servicios urgentes por vencer</p>
           </div>
         }
+
         @for (s of data.expiringServices; track s.id) {
           <div class="dash-card mb-3">
             <div class="flex flex-col md:flex-row justify-between gap-4">
               <div class="flex-1 min-w-0">
                 <div class="flex items-center gap-2 flex-wrap mb-1">
-                  <span class="w-2.5 h-2.5 rounded-full shrink-0" [class.bg-red-400]="s.urgency === 'expired' || s.urgency === 'critical'" [class.animate-pulse]="s.urgency === 'critical'" [class.bg-amber-400]="s.urgency === 'warning'" [class.bg-emerald-400]="s.urgency === 'ok'"></span>
-                  <span class="text-base font-bold text-white">{{ s.name }}</span>
+                  <span class="w-2.5 h-2.5 rounded-full shrink-0"
+                    [class.bg-red-500]="s.urgency === 'expired' || s.urgency === 'critical'"
+                    [class.animate-pulse]="s.urgency === 'critical'"
+                    [class.bg-amber-500]="s.urgency === 'warning'"
+                    [class.bg-emerald-500]="s.urgency === 'ok'">
+                  </span>
+                  <span class="text-base font-bold text-gray-900 dark:text-white">{{ s.name }}</span>
                   <span class="status-badge" [ngClass]="urgencyBadgeClass(s.urgency)">{{ urgencyLabel(s.urgency) }}</span>
                 </div>
-                <p class="text-xs text-slate-400">
-                  Cliente: <strong class="text-slate-200">{{ s.client_name }}</strong>
+                <p class="text-xs text-gray-400 mt-1">
+                  Cliente: <strong class="text-gray-700 dark:text-gray-200">{{ s.client_name }}</strong>
                   · Proveedor: {{ s.provider }}
                   · {{ cycleLabel(s.billing_cycle) }}
                 </p>
-                <p class="text-xs text-slate-500 mt-1">
-                  Vence: <strong class="text-amber-400">{{ s.expiration_date }}</strong>
-                  · <span [class.text-red-400]="s.urgency === 'expired' || s.urgency === 'critical'" [class.text-amber-400]="s.urgency === 'warning'">En {{ s.days_left }} días</span>
+                <p class="text-xs text-gray-400 mt-1">
+                  Vence: <strong class="text-amber-500">{{ s.expiration_date }}</strong>
+                  · <span
+                    [class.text-red-500]="s.urgency === 'expired' || s.urgency === 'critical'"
+                    [class.text-amber-500]="s.urgency === 'warning'">
+                    En {{ s.days_left }} días
+                  </span>
                 </p>
               </div>
               <div class="flex flex-col items-end gap-2 shrink-0">
-                <p class="text-lg font-bold text-white">{{ formatMoney(s.price_mxn) }}</p>
-                <p class="text-xs text-emerald-400">Margen: {{ formatMoney(s.profit_margin) }}</p>
+                <p class="text-lg font-bold text-gray-900 dark:text-white">{{ formatMoney(s.price_mxn) }}</p>
+                <p class="text-xs text-emerald-500">Margen: {{ formatMoney(s.profit_margin) }}</p>
                 <button
                   (click)="openWhatsApp(s)"
                   class="flex items-center gap-1.5 bg-gradient-to-r from-[#25D366] to-[#128C7E] text-white text-xs font-bold px-3 py-2 rounded-lg hover:opacity-90 transition-opacity cursor-pointer">
-                  <mat-icon class="scale-75 leading-none">chat</mat-icon>
+                  <span class="material-symbols-outlined text-[16px] leading-none">chat</span>
                   Enviar WA
                 </button>
               </div>
@@ -332,24 +375,28 @@
           </div>
         }
 
-        <!-- Todos los servicios -->
-        <p class="section-title mt-2">Todos los servicios activos</p>
+        <p class="section-title mt-2">
+          <span class="material-symbols-outlined text-[14px] mr-1">dns</span>
+          Todos los servicios activos
+        </p>
         <div class="dash-card !p-0">
-          <div class="grid grid-cols-[1fr_auto_auto_auto] gap-x-4 px-4 py-2 border-b border-[#1e2235]">
+          <div class="grid grid-cols-[1fr_auto_auto_auto] gap-x-4 px-4 py-2 border-b border-gray-200 dark:border-[#1e2235]">
             <span class="col-label">Servicio</span>
             <span class="col-label text-right">Precio</span>
             <span class="col-label text-right">MRR</span>
             <span class="col-label text-right">Margen</span>
           </div>
           @for (s of data.serviceMargins; track s.id) {
-            <div class="grid grid-cols-[1fr_auto_auto_auto] gap-x-4 px-4 py-3 border-b border-[#1a1f2e] last:border-0 items-center hover:bg-white/[0.02] transition-colors">
+            <div class="grid grid-cols-[1fr_auto_auto_auto] gap-x-4 px-4 py-3 border-b border-gray-100 dark:border-[#1a1f2e] last:border-0 items-center hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
               <div class="min-w-0">
-                <p class="text-sm font-semibold text-white truncate">{{ s.name }}</p>
-                <p class="text-xs text-slate-500">{{ s.client_name }} · {{ cycleLabel(s.billing_cycle) }}</p>
+                <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">{{ s.name }}</p>
+                <p class="text-xs text-gray-400">{{ s.client_name }} · {{ cycleLabel(s.billing_cycle) }}</p>
               </div>
-              <p class="text-sm text-slate-300 tabular-nums text-right">{{ formatMoney(s.price_mxn) }}</p>
-              <p class="text-sm font-bold text-blue-400 tabular-nums text-right">{{ formatMoney(s.mrr) }}</p>
-              <p class="text-sm font-bold tabular-nums text-right" [class.text-amber-400]="marginPctSvc(s) < 30 && marginPctSvc(s) > 0" [class.text-emerald-400]="marginPctSvc(s) >= 30">
+              <p class="text-sm text-gray-500 dark:text-gray-400 tabular-nums text-right">{{ formatMoney(s.price_mxn) }}</p>
+              <p class="text-sm font-bold text-blue-500 tabular-nums text-right">{{ formatMoney(s.mrr) }}</p>
+              <p class="text-sm font-bold tabular-nums text-right"
+                [class.text-amber-500]="marginPctSvc(s) < 30 && marginPctSvc(s) > 0"
+                [class.text-emerald-500]="marginPctSvc(s) >= 30">
                 {{ marginPctSvc(s) }}%
               </p>
             </div>
@@ -357,12 +404,11 @@
         </div>
       }
 
-      <!-- ══════════════════════════════════════════════════════════════════
+      <!-- ════════════════════════════════════════════════════════════════
            TAB: NOTIFICACIONES
-      ══════════════════════════════════════════════════════════════════ -->
+      ════════════════════════════════════════════════════════════════ -->
       @if (activeTab() === 'notifs') {
 
-        <!-- Contadores por canal -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
           @for (ch of notifChannels(data.notificationsSummary); track ch.key) {
             <div
@@ -370,49 +416,52 @@
               [class.ring-1]="notifFilter() === ch.key"
               [class.ring-blue-500]="notifFilter() === ch.key"
               (click)="notifFilter.set(ch.key)">
-              <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">{{ ch.icon }} {{ ch.label }}</p>
+              <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{{ ch.icon }} {{ ch.label }}</p>
               <p class="text-3xl font-bold" [style.color]="ch.color">{{ ch.val }}</p>
             </div>
           }
         </div>
 
-        <!-- Historial -->
-        <p class="section-title">Historial de notificaciones</p>
-        <div class="dash-card !p-0 divide-y divide-[#1a1f2e]">
+        <p class="section-title">
+          <span class="material-symbols-outlined text-[14px] mr-1">history</span>
+          Historial de notificaciones
+        </p>
+        <div class="dash-card !p-0 divide-y divide-gray-100 dark:divide-[#1a1f2e]">
           @for (log of filteredNotifs(data.recentNotifications); track log.id) {
-            <div class="flex gap-3 p-4 hover:bg-white/[0.02] transition-colors">
-              <!-- Ícono canal -->
+            <div class="flex gap-3 p-4 hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
               <div
-                class="w-9 h-9 rounded-full flex items-center justify-center text-base shrink-0 border"
+                class="w-9 h-9 rounded-full flex items-center justify-center shrink-0 border"
                 [ngClass]="notifIconClass(log.type)">
-                {{ notifIcon(log.type) }}
+                <span class="material-symbols-outlined text-[18px]">{{ notifMaterialIcon(log.type) }}</span>
               </div>
-              <!-- Cuerpo -->
               <div class="flex-1 min-w-0">
                 <div class="flex justify-between items-start gap-3">
                   <div class="flex items-center gap-2 flex-wrap">
-                    <span class="text-sm font-bold text-white">{{ log.client_name }}</span>
+                    <span class="text-sm font-bold text-gray-900 dark:text-white">{{ log.client_name }}</span>
                     <span class="status-badge" [ngClass]="notifBadgeClass(log.type)">{{ notifLabel(log.type) }}</span>
                   </div>
-                  <span class="text-[10px] text-slate-500 shrink-0 whitespace-nowrap">{{ log.sent_ago }}</span>
+                  <span class="text-[10px] text-gray-400 shrink-0 whitespace-nowrap">{{ log.sent_ago }}</span>
                 </div>
                 @if (log.service_name) {
-                  <p class="text-xs text-slate-500 mt-0.5">🔧 {{ log.service_name }}</p>
+                  <p class="text-xs text-gray-400 mt-0.5 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[12px]">build</span>
+                    {{ log.service_name }}
+                  </p>
                 }
-                <p class="text-xs text-slate-400 mt-1 leading-relaxed line-clamp-2">{{ log.message_body }}</p>
-                <p class="text-[10px] text-slate-600 mt-1">{{ log.sent_at }}</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed line-clamp-2">{{ log.message_body }}</p>
+                <p class="text-[10px] text-gray-400 mt-1">{{ log.sent_at }}</p>
               </div>
             </div>
           }
           @if (filteredNotifs(data.recentNotifications).length === 0) {
-            <div class="flex flex-col items-center py-12 text-slate-500">
-              <mat-icon class="scale-150 mb-3">notifications_none</mat-icon>
+            <div class="flex flex-col items-center py-12 text-gray-400">
+              <span class="material-symbols-outlined text-[48px] mb-3">notifications_none</span>
               <p class="text-sm">Sin notificaciones para este filtro</p>
             </div>
           }
         </div>
       }
 
-    } <!-- end dashboardData -->
+    }
   </div>
 </div>

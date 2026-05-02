@@ -14,13 +14,32 @@ import { DashboardData } from '../../../core/models/dashboard.model';
   styles: [`
     :host { display: block; }
 
-    .dash-card {
+    /* ── Cards ────────────────────────────────────────────────────── */
+    /* Dark mode por defecto (clase dark en <html>) */
+    :host-context(html.dark) .dash-card {
       background: #141720;
       border: 1px solid #1e2235;
+    }
+
+    /* Light mode: sin clase dark en <html> */
+    .dash-card {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 1px 3px rgba(0,0,0,.06);
       border-radius: 14px;
       padding: 1rem 1.25rem;
     }
 
+    :host-context(html.dark) .dash-card:hover {
+      border-color: #2a3050;
+      box-shadow: 0 4px 24px rgba(0,0,0,.3);
+    }
+
+    .dash-card:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,.08);
+    }
+
+    /* ── KPI helpers ──────────────────────────────────────────────── */
     .kpi-label {
       font-size: 10px;
       font-weight: 700;
@@ -30,12 +49,15 @@ import { DashboardData } from '../../../core/models/dashboard.model';
       margin-bottom: 4px;
     }
 
+    /* ── KPI value ────────────────────────────────────────────────── */
     .kpi-value {
       font-size: 22px;
       font-weight: 700;
-      color: #f1f5f9;
+      color: #111827;
       line-height: 1.2;
     }
+
+    :host-context(html.dark) .kpi-value { color: #f1f5f9; }
 
     .kpi-sub {
       font-size: 11px;
@@ -43,6 +65,7 @@ import { DashboardData } from '../../../core/models/dashboard.model';
       margin-top: 4px;
     }
 
+    /* ── Section title ────────────────────────────────────────────── */
     .section-title {
       font-size: 10px;
       font-weight: 700;
@@ -50,8 +73,11 @@ import { DashboardData } from '../../../core/models/dashboard.model';
       text-transform: uppercase;
       color: #6b7280;
       margin: 1.25rem 0 0.6rem;
+      display: flex;
+      align-items: center;
     }
 
+    /* ── Status badge ─────────────────────────────────────────────── */
     .status-badge {
       display: inline-block;
       font-size: 10px;
@@ -61,6 +87,7 @@ import { DashboardData } from '../../../core/models/dashboard.model';
       border: 1px solid transparent;
     }
 
+    /* ── Col label (tablas) ───────────────────────────────────────── */
     .col-label {
       font-size: 10px;
       font-weight: 700;
@@ -69,7 +96,14 @@ import { DashboardData } from '../../../core/models/dashboard.model';
       color: #4b5563;
     }
 
-    /* Scrollbar personalizado */
+    /* ── Nav tabs fondo light ─────────────────────────────────────── */
+    :host-context(.light) .tabs-bar,
+    :host-context([data-theme="light"]) .tabs-bar {
+      background: #ffffff;
+      border-color: #e5e7eb;
+    }
+
+    /* ── Scrollbar ────────────────────────────────────────────────── */
     ::-webkit-scrollbar { width: 4px; height: 4px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: #1e2235; border-radius: 99px; }
@@ -88,12 +122,15 @@ export class DashboardComponent implements OnInit {
   activeTab   = signal<'overview' | 'revenue' | 'services' | 'notifs'>('overview');
   notifFilter = signal<string>('all');
 
-  readonly today = new Date().toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' });
+  readonly today = new Date().toLocaleDateString('es-MX', {
+    day: 'numeric', month: 'short', year: 'numeric'
+  });
 
+  // Íconos Material Symbols (outlined) — más profesionales que mat-icon
   readonly tabs: { id: 'overview' | 'revenue' | 'services' | 'notifs'; label: string; icon: string }[] = [
-    { id: 'overview', label: 'Resumen',       icon: 'grid_view' },
-    { id: 'revenue',  label: 'Ingresos',       icon: 'trending_up' },
-    { id: 'services', label: 'Servicios',       icon: 'build' },
+    { id: 'overview', label: 'Resumen',       icon: 'grid_view'      },
+    { id: 'revenue',  label: 'Ingresos',       icon: 'trending_up'   },
+    { id: 'services', label: 'Servicios',       icon: 'dns'           },
     { id: 'notifs',   label: 'Notificaciones',  icon: 'notifications' },
   ];
 
@@ -134,7 +171,7 @@ export class DashboardComponent implements OnInit {
     return this.currencyPipe.transform(n, 'MXN', 'symbol', '1.0-0') ?? '$0';
   }
 
-  // ── Chart helpers ─────────────────────────────────────────────────────
+  // ── Chart ─────────────────────────────────────────────────────────────
   barHeight(total: number): number {
     const max = this.maxRevenue();
     return max > 0 ? Math.max((total / max) * 100, 2) : 2;
@@ -144,13 +181,13 @@ export class DashboardComponent implements OnInit {
     return Math.max(...chart.map(p => Number(p.total)));
   }
 
-  // ── LTV helpers ───────────────────────────────────────────────────────
+  // ── LTV ───────────────────────────────────────────────────────────────
   ltvPct(ltv: number, list: any[]): number {
     const max = Math.max(...list.map(c => c.ltv), 1);
     return Math.round((ltv / max) * 100);
   }
 
-  // ── Project / Status ─────────────────────────────────────────────────
+  // ── Project status ────────────────────────────────────────────────────
   statusLabel(status: string): string {
     const map: Record<string, string> = {
       completed:   'Completado',
@@ -162,8 +199,8 @@ export class DashboardComponent implements OnInit {
 
   statusBadgeClass(status: string): string {
     const map: Record<string, string> = {
-      completed:   'bg-emerald-500/10 text-emerald-400 !border-emerald-500/20',
-      development: 'bg-blue-500/10 text-blue-400 !border-blue-500/20',
+      completed:   'bg-emerald-500/10 text-emerald-500 !border-emerald-500/20',
+      development: 'bg-blue-500/10 text-blue-500 !border-blue-500/20',
       quoted:      'bg-slate-500/10 text-slate-400 !border-slate-500/20',
     };
     return map[status] ?? '';
@@ -172,35 +209,31 @@ export class DashboardComponent implements OnInit {
   // ── Urgency ───────────────────────────────────────────────────────────
   urgencyLabel(urgency: string): string {
     const map: Record<string, string> = {
-      expired:  'Vencido',
-      critical: 'Crítico',
-      warning:  'Próximo',
-      ok:       'Vigente',
+      expired: 'Vencido', critical: 'Crítico',
+      warning: 'Próximo', ok: 'Vigente',
     };
     return map[urgency] ?? urgency;
   }
 
   urgencyBadgeClass(urgency: string): string {
     const map: Record<string, string> = {
-      expired:  'bg-red-500/10 text-red-400 !border-red-500/20',
-      critical: 'bg-red-500/10 text-red-400 !border-red-500/20',
-      warning:  'bg-amber-500/10 text-amber-400 !border-amber-500/20',
-      ok:       'bg-emerald-500/10 text-emerald-400 !border-emerald-500/20',
+      expired:  'bg-red-500/10 text-red-500 !border-red-500/20',
+      critical: 'bg-red-500/10 text-red-500 !border-red-500/20',
+      warning:  'bg-amber-500/10 text-amber-500 !border-amber-500/20',
+      ok:       'bg-emerald-500/10 text-emerald-500 !border-emerald-500/20',
     };
     return map[urgency] ?? '';
   }
 
-  // ── Service margin ────────────────────────────────────────────────────
+  // ── Margins ───────────────────────────────────────────────────────────
   marginPctSvc(s: any): number {
     return s.mrr > 0 ? Math.round((s.margin_monthly / s.mrr) * 100) : 0;
   }
 
   cycleLabel(cycle: string): string {
     const map: Record<string, string> = {
-      monthly:    'Mensual',
-      quarterly:  'Trimestral',
-      annually:   'Anual',
-      biennially: 'Bienal',
+      monthly: 'Mensual', quarterly: 'Trimestral',
+      annually: 'Anual',  biennially: 'Bienal',
     };
     return map[cycle] ?? cycle;
   }
@@ -238,29 +271,30 @@ export class DashboardComponent implements OnInit {
     return map[type] ?? type;
   }
 
-  notifIcon(type: string): string {
+  /** Material Symbol para el avatar de notificación */
+  notifMaterialIcon(type: string): string {
     const map: Record<string, string> = {
-      whatsapp_reminder: '💬',
-      email_invoice:     '✉️',
-      push_alert:        '🔔',
+      whatsapp_reminder: 'chat',
+      email_invoice:     'mail',
+      push_alert:        'notifications',
     };
-    return map[type] ?? '📨';
+    return map[type] ?? 'circle_notifications';
   }
 
   notifIconClass(type: string): string {
     const map: Record<string, string> = {
-      whatsapp_reminder: 'bg-green-500/10 border-green-500/20',
-      email_invoice:     'bg-blue-500/10 border-blue-500/20',
-      push_alert:        'bg-violet-500/10 border-violet-500/20',
+      whatsapp_reminder: 'bg-green-500/10 border-green-500/20 text-green-500',
+      email_invoice:     'bg-blue-500/10 border-blue-500/20 text-blue-500',
+      push_alert:        'bg-violet-500/10 border-violet-500/20 text-violet-500',
     };
-    return map[type] ?? 'bg-slate-500/10 border-slate-500/20';
+    return map[type] ?? 'bg-slate-500/10 border-slate-500/20 text-slate-400';
   }
 
   notifBadgeClass(type: string): string {
     const map: Record<string, string> = {
-      whatsapp_reminder: 'bg-green-500/10 text-green-400 !border-green-500/20',
-      email_invoice:     'bg-blue-500/10 text-blue-400 !border-blue-500/20',
-      push_alert:        'bg-violet-500/10 text-violet-400 !border-violet-500/20',
+      whatsapp_reminder: 'bg-green-500/10 text-green-500 !border-green-500/20',
+      email_invoice:     'bg-blue-500/10 text-blue-500 !border-blue-500/20',
+      push_alert:        'bg-violet-500/10 text-violet-500 !border-violet-500/20',
     };
     return map[type] ?? '';
   }
