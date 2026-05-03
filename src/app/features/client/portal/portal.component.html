@@ -6,7 +6,7 @@
         ¡Bienvenido, {{ dashboardData()?.profile?.contact_name || 'Cliente' }}!
       </h1>
       <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-        Este es el resumen de tus servicios y proyectos con Tech Solutions.
+        Este es el resumen general de tu cuenta con Tech Solutions.
       </p>
     </div>
   </div>
@@ -49,39 +49,129 @@
       </app-metric-card>
     </div>
 
-    <!-- Servicios y Fechas de Vencimiento -->
-    <div class="ui-card p-6">
+    <!-- Layout de 2 columnas para pantallas grandes -->
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+      
+      <!-- SECCIÓN: Mis Proyectos -->
+      <div class="ui-card p-6 bg-white dark:bg-surface-paper rounded-xl shadow-sm border border-gray-100 dark:border-gray-800">
+        <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center">
+          <mat-icon class="mr-2 text-primary">folder_special</mat-icon> Mis Proyectos
+        </h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm text-left">
+            <thead class="text-xs text-gray-500 uppercase bg-gray-50 dark:bg-gray-800 dark:text-gray-400">
+              <tr>
+                <th class="px-4 py-3 rounded-tl-lg">Nombre</th>
+                <th class="px-4 py-3">Tipo</th>
+                <th class="px-4 py-3">Estado</th>
+                <th class="px-4 py-3 text-right rounded-tr-lg">Inversión</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (project of dashboardData().recent_projects; track project.id) {
+                <tr class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                  <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">{{ project.name }}</td>
+                  <td class="px-4 py-3 text-gray-500 capitalize">{{ project.type }}</td>
+                  <td class="px-4 py-3">
+                    <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 capitalize">
+                      {{ project.status }}
+                    </span>
+                  </td>
+                  <td class="px-4 py-3 text-right font-medium text-gray-900 dark:text-white">
+                    {{ project.total_price | currency:'MXN' }}
+                  </td>
+                </tr>
+              } @empty {
+                <tr><td colspan="4" class="px-4 py-8 text-center text-gray-500">No tienes proyectos registrados.</td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- SECCIÓN: Mis Servicios -->
+      <div class="ui-card p-6 bg-white dark:bg-surface-paper rounded-xl shadow-sm border border-gray-100 dark:border-gray-800">
+        <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center">
+          <mat-icon class="mr-2 text-purple-500">dns</mat-icon> Mis Servicios
+        </h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm text-left">
+            <thead class="text-xs text-gray-500 uppercase bg-gray-50 dark:bg-gray-800 dark:text-gray-400">
+              <tr>
+                <th class="px-4 py-3 rounded-tl-lg">Servicio</th>
+                <th class="px-4 py-3">Ciclo</th>
+                <th class="px-4 py-3 text-right">Precio</th>
+                <th class="px-4 py-3 text-right rounded-tr-lg">Vencimiento</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (service of dashboardData().active_services; track service.id) {
+                <tr class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                  <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">
+                    {{ service.name }}
+                    <div class="text-xs text-gray-500 font-normal">{{ service.project?.name }}</div>
+                  </td>
+                  <td class="px-4 py-3">
+                    <span class="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-600 dark:bg-gray-700 capitalize">
+                      {{ service.billing_cycle }}
+                    </span>
+                  </td>
+                  <td class="px-4 py-3 text-right text-gray-500">
+                    {{ service.price_mxn | currency:'MXN' }}
+                  </td>
+                  <td class="px-4 py-3 text-right font-medium text-gray-900 dark:text-white">
+                    {{ service.expiration_date | date:'dd/MM/yyyy' }}
+                  </td>
+                </tr>
+              } @empty {
+                <tr><td colspan="4" class="px-4 py-8 text-center text-gray-500">No tienes servicios activos.</td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN: Historial de Pagos (Ancho Completo) -->
+    <div class="ui-card p-6 bg-white dark:bg-surface-paper rounded-xl shadow-sm border border-gray-100 dark:border-gray-800">
       <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center">
-        <mat-icon class="mr-2 text-primary">event_available</mat-icon> Tus Servicios Activos
+        <mat-icon class="mr-2 text-green-500">receipt_long</mat-icon> Historial de Pagos Recientes
       </h2>
       <div class="overflow-x-auto">
         <table class="w-full text-sm text-left">
           <thead class="text-xs text-gray-500 uppercase bg-gray-50 dark:bg-gray-800 dark:text-gray-400">
             <tr>
-              <th class="px-4 py-3">Servicio</th>
-              <th class="px-4 py-3">Proyecto</th>
-              <th class="px-4 py-3">Ciclo</th>
-              <th class="px-4 py-3 text-right">Vencimiento</th>
+              <th class="px-4 py-3 rounded-tl-lg">Fecha</th>
+              <th class="px-4 py-3">Concepto</th>
+              <th class="px-4 py-3">Método</th>
+              <th class="px-4 py-3">Estado</th>
+              <th class="px-4 py-3 text-right rounded-tr-lg">Monto</th>
             </tr>
           </thead>
           <tbody>
-            @for (service of dashboardData().active_services; track service.id) {
+            @for (payment of dashboardData().recent_payments; track payment.id) {
               <tr class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50">
-                <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">{{ service.name }}</td>
-                <td class="px-4 py-3 text-gray-500">{{ service.project?.name || 'N/A' }}</td>
-                <td class="px-4 py-3">
-                  <span class="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-600 dark:bg-gray-700">{{ service.billing_cycle }}</span>
+                <td class="px-4 py-3 text-gray-500 whitespace-nowrap">{{ payment.paid_at | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">
+                  Pago a {{ payment.service?.name || payment.project?.name || 'Servicio General' }}
                 </td>
-                <td class="px-4 py-3 text-right font-medium text-gray-900 dark:text-white">
-                  {{ service.expiration_date | date:'dd/MM/yyyy' }}
+                <td class="px-4 py-3 text-gray-500 capitalize">{{ payment.payment_method }}</td>
+                <td class="px-4 py-3">
+                  <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400 capitalize">
+                    {{ payment.status }}
+                  </span>
+                </td>
+                <td class="px-4 py-3 text-right font-bold text-gray-900 dark:text-white">
+                  {{ payment.amount | currency:'MXN' }}
                 </td>
               </tr>
             } @empty {
-              <tr><td colspan="4" class="px-4 py-8 text-center text-gray-500">No tienes servicios activos.</td></tr>
+              <tr><td colspan="5" class="px-4 py-8 text-center text-gray-500">No hay pagos recientes registrados.</td></tr>
             }
           </tbody>
         </table>
       </div>
     </div>
+
   }
 </div>
