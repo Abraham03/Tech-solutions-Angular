@@ -42,16 +42,18 @@ export class HomeComponent implements OnInit {
 
   // ── Tech stack ─────────────────────────────────────────────────────────
   techStack = [
-    { name: 'Angular',      icon: 'web',            color: '#dd0031' },
-    { name: 'Laravel',      icon: 'local_fire_department', color: '#f55247' },
-    { name: 'Flutter',      icon: 'phone_iphone',   color: '#54c5f8' },
-    { name: 'Spring Boot',  icon: 'deployed_code',  color: '#6db33f' },
-    { name: 'MySQL',        icon: 'database',       color: '#00758f' },
-    { name: 'Docker',       icon: 'inventory_2',    color: '#2496ed' },
-    { name: 'TypeScript',   icon: 'code',           color: '#3178c6' },
-    { name: 'Tailwind CSS', icon: 'style',          color: '#38bdf8' },
-    { name: 'Firebase',     icon: 'local_fire_department', color: '#ffca28' },
-    { name: 'Google Cloud', icon: 'cloud',          color: '#4285f4' },
+    { name: 'Angular',      iconUrl: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/angular/angular-original.svg', color: '#dd0031' },
+    { name: 'Laravel',      iconUrl: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/laravel/laravel-original.svg', color: '#f55247' },
+    { name: 'Flutter',      iconUrl: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/flutter/flutter-original.svg', color: '#54c5f8' },
+    { name: 'Spring Boot',  iconUrl: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/spring/spring-original.svg', color: '#6db33f' },
+    { name: 'MySQL',        iconUrl: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mysql/mysql-original.svg', color: '#00758f' },
+    { name: 'Docker',       iconUrl: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-original.svg', color: '#2496ed' },
+    { name: 'TypeScript',   iconUrl: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg', color: '#3178c6' },
+    { name: 'Tailwind CSS', iconUrl: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/tailwindcss/tailwindcss-original.svg', color: '#38bdf8' },
+    { name: 'Firebase',     iconUrl: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/firebase/firebase-original.svg', color: '#ffca28' },
+    { name: 'Google Cloud', iconUrl: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/googlecloud/googlecloud-original.svg', color: '#4285f4' },
+    { name: 'Java',         iconUrl: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg', color: '#f89820' },
+    { name: 'JavaScript',   iconUrl: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg', color: '#f7df1e' }
   ];
 
   // ── Servicios ──────────────────────────────────────────────────────────
@@ -157,11 +159,11 @@ export class HomeComponent implements OnInit {
       gradient: 'linear-gradient(135deg, #8b5cf6 0%, #d946ef 100%)',
     },
     {
-      icono: 'security',
-      titulo: 'API Segura con Roles y JWT',
-      descripcion: 'Backend con Spring Security para gestión de usuarios y roles, usando JSON Web Tokens para autenticación robusta.',
-      tags: ['Spring Security', 'JWT', 'Java'],
-      categoria: 'Backend',
+      icono: 'package',
+      titulo: 'Gestión de Rutas y Paquetes',
+      descripcion: 'Aplicación movíl para gestionar rutas, evidencias, rastrear paquetes con la pagina web.',
+      tags: ['Flutter', 'Laravel', 'JWT', 'PHP', 'MySQL'],
+      categoria: 'Movíl y Backend',
       gradient: 'linear-gradient(135deg, #f59e0b 0%, #ef4444 100%)',
     },
     {
@@ -179,7 +181,7 @@ export class HomeComponent implements OnInit {
     { icon: 'chat',     label: 'WhatsApp',  value: '+52 55 3994 8515',               href: 'https://wa.me/5215539948515',                        color: '#34d399', bgColor: 'rgba(52,211,153,0.1)'  },
     { icon: 'mail',     label: 'Email',     value: 'achave8627@gmail.com',            href: 'mailto:achave8627@gmail.com',                         color: '#60a5fa', bgColor: 'rgba(96,165,250,0.1)'  },
     { icon: 'work',     label: 'LinkedIn',  value: 'Abraham Chavez',                  href: 'https://linkedin.com/in/abraham-chavez-937758340',    color: '#a78bfa', bgColor: 'rgba(167,139,250,0.1)' },
-    { icon: 'location_on', label: 'Ubicación', value: 'Querétaro, México',            href: '#',                                                   color: '#fbbf24', bgColor: 'rgba(251,191,36,0.1)'  },
+    { icon: 'location_on', label: 'Ubicación', value: 'Hidalgo, México',            href: '#',                                                   color: '#fbbf24', bgColor: 'rgba(251,191,36,0.1)'  },
   ];
 
   whyMe = [

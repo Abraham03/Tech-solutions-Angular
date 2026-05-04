@@ -16,7 +16,7 @@
       <div class="animate-fade-in-up">
         <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-blue-500/30 bg-blue-500/10 text-blue-400 text-xs font-bold uppercase tracking-widest backdrop-blur-sm">
           <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
-          Full Stack Developer · Querétaro, MX
+          Full Stack Developer · Hidalgo, MX
         </span>
       </div>
 
@@ -148,7 +148,7 @@
     <div class="tech-scroll-inner">
       @for (tech of techStack.concat(techStack); track $index) {
         <div class="tech-pill">
-          <span class="material-symbols-outlined text-[16px]" [style.color]="tech.color">{{ tech.icon }}</span>
+          <img [src]="tech.iconUrl" [alt]="tech.name" class="w-5 h-5 object-contain" />
           <span>{{ tech.name }}</span>
         </div>
       }
