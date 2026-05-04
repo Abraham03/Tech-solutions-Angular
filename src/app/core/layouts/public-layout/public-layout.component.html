@@ -1,67 +1,116 @@
-<div class="min-h-screen flex flex-col bg-white dark:bg-surface-dark transition-colors duration-300">
+<div class="min-h-screen flex flex-col bg-[#0a0a0f] transition-colors duration-300 font-sans">
   
-  <nav class="sticky top-0 z-50 bg-white/80 dark:bg-surface-dark/80 backdrop-blur-md border-b border-gray-100 dark:border-surface-border">
+  <!-- NAVBAR PÚBLICO SIEMPRE OSCURO -->
+  <nav class="fixed top-0 w-full z-50 bg-[#030712]/80 backdrop-blur-md border-b border-white/5 transition-all duration-300">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-20 items-center">
+        <!-- Logo -->
         <div class="flex items-center gap-3 cursor-pointer group" routerLink="/">
+          <div class="flex items-center gap-3 cursor-pointer group" routerLink="/">
           <img src="img/Logo.png" alt="Tech Solutions Logo" class="h-10 w-auto object-contain transition-transform group-hover:scale-105 drop-shadow-md">
-          <span class="text-xl font-bold tracking-tight text-gray-900 dark:text-white hidden sm:block">Tech Solutions</span>
+        </div>
+          <span class="text-xl font-bold tracking-tight text-white hidden sm:block">Tech Solutions</span>
         </div>
 
+        <!-- Desktop Menu -->
         <div class="hidden md:flex items-center gap-8">
-          <a href="#sobre-nosotros" class="text-sm font-medium text-gray-600 hover:text-brand-primary dark:text-gray-300 transition-colors">Sobre Nosotros</a>
-          <a href="#servicios" class="text-sm font-medium text-gray-600 hover:text-brand-primary dark:text-gray-300 transition-colors">Servicios</a>
-          <a href="#proceso" class="text-sm font-medium text-gray-600 hover:text-brand-primary dark:text-gray-300 transition-colors">Proceso</a>
-          <a href="#proyectos" class="text-sm font-medium text-gray-600 hover:text-brand-primary dark:text-gray-300 transition-colors">Proyectos</a>
-          <div class="h-6 w-px bg-gray-200 dark:bg-surface-border mx-2"></div>
-          <button routerLink="/auth/login" class="ui-btn-primary !py-2 !px-5 text-sm">
-            Iniciar Sesión
-          </button>
+          <a href="#sobre-nosotros" class="text-sm font-medium text-gray-400 hover:text-white transition-colors duration-200">Sobre Nosotros</a>
+          <a href="#servicios" class="text-sm font-medium text-gray-400 hover:text-white transition-colors duration-200">Servicios</a>
+          <a href="#proceso" class="text-sm font-medium text-gray-400 hover:text-white transition-colors duration-200">Proceso</a>
+          <a href="#proyectos" class="text-sm font-medium text-gray-400 hover:text-white transition-colors duration-200">Portafolio</a>
+          
+          <div class="h-6 w-px bg-white/10 mx-2"></div>
+          
+          <!-- Lógica de Botones según estado de autenticación -->
+          <ng-container *ngIf="!user()">
+            <button routerLink="/auth/login" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-white text-sm font-bold hover:bg-white/10 hover:border-white/20 transition-all">
+              <span class="material-symbols-outlined text-[18px]">login</span>
+              Acceder
+            </button>
+          </ng-container>
+          
+          <ng-container *ngIf="user()">
+            <button [routerLink]="user()?.role === 'admin' ? '/admin/dashboard' : '/client/dashboard'" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-blue-500/30 bg-blue-500/10 text-blue-400 text-sm font-bold hover:bg-blue-500/20 transition-all shadow-[0_0_15px_rgba(59,130,246,0.15)]">
+              <span class="material-symbols-outlined text-[18px]">space_dashboard</span>
+              Mi Tablero
+            </button>
+          </ng-container>
         </div>
 
-        <button (click)="toggleMenu()" class="md:hidden p-2 rounded-lg text-gray-600 dark:text-gray-300 focus:outline-none">
+        <!-- Mobile Menu Toggle -->
+        <button (click)="toggleMenu()" class="md:hidden p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors focus:outline-none">
           <mat-icon>{{ isMenuOpen ? 'close' : 'menu' }}</mat-icon>
         </button>
       </div>
     </div>
 
+    <!-- Mobile Menu Dropdown -->
     @if (isMenuOpen) {
-      <div class="md:hidden bg-white dark:bg-surface-dark border-t border-gray-100 dark:border-surface-border absolute w-full shadow-lg">
-        <div class="px-4 pt-2 pb-6 space-y-2">
-          <a href="#sobre-nosotros" (click)="closeMenu()" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-brand-primary hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800 rounded-md">Sobre Nosotros</a>
-          <a href="#servicios" (click)="closeMenu()" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-brand-primary hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800 rounded-md">Servicios</a>
-          <a href="#proceso" (click)="closeMenu()" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-brand-primary hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800 rounded-md">Proceso</a>
-          <a href="#proyectos" (click)="closeMenu()" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-brand-primary hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800 rounded-md">Proyectos</a>
+      <div class="md:hidden bg-[#030712] border-t border-white/5 absolute w-full shadow-2xl">
+        <div class="px-4 pt-4 pb-6 space-y-2">
+          <a href="#sobre-nosotros" (click)="closeMenu()" class="block px-4 py-3 text-base font-medium text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-colors">Sobre Nosotros</a>
+          <a href="#servicios" (click)="closeMenu()" class="block px-4 py-3 text-base font-medium text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-colors">Servicios</a>
+          <a href="#proceso" (click)="closeMenu()" class="block px-4 py-3 text-base font-medium text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-colors">Proceso</a>
+          <a href="#proyectos" (click)="closeMenu()" class="block px-4 py-3 text-base font-medium text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-colors">Portafolio</a>
           
-          <div class="pt-4 mt-2 border-t border-gray-100 dark:border-surface-border">
-            <button routerLink="/auth/login" (click)="closeMenu()" class="w-full ui-btn-primary !py-3 text-base">
-              Iniciar Sesión
-            </button>
+          <div class="pt-4 mt-2 border-t border-white/5">
+            <ng-container *ngIf="!user()">
+              <button routerLink="/auth/login" (click)="closeMenu()" class="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl border border-white/10 bg-white/5 text-white font-bold hover:bg-white/10 transition-all">
+                <span class="material-symbols-outlined text-[20px]">login</span>
+                Acceder
+              </button>
+            </ng-container>
+            
+            <ng-container *ngIf="user()">
+              <button [routerLink]="user()?.role === 'admin' ? '/admin/dashboard' : '/client/dashboard'" (click)="closeMenu()" class="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-violet-600 text-white font-bold hover:shadow-lg hover:shadow-blue-500/25 transition-all">
+                <span class="material-symbols-outlined text-[20px]">space_dashboard</span>
+                Ir al Tablero
+              </button>
+            </ng-container>
           </div>
         </div>
       </div>
     }
   </nav>
 
+  <!-- MAIN CONTENT -->
+  <!-- Quité el padding top porque tu componente Home ya tiene un pt-20 en la sección Hero -->
   <main class="flex-1 overflow-x-hidden w-full relative">
     <router-outlet></router-outlet>
   </main>
 
-  <footer class="bg-[#030712] py-10 border-t border-gray-800/50 relative z-10">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+  <!-- FOOTER PÚBLICO -->
+  <footer class="bg-[#030712] py-10 border-t border-white/5 relative z-10 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
       
-      <div class="flex justify-center gap-6 mb-6">
-        <a href="https://www.linkedin.com/in/abraham-chavez-937758340/" target="_blank" aria-label="LinkedIn"
-           class="text-gray-500 hover:text-blue-500 transition-colors duration-300 transform hover:scale-110 hover:-translate-y-1">
-          <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+      <!-- Brand -->
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-3 cursor-pointer group" routerLink="/">
+          <img src="img/Logo.png" alt="Tech Solutions Logo" class="h-10 w-auto object-contain transition-transform group-hover:scale-105 drop-shadow-md">
+          <span class="text-xl font-bold tracking-tight text-gray-900 dark:text-white hidden sm:block">Tech Solutions</span>
+        </div>
+      </div>
+      
+      <!-- Copyright -->
+      <p class="text-gray-500 text-sm">
+        &copy; {{ currentYear }} Tech Solutions. Todos los derechos reservados.
+      </p>
+
+      <!-- Social Links -->
+      <div class="flex items-center gap-5">
+        <a href="mailto:achave8627@gmail.com" class="text-gray-500 hover:text-blue-400 transition-colors transform hover:scale-110">
+          <span class="material-symbols-outlined text-[22px]">mail</span>
+        </a>
+        <a href="https://wa.me/5215539948515" target="_blank" class="text-gray-500 hover:text-emerald-400 transition-colors transform hover:scale-110">
+          <span class="material-symbols-outlined text-[22px]">chat</span>
+        </a>
+        <a href="https://linkedin.com/in/abraham-chavez-937758340" target="_blank" aria-label="LinkedIn" class="text-gray-500 hover:text-blue-500 transition-colors transform hover:scale-110">
+          <svg class="w-[20px] h-[20px]" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path fill-rule="evenodd" d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" clip-rule="evenodd" />
           </svg>
         </a>
       </div>
-      
-      <p class="text-gray-500 text-sm tracking-wide">
-        &copy; {{ currentYear }} Tech Solutions. Todos los derechos reservados.
-      </p>
+
     </div>
   </footer>
 </div>

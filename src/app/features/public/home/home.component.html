@@ -1,197 +1,190 @@
-<section id="inicio" class="relative min-h-[90vh] flex items-center pt-20 overflow-hidden bg-gray-900 transition-colors duration-300"
-         style="background-image: linear-gradient(rgba(3, 7, 18, 0.7), rgba(3, 7, 18, 0.8)), url('img/cover5.jpg'); background-size: cover; background-position: center; background-attachment: fixed;">
+<!-- ══════════════════════════════════════════════════════════════════
+     HERO
+══════════════════════════════════════════════════════════════════ -->
+<section id="inicio" class="relative min-h-[90vh] flex items-center pt-20 overflow-hidden"
+  style="background-image: linear-gradient(rgba(3,7,18,0.75), rgba(3,7,18,0.88)), url('img/cover5.jpg'); background-size: cover; background-position: center; background-attachment: fixed;">
+
+  <!-- Orbes de color encima de la foto -->
+  <div class="absolute inset-0 z-0 pointer-events-none">
+    <div class="hero-orb hero-orb-1"></div>
+    <div class="hero-orb hero-orb-2"></div>
+  </div>
+
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
     <div class="text-center space-y-8 max-w-4xl mx-auto">
-      <span class="animate-fade-in-up inline-block px-4 py-1.5 rounded-full bg-blue-500/20 border border-blue-500/30 text-blue-400 text-xs font-bold uppercase tracking-widest backdrop-blur-sm">
-        Full Stack Developer
-      </span>
+
+      <div class="animate-fade-in-up">
+        <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-blue-500/30 bg-blue-500/10 text-blue-400 text-xs font-bold uppercase tracking-widest backdrop-blur-sm">
+          <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
+          Full Stack Developer · Querétaro, MX
+        </span>
+      </div>
+
       <h1 class="animate-fade-in-up delay-100 text-4xl md:text-6xl lg:text-7xl font-black tracking-tight text-white leading-tight drop-shadow-lg">
         Transformo tus ideas en <br/>
-        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">Resultados Digitales</span>
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-violet-400 to-purple-500">Resultados Digitales</span>
       </h1>
-      <p class="animate-fade-in-up delay-200 text-lg md:text-xl text-gray-300 max-w-2xl mx-auto drop-shadow">
+
+      <p class="animate-fade-in-up delay-200 text-lg md:text-xl text-gray-300 max-w-2xl mx-auto drop-shadow leading-relaxed">
         Como desarrollador Full Stack, creo soluciones de software a la medida que optimizan procesos y potencian el crecimiento de tu negocio.
       </p>
-      <div class="animate-fade-in-up delay-300 flex flex-col sm:flex-row justify-center gap-4 pt-6">
-        <a href="#contacto" class="ui-btn-primary px-10 !py-4 text-lg shadow-lg shadow-brand-primary/30">Solicita una Consultoría</a>
+
+      <div class="animate-fade-in-up delay-300 flex flex-col sm:flex-row justify-center gap-4 pt-2">
+        <a href="#contacto" class="hero-btn-primary">
+          <span class="material-symbols-outlined text-[20px]">rocket_launch</span>
+          Solicitar Consultoría
+        </a>
+        <a href="#proyectos" class="hero-btn-secondary">
+          <span class="material-symbols-outlined text-[20px]">play_circle</span>
+          Ver Proyectos
+        </a>
       </div>
+
+      <!-- Mini métricas -->
+      <div class="animate-fade-in-up delay-400 flex flex-wrap justify-center gap-6 pt-4">
+        @for (stat of heroStats; track stat.label) {
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center backdrop-blur-sm">
+              <span class="material-symbols-outlined text-blue-400 text-[18px]">{{ stat.icon }}</span>
+            </div>
+            <div class="text-left">
+              <p class="text-white font-bold text-lg leading-none">{{ stat.value }}</p>
+              <p class="text-gray-400 text-xs mt-0.5">{{ stat.label }}</p>
+            </div>
+          </div>
+        }
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Scroll indicator -->
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce opacity-40">
+    <span class="text-gray-400 text-xs tracking-widest uppercase">Scroll</span>
+    <span class="material-symbols-outlined text-gray-400 text-[18px]">keyboard_arrow_down</span>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     STATS COUNTER
+══════════════════════════════════════════════════════════════════ -->
+<section class="py-16 bg-[#0d0d14] border-y border-white/5">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+      @for (stat of counterStats; track stat.label) {
+        <div class="text-center">
+          <div class="inline-flex items-center justify-center w-12 h-12 rounded-xl mb-3" [style.background]="stat.bgColor">
+            <span class="material-symbols-outlined text-[22px]" [style.color]="stat.color">{{ stat.icon }}</span>
+          </div>
+          <p class="text-3xl md:text-4xl font-black text-white mb-1">{{ stat.value }}</p>
+          <p class="text-gray-500 text-sm">{{ stat.label }}</p>
+        </div>
+      }
     </div>
   </div>
 </section>
 
-<section id="sobre-nosotros" class="py-24 bg-white dark:bg-[#151822]">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex flex-col lg:flex-row items-center gap-16">
-      
-      <div class="w-full lg:w-1/2 relative flex justify-center animate-fade-in-up">
-        <div class="absolute inset-0 bg-gradient-to-tr from-brand-primary to-purple-600 transform rotate-3 scale-105 rounded-3xl opacity-20 blur-xl z-0"></div>
-        <img src="img/nosotros.png" alt="Sobre Tech Solutions" class="animate-float relative z-10 w-full max-w-md rounded-3xl shadow-2xl object-cover border border-gray-200 dark:border-gray-800">
+<!-- ══════════════════════════════════════════════════════════════════
+     SOBRE NOSOTROS
+══════════════════════════════════════════════════════════════════ -->
+<section id="sobre-nosotros" class="py-28 bg-[#0a0a0f] relative overflow-hidden">
+  <div class="absolute top-1/2 left-0 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl -translate-y-1/2"></div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-20">
+
+      <!-- Imagen con decoración -->
+      <div class="w-full lg:w-5/12 relative flex justify-center animate-fade-in-up">
+        <div class="absolute inset-0 bg-gradient-to-tr from-blue-500 to-purple-600 rotate-3 scale-105 rounded-3xl opacity-20 blur-2xl"></div>
+        <img src="img/nosotros.png" alt="Sobre Tech Solutions"
+          class="relative z-10 w-full max-w-sm rounded-3xl shadow-2xl object-cover border border-white/10 animate-float">
+        <!-- Badge flotante -->
+        <div class="absolute -bottom-4 -right-4 z-20 bg-gradient-to-r from-blue-600 to-violet-600 text-white px-4 py-2 rounded-2xl shadow-xl text-sm font-bold">
+          <span class="material-symbols-outlined text-[16px] align-middle mr-1">verified</span>
+          Disponible para proyectos
+        </div>
       </div>
 
-      <div class="w-full lg:w-1/2 space-y-6 animate-fade-in-up delay-200">
+      <!-- Texto -->
+      <div class="w-full lg:w-7/12 space-y-7 animate-fade-in-up delay-200">
         <div class="flex items-center gap-3">
-          <div class="w-12 h-1 bg-brand-primary rounded-full"></div>
-          <span class="text-brand-primary font-bold uppercase tracking-widest text-sm">Conócenos</span>
+          <div class="h-px w-12 bg-gradient-to-r from-blue-500 to-violet-500"></div>
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-violet-400 font-bold uppercase tracking-widest text-sm">Conócenos</span>
         </div>
-        
-        <h2 class="text-3xl md:text-5xl font-black text-gray-900 dark:text-white leading-tight">
-          Transformando Visión en Realidad Digital
+
+        <h2 class="text-4xl md:text-5xl font-black text-white leading-tight">
+          Transformamos visión<br/>en
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500"> realidad digital</span>
         </h2>
-        
-        <p class="text-gray-600 dark:text-gray-400 text-lg leading-relaxed">
-          En <strong class="text-gray-900 dark:text-white">Tech Solutions</strong>, somos un equipo apasionado por crear herramientas tecnológicas. Nos especializamos en el desarrollo full-stack, creando aplicaciones web y móviles que impulsan la eficiencia de los negocios.
+
+        <p class="text-gray-400 text-lg leading-relaxed">
+          En <strong class="text-white">Tech Solutions</strong>, construimos software que importa. Nos especializamos en crear aplicaciones robustas, escalables y centradas en el usuario que impulsan el crecimiento real de los negocios.
         </p>
 
-        <div class="flex flex-wrap gap-6 pt-4">
-          <div class="ui-card flex items-center gap-4 !p-4 border-l-4 !border-l-brand-primary">
-            <div class="w-12 h-12 rounded-full bg-brand-primary/10 flex items-center justify-center text-brand-primary">
-              <mat-icon>calendar_month</mat-icon>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+          @for (feat of aboutFeatures; track feat.title) {
+            <div class="about-feature-card">
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" [style.background]="feat.bgColor">
+                <span class="material-symbols-outlined text-[20px]" [style.color]="feat.color">{{ feat.icon }}</span>
+              </div>
+              <div>
+                <p class="text-white font-bold text-sm">{{ feat.title }}</p>
+                <p class="text-gray-500 text-xs mt-0.5">{{ feat.desc }}</p>
+              </div>
             </div>
-            <div>
-              <span class="block text-2xl font-bold text-gray-900 dark:text-white">+5 Años</span>
-              <span class="text-gray-500 dark:text-gray-400 text-xs uppercase tracking-widest">Experiencia</span>
-            </div>
-          </div>
-          
-          <div class="ui-card flex items-center gap-4 !p-4 border-l-4 !border-l-purple-500">
-            <div class="w-12 h-12 rounded-full bg-purple-500/10 flex items-center justify-center text-purple-500">
-              <mat-icon>handshake</mat-icon>
-            </div>
-            <div>
-              <span class="block text-2xl font-bold text-gray-900 dark:text-white">100%</span>
-              <span class="text-gray-500 dark:text-gray-400 text-xs uppercase tracking-widest">Compromiso</span>
-            </div>
-          </div>
+          }
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<section id="servicios" class="py-24 bg-gray-50 dark:bg-surface-dark relative overflow-hidden">
+<!-- ══════════════════════════════════════════════════════════════════
+     STACK TECNOLÓGICO (scroll infinito)
+══════════════════════════════════════════════════════════════════ -->
+<section class="py-14 bg-[#0d0d14] border-y border-white/5 overflow-hidden">
+  <p class="text-center text-gray-600 text-xs font-bold uppercase tracking-widest mb-8">Stack tecnológico</p>
+  <div class="tech-scroll-track">
+    <div class="tech-scroll-inner">
+      @for (tech of techStack.concat(techStack); track $index) {
+        <div class="tech-pill">
+          <span class="material-symbols-outlined text-[16px]" [style.color]="tech.color">{{ tech.icon }}</span>
+          <span>{{ tech.name }}</span>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     SERVICIOS
+══════════════════════════════════════════════════════════════════ -->
+<section id="servicios" class="py-28 bg-[#0a0a0f] relative overflow-hidden">
+  <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-violet-600/8 rounded-full blur-3xl"></div>
+
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-    <div class="text-center max-w-3xl mx-auto mb-16 animate-fade-in-up">
-      <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">Soluciones Pensadas para tu Negocio</h2>
-      <p class="mt-4 text-lg text-gray-600 dark:text-gray-400">Más que código, desarrollo herramientas que generan valor.</p>
+    <div class="text-center max-w-2xl mx-auto mb-16 animate-fade-in-up">
+      <div class="flex items-center justify-center gap-3 mb-4">
+        <div class="h-px w-12 bg-gradient-to-r from-transparent to-blue-500"></div>
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-violet-400 font-bold uppercase tracking-widest text-sm">Servicios</span>
+        <div class="h-px w-12 bg-gradient-to-l from-transparent to-violet-500"></div>
+      </div>
+      <h2 class="text-4xl md:text-5xl font-black text-white">Soluciones que generan <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">valor real</span></h2>
+      <p class="mt-4 text-gray-400 text-lg">Más que código — construyo herramientas que hacen crecer tu negocio.</p>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-      <div class="ui-card text-center group animate-fade-in-up delay-100">
-        <div class="w-16 h-16 rounded-full bg-blue-500/10 text-blue-500 mx-auto flex items-center justify-center mb-6 transition-transform duration-300 group-hover:scale-110 group-hover:bg-blue-500 group-hover:text-white">
-          <mat-icon class="scale-150">laptop_mac</mat-icon>
-        </div>
-        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Aplicaciones Web</h3>
-        <p class="text-gray-500 dark:text-gray-400 text-sm">Desde sistemas de gestión interna (SaaS) hasta portales complejos para tu operación.</p>
-      </div>
-
-      <div class="ui-card text-center group animate-fade-in-up delay-200">
-        <div class="w-16 h-16 rounded-full bg-emerald-500/10 text-emerald-500 mx-auto flex items-center justify-center mb-6 transition-transform duration-300 group-hover:scale-110 group-hover:bg-emerald-500 group-hover:text-white">
-          <mat-icon class="scale-150">rocket_launch</mat-icon>
-        </div>
-        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Páginas de Impacto</h3>
-        <p class="text-gray-500 dark:text-gray-400 text-sm">Sitios dinámicos y atractivos, optimizados para convertir visitantes en clientes.</p>
-      </div>
-
-      <div class="ui-card text-center group animate-fade-in-up delay-300">
-        <div class="w-16 h-16 rounded-full bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 mx-auto flex items-center justify-center mb-6 transition-transform duration-300 group-hover:scale-110 group-hover:bg-yellow-500 group-hover:text-white">
-          <mat-icon class="scale-150">smartphone</mat-icon>
-        </div>
-        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Apps Móviles</h3>
-        <p class="text-gray-500 dark:text-gray-400 text-sm">Creación de aplicaciones para iOS y Android de alto rendimiento con Flutter.</p>
-      </div>
-
-      <div class="ui-card text-center group animate-fade-in-up delay-400">
-        <div class="w-16 h-16 rounded-full bg-purple-500/10 text-purple-500 mx-auto flex items-center justify-center mb-6 transition-transform duration-300 group-hover:scale-110 group-hover:bg-purple-500 group-hover:text-white">
-          <mat-icon class="scale-150">settings_suggest</mat-icon>
-        </div>
-        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Automatización</h3>
-        <p class="text-gray-500 dark:text-gray-400 text-sm">Software para eliminar tareas repetitivas, reducir costos y aumentar la eficiencia.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="proceso" class="py-24 bg-white dark:bg-[#151822]">
-  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="text-center mb-16 animate-fade-in-up">
-      <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">Un Proceso Claro, Resultados Garantizados</h2>
-      <p class="mt-4 text-lg text-gray-600 dark:text-gray-400">Te acompaño en cada paso, desde la idea inicial hasta el lanzamiento y más allá.</p>
-    </div>
-
-    <div class="relative border-l-2 border-dashed border-gray-200 dark:border-gray-700 ml-6 md:ml-1/2">
-      
-      <div class="mb-12 ml-10 relative animate-fade-in-up">
-        <div class="absolute -left-[53px] top-1 w-12 h-12 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center border-4 border-white dark:border-[#151822]">
-          <mat-icon>lightbulb</mat-icon>
-        </div>
-        <div class="ui-card !p-6">
-          <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">1. Descubrimiento y Estrategia</h3>
-          <p class="text-gray-600 dark:text-gray-400 text-sm">Nos reunimos para entender a fondo tus objetivos. Definimos el alcance, las funcionalidades clave y la estrategia tecnológica ideal.</p>
-        </div>
-      </div>
-
-      <div class="mb-12 ml-10 relative animate-fade-in-up delay-100">
-        <div class="absolute -left-[53px] top-1 w-12 h-12 bg-cyan-100 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400 rounded-full flex items-center justify-center border-4 border-white dark:border-[#151822]">
-          <mat-icon>design_services</mat-icon>
-        </div>
-        <div class="ui-card !p-6">
-          <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">2. Prototipado y Diseño UX/UI</h3>
-          <p class="text-gray-600 dark:text-gray-400 text-sm">Creo un prototipo interactivo para que puedas probar la experiencia de usuario antes de escribir una sola línea de código.</p>
-        </div>
-      </div>
-
-      <div class="mb-12 ml-10 relative animate-fade-in-up delay-200">
-        <div class="absolute -left-[53px] top-1 w-12 h-12 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full flex items-center justify-center border-4 border-white dark:border-[#151822]">
-          <mat-icon>code</mat-icon>
-        </div>
-        <div class="ui-card !p-6">
-          <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">3. Desarrollo Ágil</h3>
-          <p class="text-gray-600 dark:text-gray-400 text-sm">Construyo la aplicación con código limpio y escalable. Te mantengo al tanto con avances periódicos.</p>
-        </div>
-      </div>
-
-      <div class="ml-10 relative animate-fade-in-up delay-300">
-        <div class="absolute -left-[53px] top-1 w-12 h-12 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-full flex items-center justify-center border-4 border-white dark:border-[#151822]">
-          <mat-icon>rocket_launch</mat-icon>
-        </div>
-        <div class="ui-card !p-6">
-          <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">4. Revisión y Despliegue</h3>
-          <p class="text-gray-600 dark:text-gray-400 text-sm">Realizamos pruebas exhaustivas y despliego la solución en un entorno de producción seguro y optimizado.</p>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<section id="proyectos" class="py-24 bg-gray-50 dark:bg-surface-dark">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="text-center max-w-3xl mx-auto mb-16 animate-fade-in-up">
-      <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">Mi Portafolio</h2>
-      <p class="mt-4 text-lg text-gray-600 dark:text-gray-400">Una selección de proyectos que demuestran mi experiencia.</p>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      @for (proyecto of proyectos; track proyecto.titulo; let i = $index) {
-        <div class="ui-card flex flex-col h-full group animate-scale-in hover:-translate-y-3 hover:shadow-xl hover:shadow-brand-primary/10 hover:border-brand-primary/30 transition-all duration-500" 
-             [style.animation-delay]="(i * 150) + 'ms'">
-             
-          <div class="flex items-center gap-4 mb-4">
-            <div class="p-2 rounded-lg bg-brand-primary/10 text-brand-primary group-hover:bg-brand-primary group-hover:text-white transition-colors duration-300">
-              <mat-icon class="scale-125">{{ proyecto.icono }}</mat-icon>
-            </div>
-            <h3 class="text-lg font-bold text-gray-900 dark:text-white group-hover:text-brand-primary transition-colors duration-300">{{ proyecto.titulo }}</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      @for (servicio of servicios; track servicio.title; let i = $index) {
+        <div class="service-card animate-fade-in-up" [style.animation-delay]="(i * 100) + 'ms'">
+          <div class="service-card-glow" [style.background]="servicio.glow"></div>
+          <div class="w-14 h-14 rounded-2xl flex items-center justify-center mb-5 transition-all duration-300 service-icon-wrap" [style.background]="servicio.iconBg">
+            <span class="material-symbols-outlined text-[26px]" [style.color]="servicio.iconColor">{{ servicio.icon }}</span>
           </div>
-          
-          <p class="text-gray-600 dark:text-gray-400 text-sm flex-grow mb-6 leading-relaxed">
-            {{ proyecto.descripcion }}
-          </p>
-          
-          <div class="flex flex-wrap gap-2 mt-auto pt-4 border-t border-gray-100 dark:border-surface-border">
-            @for (tag of proyecto.tags; track tag) {
-              <span class="px-2.5 py-1 bg-gray-50 dark:bg-[#151822] text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-800 text-[10px] font-bold uppercase tracking-wider rounded-md">
-                {{ tag }}
-              </span>
+          <h3 class="text-lg font-bold text-white mb-2">{{ servicio.title }}</h3>
+          <p class="text-gray-500 text-sm leading-relaxed flex-1">{{ servicio.desc }}</p>
+          <div class="mt-5 pt-4 border-t border-white/5 flex flex-wrap gap-1.5">
+            @for (tag of servicio.tags; track tag) {
+              <span class="text-[10px] font-bold px-2 py-1 rounded-md bg-white/5 text-gray-400 border border-white/5">{{ tag }}</span>
             }
           </div>
         </div>
@@ -200,52 +193,204 @@
   </div>
 </section>
 
-<section id="reviews" class="py-24 bg-white dark:bg-[#151822]">
+<!-- ══════════════════════════════════════════════════════════════════
+     PROCESO
+══════════════════════════════════════════════════════════════════ -->
+<section id="proceso" class="py-28 bg-[#0d0d14] relative overflow-hidden">
+  <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-blue-600/5 rounded-full blur-3xl"></div>
+
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <div class="text-center max-w-2xl mx-auto mb-16 animate-fade-in-up">
+      <div class="flex items-center justify-center gap-3 mb-4">
+        <div class="h-px w-12 bg-gradient-to-r from-transparent to-blue-500"></div>
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-violet-400 font-bold uppercase tracking-widest text-sm">Proceso</span>
+        <div class="h-px w-12 bg-gradient-to-l from-transparent to-violet-500"></div>
+      </div>
+      <h2 class="text-4xl md:text-5xl font-black text-white">De la idea al <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">lanzamiento</span></h2>
+      <p class="mt-4 text-gray-400 text-lg">Un proceso claro y transparente en cada etapa.</p>
+    </div>
+
+    <!-- Timeline grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      @for (step of proceso; track step.title; let i = $index) {
+        <div class="process-card animate-fade-in-up" [style.animation-delay]="(i * 120) + 'ms'">
+          <div class="flex items-start gap-4">
+            <div class="process-number" [style.background]="step.gradient">{{ i + 1 }}</div>
+            <div class="flex-1">
+              <div class="flex items-center gap-3 mb-2">
+                <span class="material-symbols-outlined text-[20px]" [style.color]="step.color">{{ step.icon }}</span>
+                <h3 class="text-white font-bold">{{ step.title }}</h3>
+              </div>
+              <p class="text-gray-500 text-sm leading-relaxed">{{ step.desc }}</p>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     PORTAFOLIO
+══════════════════════════════════════════════════════════════════ -->
+<section id="proyectos" class="py-28 bg-[#0a0a0f] relative overflow-hidden">
+  <div class="absolute top-0 left-0 w-[500px] h-[500px] bg-blue-600/8 rounded-full blur-3xl"></div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <div class="text-center max-w-2xl mx-auto mb-16 animate-fade-in-up">
+      <div class="flex items-center justify-center gap-3 mb-4">
+        <div class="h-px w-12 bg-gradient-to-r from-transparent to-blue-500"></div>
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-violet-400 font-bold uppercase tracking-widest text-sm">Portafolio</span>
+        <div class="h-px w-12 bg-gradient-to-l from-transparent to-violet-500"></div>
+      </div>
+      <h2 class="text-4xl md:text-5xl font-black text-white">Proyectos que <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">hablan solos</span></h2>
+      <p class="mt-4 text-gray-400 text-lg">Soluciones reales entregadas a clientes reales.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      @for (proyecto of proyectos; track proyecto.titulo; let i = $index) {
+        <div class="portfolio-card animate-fade-in-up" [style.animation-delay]="(i * 100) + 'ms'">
+          <!-- Header con gradiente -->
+          <div class="portfolio-card-header" [style.background]="proyecto.gradient">
+            <div class="portfolio-card-icon">
+              <span class="material-symbols-outlined text-[32px] text-white">{{ proyecto.icono }}</span>
+            </div>
+            <span class="portfolio-badge">{{ proyecto.categoria }}</span>
+          </div>
+          <!-- Body -->
+          <div class="p-5">
+            <h3 class="text-white font-bold text-base mb-2 group-hover:text-blue-400 transition-colors">{{ proyecto.titulo }}</h3>
+            <p class="text-gray-500 text-sm leading-relaxed mb-4">{{ proyecto.descripcion }}</p>
+            <div class="flex flex-wrap gap-1.5">
+              @for (tag of proyecto.tags; track tag) {
+                <span class="text-[10px] font-bold px-2 py-1 rounded-md bg-white/5 text-gray-400 border border-white/5 uppercase tracking-wide">{{ tag }}</span>
+              }
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     TESTIMONIOS
+══════════════════════════════════════════════════════════════════ -->
+<section id="reviews" class="py-28 bg-[#0d0d14] border-y border-white/5">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center animate-fade-in-up">
-    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">La Voz de mis Clientes</h2>
-    <p class="text-lg text-gray-600 dark:text-gray-400 mb-12">Descubre por qué confían en mí para sus proyectos más ambiciosos.</p>
-    
+    <div class="flex items-center justify-center gap-3 mb-4">
+      <div class="h-px w-12 bg-gradient-to-r from-transparent to-yellow-500"></div>
+      <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-400 font-bold uppercase tracking-widest text-sm">Testimonios</span>
+      <div class="h-px w-12 bg-gradient-to-l from-transparent to-orange-400"></div>
+    </div>
+    <h2 class="text-4xl md:text-5xl font-black text-white mb-4">Lo que dicen <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-400">mis clientes</span></h2>
+    <p class="text-gray-400 text-lg mb-12 max-w-xl mx-auto">Resultados reales que hablan por sí solos.</p>
+
     <div class="elfsight-app-7b308c20-3d98-41a6-b0eb-c052241a53c0 max-w-5xl mx-auto mb-10" data-elfsight-app-lazy></div>
-    
-    <a href="https://g.page/r/CevjEafxXVMAEBM/review" target="_blank" class="inline-flex items-center gap-2 ui-btn-secondary !px-8">
-      <mat-icon class="text-yellow-500">star</mat-icon>
+
+    <a href="https://g.page/r/CevjEafxXVMAEBM/review" target="_blank"
+      class="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl border border-yellow-500/30 bg-yellow-500/10 text-yellow-400 font-bold hover:bg-yellow-500/20 transition-colors">
+      <span class="material-symbols-outlined text-[20px]">star</span>
       Dejar una Reseña en Google
     </a>
   </div>
 </section>
 
-<section id="contacto" class="py-24 bg-gray-50 dark:bg-surface-dark">
-  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 animate-fade-in-up">
-    <div class="ui-card !p-8 md:!p-12 relative overflow-hidden border-t-4 !border-t-brand-primary">
-      <div class="absolute top-0 right-0 w-64 h-64 bg-brand-primary/5 rounded-full blur-3xl -z-10"></div>
-      
-      <div class="text-center mb-10">
-        <h2 class="text-3xl font-bold text-gray-900 dark:text-white">¿Listo para Empezar?</h2>
-        <p class="mt-2 text-gray-600 dark:text-gray-400">Contáctame. Transformemos juntos tu visión en una realidad digital.</p>
+<!-- ══════════════════════════════════════════════════════════════════
+     CONTACTO
+══════════════════════════════════════════════════════════════════ -->
+<section id="contacto" class="py-28 bg-[#0a0a0f] relative overflow-hidden">
+  <div class="absolute top-1/2 right-0 w-96 h-96 bg-violet-600/10 rounded-full blur-3xl -translate-y-1/2"></div>
+  <div class="absolute top-1/2 left-0 w-96 h-96 bg-blue-600/8 rounded-full blur-3xl -translate-y-1/2"></div>
+
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+
+    <div class="text-center max-w-2xl mx-auto mb-14 animate-fade-in-up">
+      <div class="flex items-center justify-center gap-3 mb-4">
+        <div class="h-px w-12 bg-gradient-to-r from-transparent to-blue-500"></div>
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-violet-400 font-bold uppercase tracking-widest text-sm">Contacto</span>
+        <div class="h-px w-12 bg-gradient-to-l from-transparent to-violet-500"></div>
+      </div>
+      <h2 class="text-4xl md:text-5xl font-black text-white">¿Listo para <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">empezar?</span></h2>
+      <p class="mt-4 text-gray-400 text-lg">Cuéntame tu idea y te doy una consultoría gratuita.</p>
+    </div>
+
+    <div class="contact-grid animate-fade-in-up delay-100">
+
+      <!-- Lado izquierdo: datos de contacto -->
+      <div class="contact-info-panel">
+        <h3 class="text-white font-bold text-xl mb-6">Hablemos directamente</h3>
+        <div class="space-y-4 mb-8">
+          @for (info of contactInfo; track info.label) {
+            <a [href]="info.href" target="_blank"
+              class="flex items-center gap-4 p-3 rounded-xl bg-white/5 border border-white/5 hover:border-blue-500/30 hover:bg-blue-500/5 transition-all group">
+              <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0" [style.background]="info.bgColor">
+                <span class="material-symbols-outlined text-[18px]" [style.color]="info.color">{{ info.icon }}</span>
+              </div>
+              <div>
+                <p class="text-gray-400 text-xs">{{ info.label }}</p>
+                <p class="text-white text-sm font-medium group-hover:text-blue-400 transition-colors">{{ info.value }}</p>
+              </div>
+            </a>
+          }
+        </div>
+
+        <!-- Por qué elegirme -->
+        <div class="space-y-3">
+          <p class="text-gray-500 text-xs font-bold uppercase tracking-widest">Por qué elegirme</p>
+          @for (reason of whyMe; track reason) {
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-emerald-400 text-[16px]">check_circle</span>
+              <span class="text-gray-400 text-sm">{{ reason }}</span>
+            </div>
+          }
+        </div>
       </div>
 
-      <form (submit)="enviarWhatsApp($event)" class="space-y-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <input type="text" required class="ui-input" placeholder="Tu Nombre">
+      <!-- Lado derecho: formulario -->
+      <div class="contact-form-panel">
+        <form (submit)="enviarWhatsApp($event)" class="space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-gray-400 text-xs font-bold uppercase tracking-wide mb-2">Nombre</label>
+              <input type="text" required class="contact-input" placeholder="Tu nombre completo">
+            </div>
+            <div>
+              <label class="block text-gray-400 text-xs font-bold uppercase tracking-wide mb-2">Correo</label>
+              <input type="email" required class="contact-input" placeholder="tu@correo.com">
+            </div>
           </div>
           <div>
-            <input type="email" required class="ui-input" placeholder="Tu Correo Electrónico">
+            <label class="block text-gray-400 text-xs font-bold uppercase tracking-wide mb-2">Tipo de proyecto</label>
+            <select class="contact-input">
+              <option value="" disabled selected>Selecciona una opción</option>
+              <option>Aplicación Web / SaaS</option>
+              <option>Página de Impacto</option>
+              <option>App Móvil (Flutter)</option>
+              <option>Automatización</option>
+              <option>Otro</option>
+            </select>
           </div>
-        </div>
-        <div>
-          <textarea required rows="5" class="ui-input resize-none" placeholder="Cuéntanos sobre tu proyecto..."></textarea>
-        </div>
-        <button type="submit" class="ui-btn-primary w-full !py-4 text-lg">
-          <mat-icon>send</mat-icon> Enviar Mensaje
-        </button>
-      </form>
+          <div>
+            <label class="block text-gray-400 text-xs font-bold uppercase tracking-wide mb-2">Cuéntame tu idea</label>
+            <textarea required rows="4" class="contact-input resize-none" placeholder="Describe brevemente tu proyecto, objetivos y plazos..."></textarea>
+          </div>
+          <button type="submit" class="contact-submit-btn">
+            <span class="material-symbols-outlined text-[20px]">send</span>
+            Enviar por WhatsApp
+          </button>
+        </form>
+      </div>
+
     </div>
   </div>
 </section>
 
+
+
+<!-- WhatsApp FAB -->
 <a href="https://wa.me/5215539948515?text=¡Hola!%20Vi%20tu%20sitio%20web%20y%20me%20gustaría%20hablar%20sobre%20un%20proyecto."
-   target="_blank" 
-   class="fixed bottom-4 right-4 md:bottom-8 md:right-8 w-14 h-14 bg-[#25D366] text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 hover:bg-[#128C7E] transition-all duration-300 z-[100] group">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" class="w-8 h-8 filter invert group-hover:rotate-12 transition-transform duration-300">
+   target="_blank"
+   class="fixed bottom-6 right-6 md:bottom-8 md:right-8 w-14 h-14 bg-[#25D366] text-white rounded-full flex items-center justify-center shadow-2xl shadow-green-500/30 hover:scale-110 hover:bg-[#128C7E] transition-all duration-300 z-[100]">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" class="w-7 h-7 filter invert">
 </a>

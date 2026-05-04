@@ -1,14 +1,22 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-public-layout',
   standalone: true,
-  imports: [RouterModule, MatIconModule],
+  imports: [CommonModule, RouterModule, MatIconModule],
   templateUrl: './public-layout.component.html'
 })
 export class PublicLayoutComponent {
+  // Inyectamos el servicio de autenticación
+  private authService = inject(AuthService);
+  
+  // Exponemos el usuario como un Signal a la vista HTML
+  public user = this.authService.currentUser;
+
   // Año dinámico que siempre estará actualizado
   currentYear = new Date().getFullYear();
 
@@ -24,5 +32,4 @@ export class PublicLayoutComponent {
   closeMenu() {
     this.isMenuOpen = false;
   }
-  
 }
