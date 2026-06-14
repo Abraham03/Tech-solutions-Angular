@@ -29,32 +29,22 @@ body {
 }
 
 // ==========================================
-// 🆕 BOTTOM NAV MOBILE - Espacio + WhatsApp button
+// 🆕 BOTTOM NAV MOBILE - Safe area iOS + WhatsApp button
 // ==========================================
 @media (max-width: 767px) {
   body {
-    padding-bottom: 70px; // Espacio para el bottom nav
+    // ✅ Incluye safe-area-inset-bottom (notch/home indicator iOS)
+    padding-bottom: calc(70px + env(safe-area-inset-bottom));
+    padding-bottom: calc(70px + constant(safe-area-inset-bottom));
   }
   
   // Subir el botón WhatsApp arriba del bottom nav
   a[href*="wa.me"].fixed {
-    bottom: 80px !important;
+    bottom: calc(80px + env(safe-area-inset-bottom)) !important;
+    bottom: calc(80px + constant(safe-area-inset-bottom)) !important;
   }
 }
-
-// ==========================================
-// TIPOGRAFÍA FLUIDA Y RESPONSIVA (DRY)
-// ==========================================
-@layer base {
-  html {
-    font-size: clamp(14px, 1vw + 10px, 16px);
-  }
-
-  h1 { @apply text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight; }
-  h2 { @apply text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight; }
-  h3 { @apply text-lg sm:text-xl lg:text-2xl font-bold; }
-  p { @apply text-base leading-relaxed; }
-}
+ 
 
 // ==========================================
 // TECH SOLUTIONS DESIGN SYSTEM

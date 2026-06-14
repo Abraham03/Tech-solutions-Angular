@@ -1,38 +1,30 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 // INTERACTIVE MENU - BOTTOM NAV (MOBILE) + TOP STICKY (DESKTOP)
+// ✅ iOS Safe Area + Dynamic Viewport Fix
 // ═══════════════════════════════════════════════════════════════════════════════
 
 :host {
   display: block;
   
+  // 📱 MOBILE: Fixed bottom con safe area iOS
   @media (max-width: 767px) {
-    position: fixed !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    z-index: 9999 !important;
-    width: 100% !important;
-  }
-}
-
-.interactive-menu-container {
-  width: 100%;
-  
-  // 📱 MOBILE: Fixed bottom (como app nativa iOS/Android)
-  @media (max-width: 767px) {
-    position: fixed !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    z-index: 9999 !important;
-    background: rgba(13, 13, 20, 0.95);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    width: 100%;
+    background: rgba(13, 13, 20, 0.98);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+    // ✅ Safe area iOS (notch + home indicator)
     padding-bottom: env(safe-area-inset-bottom);
+    // ✅ Fallback para navegadores antiguos
+    padding-bottom: constant(safe-area-inset-bottom);
   }
-
+  
   // 💻 DESKTOP: Sticky top
   @media (min-width: 768px) {
     position: sticky;
@@ -43,6 +35,11 @@
     -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
+}
+
+.interactive-menu-container {
+  width: 100%;
+  // ❌ Ya no necesita position: fixed (lo maneja :host)
 }
 
 .menu-nav {
@@ -88,6 +85,7 @@
   color: rgba(255, 255, 255, 0.6);
   transition: all 0.3s ease;
   user-select: none;
+  -webkit-user-select: none;
   -webkit-tap-highlight-color: transparent;
   
   @media (max-width: 767px) {
