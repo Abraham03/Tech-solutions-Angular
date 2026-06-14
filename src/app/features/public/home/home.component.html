@@ -1,54 +1,54 @@
-<!-- ══════════════════════════════════════════════════════════════════
-     HERO
-══════════════════════════════════════════════════════════════════ -->
-<section id="inicio" class="relative min-h-[90vh] flex items-center pt-20 overflow-hidden"
-  style="background-image: linear-gradient(rgba(3,7,18,0.75), rgba(3,7,18,0.88)), url('img/cover5.jpg'); background-size: cover; background-position: center; background-attachment: fixed;">
+<app-interactive-menu 
+  [items]="menuItems" 
+  accentColor="#3b82f6">
+</app-interactive-menu>
 
-  <!-- Orbes de color encima de la foto -->
+<section id="inicio" class="relative min-h-[90vh] flex items-center pt-16 md:pt-20 overflow-hidden px-4 sm:px-6 lg:px-8"
+  style="background-image: linear-gradient(rgba(3,7,18,0.75), rgba(3,7,18,0.88)), url('img/cover5.webp'); background-size: cover; background-position: center; background-attachment: fixed;">
+
   <div class="absolute inset-0 z-0 pointer-events-none">
     <div class="hero-orb hero-orb-1"></div>
     <div class="hero-orb hero-orb-2"></div>
   </div>
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
-    <div class="text-center space-y-8 max-w-4xl mx-auto">
+  <div class="max-w-7xl mx-auto relative z-10 w-full">
+    <div class="text-center space-y-6 md:space-y-8 max-w-4xl mx-auto">
 
       <div class="animate-fade-in-up">
-        <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-blue-500/30 bg-blue-500/10 text-blue-400 text-xs font-bold uppercase tracking-widest backdrop-blur-sm">
+        <span class="inline-flex items-center gap-2 px-3 md:px-4 py-2 rounded-full border border-blue-500/30 bg-blue-500/10 text-blue-400 text-xs font-bold uppercase tracking-widest backdrop-blur-sm">
           <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
           Full Stack Developer · Hidalgo, MX
         </span>
       </div>
 
-      <h1 class="animate-fade-in-up delay-100 text-4xl md:text-6xl lg:text-7xl font-black tracking-tight text-white leading-tight drop-shadow-lg">
+      <h1 class="animate-fade-in-up delay-100 text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-black tracking-tight text-white leading-tight drop-shadow-lg">
         Transformo tus ideas en <br/>
         <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-violet-400 to-purple-500">Resultados Digitales</span>
       </h1>
 
-      <p class="animate-fade-in-up delay-200 text-lg md:text-xl text-gray-300 max-w-2xl mx-auto drop-shadow leading-relaxed">
+      <p class="animate-fade-in-up delay-200 text-base sm:text-lg md:text-xl text-gray-300 max-w-2xl mx-auto drop-shadow leading-relaxed">
         Como desarrollador Full Stack, creo soluciones de software a la medida que optimizan procesos y potencian el crecimiento de tu negocio.
       </p>
 
-      <div class="animate-fade-in-up delay-300 flex flex-col sm:flex-row justify-center gap-4 pt-2">
-        <a href="#contacto" class="hero-btn-primary">
-          <span class="material-symbols-outlined text-[20px]">rocket_launch</span>
+      <div class="animate-fade-in-up delay-300 flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 pt-2">
+        <a href="#contacto" class="hero-btn-primary text-sm sm:text-base px-4 sm:px-6 py-2.5 sm:py-3">
+          <span class="material-symbols-outlined text-[18px] sm:text-[20px]">rocket_launch</span>
           Solicitar Consultoría
         </a>
-        <a href="#proyectos" class="hero-btn-secondary">
-          <span class="material-symbols-outlined text-[20px]">play_circle</span>
+        <a href="#proyectos" class="hero-btn-secondary text-sm sm:text-base px-4 sm:px-6 py-2.5 sm:py-3">
+          <span class="material-symbols-outlined text-[18px] sm:text-[20px]">play_circle</span>
           Ver Proyectos
         </a>
       </div>
 
-      <!-- Mini métricas -->
-      <div class="animate-fade-in-up delay-400 flex flex-wrap justify-center gap-6 pt-4">
+      <div class="animate-fade-in-up delay-400 flex flex-wrap justify-center gap-4 sm:gap-6 pt-4">
         @for (stat of heroStats; track stat.label) {
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center backdrop-blur-sm">
-              <span class="material-symbols-outlined text-blue-400 text-[18px]">{{ stat.icon }}</span>
+          <div class="flex items-center gap-2 sm:gap-3">
+            <div class="w-8 sm:w-10 h-8 sm:h-10 rounded-lg sm:rounded-xl bg-white/5 border border-white/10 flex items-center justify-center backdrop-blur-sm">
+              <span class="material-symbols-outlined text-blue-400 text-[16px] sm:text-[18px]">{{ stat.icon }}</span>
             </div>
             <div class="text-left">
-              <p class="text-white font-bold text-lg leading-none">{{ stat.value }}</p>
+              <p class="text-white font-bold text-sm sm:text-lg leading-none">{{ stat.value }}</p>
               <p class="text-gray-400 text-xs mt-0.5">{{ stat.label }}</p>
             </div>
           </div>
@@ -58,77 +58,66 @@
     </div>
   </div>
 
-  <!-- Scroll indicator -->
-  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce opacity-40">
+  <div class="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce opacity-40">
     <span class="text-gray-400 text-xs tracking-widest uppercase">Scroll</span>
-    <span class="material-symbols-outlined text-gray-400 text-[18px]">keyboard_arrow_down</span>
+    <span class="material-symbols-outlined text-gray-400 text-[16px] sm:text-[18px]">keyboard_arrow_down</span>
   </div>
 </section>
 
-<!-- ══════════════════════════════════════════════════════════════════
-     STATS COUNTER
-══════════════════════════════════════════════════════════════════ -->
-<section class="py-16 bg-[#0d0d14] border-y border-white/5">
+<section class="py-12 md:py-16 bg-[#0d0d14] border-y border-white/5">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8">
       @for (stat of counterStats; track stat.label) {
         <div class="text-center">
-          <div class="inline-flex items-center justify-center w-12 h-12 rounded-xl mb-3" [style.background]="stat.bgColor">
-            <span class="material-symbols-outlined text-[22px]" [style.color]="stat.color">{{ stat.icon }}</span>
+          <div class="inline-flex items-center justify-center w-10 sm:w-12 h-10 sm:h-12 rounded-lg sm:rounded-xl mb-2 sm:mb-3" [style.background]="stat.bgColor">
+            <span class="material-symbols-outlined text-[20px] sm:text-[22px]" [style.color]="stat.color">{{ stat.icon }}</span>
           </div>
-          <p class="text-3xl md:text-4xl font-black text-white mb-1">{{ stat.value }}</p>
-          <p class="text-gray-500 text-sm">{{ stat.label }}</p>
+          <p class="text-2xl sm:text-3xl md:text-4xl font-black text-white mb-1">{{ stat.value }}</p>
+          <p class="text-gray-500 text-xs sm:text-sm">{{ stat.label }}</p>
         </div>
       }
     </div>
   </div>
 </section>
 
-<!-- ══════════════════════════════════════════════════════════════════
-     SOBRE NOSOTROS
-══════════════════════════════════════════════════════════════════ -->
-<section id="sobre-nosotros" class="py-28 bg-[#0a0a0f] relative overflow-hidden">
-  <div class="absolute top-1/2 left-0 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl -translate-y-1/2"></div>
+<section id="sobre-nosotros" class="py-16 md:py-28 bg-[#0a0a0f] relative overflow-hidden px-4 sm:px-6 lg:px-8">
+  <div class="absolute top-1/2 left-0 w-64 sm:w-96 h-64 sm:h-96 bg-blue-600/10 rounded-full blur-3xl -translate-y-1/2 sm:-left-48"></div>
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-    <div class="flex flex-col lg:flex-row items-center gap-20">
+  <div class="max-w-7xl mx-auto relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-8 sm:gap-12 lg:gap-20">
 
-      <!-- Imagen con decoración -->
       <div class="w-full lg:w-5/12 relative flex justify-center animate-fade-in-up">
-        <div class="absolute inset-0 bg-gradient-to-tr from-blue-500 to-purple-600 rotate-3 scale-105 rounded-3xl opacity-20 blur-2xl"></div>
-        <img src="img/nosotros.png" alt="Sobre Tech Solutions"
-          class="relative z-10 w-full max-w-sm rounded-3xl shadow-2xl object-cover border border-white/10 animate-float">
-        <!-- Badge flotante -->
-        <div class="absolute -bottom-4 -right-4 z-20 bg-gradient-to-r from-blue-600 to-violet-600 text-white px-4 py-2 rounded-2xl shadow-xl text-sm font-bold">
-          <span class="material-symbols-outlined text-[16px] align-middle mr-1">verified</span>
-          Disponible para proyectos
+        <div class="absolute inset-0 bg-gradient-to-tr from-blue-500 to-purple-600 rotate-3 scale-105 rounded-2xl sm:rounded-3xl opacity-20 blur-2xl"></div>
+        <img ngSrc="img/nosotros.webp" alt="Sobre Tech Solutions" width="1664" height="1785" class="relative z-10 w-full max-w-xs sm:max-w-sm rounded-2xl sm:rounded-3xl shadow-2xl object-cover border border-white/10 animate-float">
+        <div class="absolute -bottom-3 sm:-bottom-4 -right-3 sm:-right-4 z-20 bg-gradient-to-r from-blue-600 to-violet-600 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl shadow-xl text-xs sm:text-sm font-bold whitespace-nowrap">
+          <span class="material-symbols-outlined text-[14px] sm:text-[16px] align-middle mr-1">verified</span>
+          Disponible
         </div>
       </div>
 
-      <!-- Texto -->
-      <div class="w-full lg:w-7/12 space-y-7 animate-fade-in-up delay-200">
+      <div class="w-full lg:w-7/12 space-y-4 sm:space-y-7 animate-fade-in-up delay-200">
         <div class="flex items-center gap-3">
-          <div class="h-px w-12 bg-gradient-to-r from-blue-500 to-violet-500"></div>
-          <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-violet-400 font-bold uppercase tracking-widest text-sm">Conócenos</span>
+          <div class="h-px w-8 sm:w-12 bg-gradient-to-r from-blue-500 to-violet-500"></div>
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-violet-400 font-bold uppercase tracking-widest text-xs sm:text-sm">Conócenos</span>
         </div>
 
-        <h2 class="text-4xl md:text-5xl font-black text-white leading-tight">
+        <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white leading-tight">
           Transformamos visión<br/>en
           <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500"> realidad digital</span>
         </h2>
 
-        <p class="text-gray-400 text-lg leading-relaxed">
+        <p class="text-gray-400 text-sm sm:text-base lg:text-lg leading-relaxed">
           En <strong class="text-white">Tech Solutions</strong>, construimos software que importa. Nos especializamos en crear aplicaciones robustas, escalables y centradas en el usuario que impulsan el crecimiento real de los negocios.
         </p>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 pt-2">
           @for (feat of aboutFeatures; track feat.title) {
             <div class="about-feature-card">
-              <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" [style.background]="feat.bgColor">
-                <span class="material-symbols-outlined text-[20px]" [style.color]="feat.color">{{ feat.icon }}</span>
+              <div class="w-8 sm:w-10 h-8 sm:h-10 rounded-lg sm:rounded-xl flex items-center justify-center shrink-0" [style.background]="feat.bgColor">
+                <span class="material-symbols-outlined text-[18px] sm:text-[20px]" [style.color]="feat.color">{{ feat.icon }}</span>
               </div>
-              <div>
-                <p class="text-white font-bold text-sm">{{ feat.title }}</p>
+              <div class="min-w-0">
+                <p class="text-white font-bold text-xs sm:text-sm">{{ feat.title }}</p>
                 <p class="text-gray-500 text-xs mt-0.5">{{ feat.desc }}</p>
               </div>
             </div>
@@ -139,133 +128,72 @@
   </div>
 </section>
 
-<!-- ══════════════════════════════════════════════════════════════════
-     STACK TECNOLÓGICO (scroll infinito)
-══════════════════════════════════════════════════════════════════ -->
-<section class="py-14 bg-[#0d0d14] border-y border-white/5 overflow-hidden">
-  <p class="text-center text-gray-600 text-xs font-bold uppercase tracking-widest mb-8">Stack tecnológico</p>
+<section class="py-10 md:py-14 bg-[#0d0d14] border-y border-white/5 overflow-x-hidden">
+  <p class="text-center text-gray-600 text-xs font-bold uppercase tracking-widest mb-6 sm:mb-8 px-4">Stack tecnológico</p>
   <div class="tech-scroll-track">
     <div class="tech-scroll-inner">
       @for (tech of techStack.concat(techStack); track $index) {
         <div class="tech-pill">
-          <img [src]="tech.iconUrl" [alt]="tech.name" class="w-5 h-5 object-contain" />
-          <span>{{ tech.name }}</span>
+          <img [ngSrc]="tech.iconUrl" [alt]="tech.name" width="20" height="20" class="w-4 sm:w-5 h-4 sm:h-5 object-contain" />
+          <span class="text-xs sm:text-sm whitespace-nowrap">{{ tech.name }}</span>
         </div>
       }
     </div>
   </div>
 </section>
 
-<!-- ══════════════════════════════════════════════════════════════════
-     SERVICIOS
-══════════════════════════════════════════════════════════════════ -->
-<section id="servicios" class="py-28 bg-[#0a0a0f] relative overflow-hidden">
-  <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-violet-600/8 rounded-full blur-3xl"></div>
+<section id="servicios" class="py-16 md:py-28 bg-[#0a0a0f] relative overflow-hidden px-4 sm:px-6 lg:px-8">
+  <div class="absolute top-0 right-0 w-80 sm:w-[500px] h-80 sm:h-[500px] bg-violet-600/8 rounded-full blur-3xl sm:right-0"></div>
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-    <div class="text-center max-w-2xl mx-auto mb-16 animate-fade-in-up">
-      <div class="flex items-center justify-center gap-3 mb-4">
-        <div class="h-px w-12 bg-gradient-to-r from-transparent to-blue-500"></div>
-        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-violet-400 font-bold uppercase tracking-widest text-sm">Servicios</span>
-        <div class="h-px w-12 bg-gradient-to-l from-transparent to-violet-500"></div>
+  <div class="max-w-7xl mx-auto relative z-10">
+    <div class="text-center max-w-2xl mx-auto mb-12 sm:mb-16 animate-fade-in-up">
+      <div class="flex items-center justify-center gap-2 sm:gap-3 mb-4 flex-wrap">
+        <div class="h-px w-6 sm:w-12 bg-gradient-to-r from-transparent to-blue-500"></div>
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-violet-400 font-bold uppercase tracking-widest text-xs sm:text-sm">Catálogo de Servicios</span>
+        <div class="h-px w-6 sm:w-12 bg-gradient-to-l from-transparent to-violet-500"></div>
       </div>
-      <h2 class="text-4xl md:text-5xl font-black text-white">Soluciones que generan <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">valor real</span></h2>
-      <p class="mt-4 text-gray-400 text-lg">Más que código — construyo herramientas que hacen crecer tu negocio.</p>
+      <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white mb-3 sm:mb-4">Soluciones que generan <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">valor real</span></h2>
+      <p class="text-gray-400 text-sm sm:text-base lg:text-lg">Más que código — construyo herramientas que hacen crecer tu negocio.</p>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       @for (servicio of servicios; track servicio.title; let i = $index) {
-        <div class="service-card animate-fade-in-up" [style.animation-delay]="(i * 100) + 'ms'">
-          <div class="service-card-glow" [style.background]="servicio.glow"></div>
-          <div class="w-14 h-14 rounded-2xl flex items-center justify-center mb-5 transition-all duration-300 service-icon-wrap" [style.background]="servicio.iconBg">
-            <span class="material-symbols-outlined text-[26px]" [style.color]="servicio.iconColor">{{ servicio.icon }}</span>
+        <div class="group bg-[#12121a] rounded-2xl border border-white/5 overflow-hidden hover:border-blue-500/30 transition-all duration-300 hover:shadow-[0_0_30px_rgba(59,130,246,0.15)] flex flex-col h-full animate-fade-in-up" [style.animation-delay]="(i * 100) + 'ms'">
+          
+          <div class="w-full h-40 overflow-hidden relative">
+            <div class="absolute inset-0 bg-gradient-to-t from-[#12121a] to-transparent z-10"></div>
+            <div class="absolute top-4 left-4 z-20 bg-black/50 backdrop-blur border border-white/10 px-2 py-1 rounded text-xs font-bold text-gray-300">{{ servicio.numero }}</div>
+            <img [ngSrc]="servicio.image" [alt]="servicio.title" fill [priority]="i < 2" class="object-cover group-hover:scale-105 transition-transform duration-700">
           </div>
-          <h3 class="text-lg font-bold text-white mb-2">{{ servicio.title }}</h3>
-          <p class="text-gray-500 text-sm leading-relaxed flex-1">{{ servicio.desc }}</p>
-          <div class="mt-5 pt-4 border-t border-white/5 flex flex-wrap gap-1.5">
-            @for (tag of servicio.tags; track tag) {
-              <span class="text-[10px] font-bold px-2 py-1 rounded-md bg-white/5 text-gray-400 border border-white/5">{{ tag }}</span>
-            }
-          </div>
-        </div>
-      }
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════════════════════════════════
-     PROCESO
-══════════════════════════════════════════════════════════════════ -->
-<section id="proceso" class="py-28 bg-[#0d0d14] relative overflow-hidden">
-  <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-blue-600/5 rounded-full blur-3xl"></div>
-
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-    <div class="text-center max-w-2xl mx-auto mb-16 animate-fade-in-up">
-      <div class="flex items-center justify-center gap-3 mb-4">
-        <div class="h-px w-12 bg-gradient-to-r from-transparent to-blue-500"></div>
-        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-violet-400 font-bold uppercase tracking-widest text-sm">Proceso</span>
-        <div class="h-px w-12 bg-gradient-to-l from-transparent to-violet-500"></div>
-      </div>
-      <h2 class="text-4xl md:text-5xl font-black text-white">De la idea al <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">lanzamiento</span></h2>
-      <p class="mt-4 text-gray-400 text-lg">Un proceso claro y transparente en cada etapa.</p>
-    </div>
-
-    <!-- Timeline grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      @for (step of proceso; track step.title; let i = $index) {
-        <div class="process-card animate-fade-in-up" [style.animation-delay]="(i * 120) + 'ms'">
-          <div class="flex items-start gap-4">
-            <div class="process-number" [style.background]="step.gradient">{{ i + 1 }}</div>
-            <div class="flex-1">
-              <div class="flex items-center gap-3 mb-2">
-                <span class="material-symbols-outlined text-[20px]" [style.color]="step.color">{{ step.icon }}</span>
-                <h3 class="text-white font-bold">{{ step.title }}</h3>
+          
+          <div class="p-6 flex flex-col flex-1 relative z-20 -mt-2">
+            <h3 class="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">{{ servicio.title }}</h3>
+            <p class="text-gray-400 text-sm leading-relaxed mb-5">{{ servicio.desc }}</p>
+            
+            <div class="bg-blue-900/20 border border-blue-500/20 rounded-lg p-3 mb-5">
+              <div class="flex items-start gap-2">
+                <span class="material-symbols-outlined text-blue-400 text-[18px] mt-0.5">help</span>
+                <div>
+                  <p class="text-[10px] text-blue-400 font-bold uppercase tracking-wider mb-0.5">El Problema</p>
+                  <p class="text-gray-300 text-sm font-medium leading-tight">{{ servicio.problema }}</p>
+                </div>
               </div>
-              <p class="text-gray-500 text-sm leading-relaxed">{{ step.desc }}</p>
             </div>
-          </div>
-        </div>
-      }
-    </div>
-  </div>
-</section>
 
-<!-- ══════════════════════════════════════════════════════════════════
-     PORTAFOLIO
-══════════════════════════════════════════════════════════════════ -->
-<section id="proyectos" class="py-28 bg-[#0a0a0f] relative overflow-hidden">
-  <div class="absolute top-0 left-0 w-[500px] h-[500px] bg-blue-600/8 rounded-full blur-3xl"></div>
-
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-    <div class="text-center max-w-2xl mx-auto mb-16 animate-fade-in-up">
-      <div class="flex items-center justify-center gap-3 mb-4">
-        <div class="h-px w-12 bg-gradient-to-r from-transparent to-blue-500"></div>
-        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-violet-400 font-bold uppercase tracking-widest text-sm">Portafolio</span>
-        <div class="h-px w-12 bg-gradient-to-l from-transparent to-violet-500"></div>
-      </div>
-      <h2 class="text-4xl md:text-5xl font-black text-white">Proyectos que <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">hablan solos</span></h2>
-      <p class="mt-4 text-gray-400 text-lg">Soluciones reales entregadas a clientes reales.</p>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      @for (proyecto of proyectos; track proyecto.titulo; let i = $index) {
-        <div class="portfolio-card animate-fade-in-up" [style.animation-delay]="(i * 100) + 'ms'">
-          <!-- Header con gradiente -->
-          <div class="portfolio-card-header" [style.background]="proyecto.gradient">
-            <div class="portfolio-card-icon">
-              <span class="material-symbols-outlined text-[32px] text-white">{{ proyecto.icono }}</span>
-            </div>
-            <span class="portfolio-badge">{{ proyecto.categoria }}</span>
-          </div>
-          <!-- Body -->
-          <div class="p-5">
-            <h3 class="text-white font-bold text-base mb-2 group-hover:text-blue-400 transition-colors">{{ proyecto.titulo }}</h3>
-            <p class="text-gray-500 text-sm leading-relaxed mb-4">{{ proyecto.descripcion }}</p>
-            <div class="flex flex-wrap gap-1.5">
-              @for (tag of proyecto.tags; track tag) {
-                <span class="text-[10px] font-bold px-2 py-1 rounded-md bg-white/5 text-gray-400 border border-white/5 uppercase tracking-wide">{{ tag }}</span>
+            <ul class="space-y-2.5 mb-6 flex-1">
+              @for (beneficio of servicio.beneficios; track beneficio) {
+                <li class="flex items-start gap-2">
+                  <span class="material-symbols-outlined text-emerald-400 text-[18px]">check_circle</span>
+                  <span class="text-gray-400 text-sm">{{ beneficio }}</span>
+                </li>
+              }
+            </ul>
+            <div class="flex flex-wrap gap-2 mt-auto pt-4 border-t border-white/5">
+              @for (tag of servicio.tags; track tag) {
+                <span class="text-xs font-semibold px-3 py-1.5 rounded-md bg-white/5 text-gray-400 border border-white/10 backdrop-blur-sm">{{ tag }}</span>
               }
             </div>
+            <div class="table-actions hidden"></div>
           </div>
         </div>
       }
@@ -273,124 +201,253 @@
   </div>
 </section>
 
-<!-- ══════════════════════════════════════════════════════════════════
-     TESTIMONIOS
-══════════════════════════════════════════════════════════════════ -->
-<section id="reviews" class="py-28 bg-[#0d0d14] border-y border-white/5">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center animate-fade-in-up">
-    <div class="flex items-center justify-center gap-3 mb-4">
-      <div class="h-px w-12 bg-gradient-to-r from-transparent to-yellow-500"></div>
-      <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-400 font-bold uppercase tracking-widest text-sm">Testimonios</span>
-      <div class="h-px w-12 bg-gradient-to-l from-transparent to-orange-400"></div>
-    </div>
-    <h2 class="text-4xl md:text-5xl font-black text-white mb-4">Lo que dicen <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-400">mis clientes</span></h2>
-    <p class="text-gray-400 text-lg mb-12 max-w-xl mx-auto">Resultados reales que hablan por sí solos.</p>
+<section id="proceso" class="py-16 md:py-28 bg-[#0d0d14] relative overflow-hidden px-4 sm:px-6 lg:px-8">
+  <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-96 sm:w-[800px] h-96 sm:h-[400px] bg-blue-600/5 rounded-full blur-3xl"></div>
 
-    <div class="elfsight-app-7b308c20-3d98-41a6-b0eb-c052241a53c0 max-w-5xl mx-auto mb-10" data-elfsight-app-lazy></div>
+  <div class="max-w-6xl mx-auto relative z-10">
+    <div class="text-center max-w-2xl mx-auto mb-12 sm:mb-20 animate-fade-in-up">
+      <div class="flex items-center justify-center gap-2 sm:gap-3 mb-4 flex-wrap">
+        <div class="h-px w-6 sm:w-12 bg-gradient-to-r from-transparent to-blue-500"></div>
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-violet-400 font-bold uppercase tracking-widest text-xs sm:text-sm">Metodología</span>
+        <div class="h-px w-6 sm:w-12 bg-gradient-to-l from-transparent to-violet-500"></div>
+      </div>
+      <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white mb-3 sm:mb-4">De la idea al <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">lanzamiento</span></h2>
+      <p class="text-gray-400 text-sm sm:text-base lg:text-lg">Un proceso claro, transparente y colaborativo en cada etapa.</p>
+    </div>
+
+    <div class="relative">
+      <div class="hidden lg:block absolute top-20 sm:top-24 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-600/30 via-purple-600/50 to-pink-600/30 z-0"></div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 relative z-10">
+        @for (step of proceso; track step.title; let i = $index) {
+          <div class="group animate-fade-in-up" [style.animation-delay]="(i * 150) + 'ms'">
+            <div class="mb-4 sm:mb-6 relative">
+              <div class="w-20 sm:w-24 h-20 sm:h-24 mx-auto rounded-full flex items-center justify-center relative group/number"
+                   [style.background]="step.gradient">
+                <div class="absolute inset-0 rounded-full opacity-0 group-hover/number:opacity-100 transition-opacity duration-500 blur-xl"
+                     [style]="'background: ' + step.gradient + ';'"></div>
+                <div class="absolute inset-0 rounded-full opacity-0 group-hover/number:opacity-50 transition-opacity duration-500"
+                     [style]="'box-shadow: 0 0 40px ' + step.color + '30;'"></div>
+                <span class="relative text-3xl sm:text-4xl font-black text-white drop-shadow-lg">{{ i + 1 }}</span>
+              </div>
+              @if (i < proceso.length - 1) {
+                <div class="lg:hidden flex justify-center mt-3 sm:mt-4">
+                  <span class="material-symbols-outlined text-gray-600 text-lg">expand_more</span>
+                </div>
+              }
+            </div>
+
+            <div class="text-center space-y-3 sm:space-y-4 group-hover:scale-105 transition-transform duration-300">
+              <div class="flex justify-center">
+                <div class="relative w-12 sm:w-14 h-12 sm:h-14 rounded-lg sm:rounded-xl flex items-center justify-center bg-gradient-to-br from-white/10 to-white/5 border border-white/20 group-hover:border-blue-400/50 group-hover:from-white/15 group-hover:to-white/10 transition-all duration-300"
+                     [style.borderColor]="step.color + '40'">
+                  <span class="material-symbols-outlined text-lg sm:text-2xl transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12" [style.color]="step.color">{{ step.icon }}</span>
+                </div>
+              </div>
+              <h3 class="text-sm sm:text-lg font-bold text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:to-purple-500 transition-all duration-300">
+                {{ step.title }}
+              </h3>
+              <p class="text-gray-500 text-xs sm:text-sm leading-relaxed group-hover:text-gray-300 transition-colors duration-300 line-clamp-3">
+                {{ step.desc }}
+              </p>
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="mt-12 sm:mt-16 text-center animate-fade-in-up" [style.animation-delay]="(proceso.length * 150 + 200) + 'ms'">
+        <div class="inline-flex flex-col items-center gap-3 sm:gap-4">
+          <div class="w-14 sm:w-16 h-14 sm:h-16 rounded-full bg-gradient-to-br from-emerald-500/20 to-teal-500/20 border border-emerald-400/40 flex items-center justify-center">
+            <span class="material-symbols-outlined text-2xl sm:text-3xl text-emerald-400">check_circle</span>
+          </div>
+          <div>
+            <p class="text-white font-bold text-sm sm:text-lg">Proyecto en Producción</p>
+            <p class="text-gray-400 text-xs sm:text-sm mt-1">Con soporte post-lanzamiento incluido</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="proyectos" class="py-16 md:py-28 bg-[#0a0a0f] relative overflow-hidden px-4 sm:px-6 lg:px-8">
+  <div class="absolute top-0 left-0 w-80 sm:w-[500px] h-80 sm:h-[500px] bg-blue-600/8 rounded-full blur-3xl sm:left-0"></div>
+  <div class="absolute bottom-0 right-0 w-64 sm:w-[400px] h-64 sm:h-[400px] bg-purple-600/8 rounded-full blur-3xl sm:right-0"></div>
+
+  <div class="max-w-7xl mx-auto relative z-10">
+
+    <div class="text-center max-w-2xl mx-auto mb-12 sm:mb-16 animate-fade-in-up">
+      <div class="flex items-center justify-center gap-2 sm:gap-3 mb-4 flex-wrap">
+        <div class="h-px w-6 sm:w-12 bg-gradient-to-r from-transparent to-blue-500"></div>
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-violet-400 font-bold uppercase tracking-widest text-xs sm:text-sm">Casos de Éxito</span>
+        <div class="h-px w-6 sm:w-12 bg-gradient-to-l from-transparent to-violet-500"></div>
+      </div>
+      <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white mb-3 sm:mb-4">Soluciones que <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">transforman</span></h2>
+      <p class="text-gray-400 text-sm sm:text-base lg:text-lg">Resultados operativos y financieros entregados a clientes reales.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+      @for (proyecto of proyectos; track proyecto.titulo; let i = $index) {
+        <div class="group relative rounded-xl sm:rounded-2xl overflow-hidden flex flex-col h-full animate-fade-in-up hover:z-20"
+             [style.animation-delay]="(i * 100) + 'ms'">
+
+          <div class="absolute inset-0 bg-[#12121a] backdrop-blur-xl border border-white/5 rounded-xl sm:rounded-2xl group-hover:border-blue-400/50 transition-all duration-500"></div>
+
+          <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl sm:rounded-2xl"
+               style="background: radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.15), transparent 70%);"></div>
+
+          <div class="relative z-10 flex flex-col h-full">
+
+            <div class="relative h-48 sm:h-56 overflow-hidden rounded-t-xl sm:rounded-t-2xl">
+              <img [ngSrc]="proyecto.imagen" [alt]="proyecto.titulo" fill [priority]="i < 2" class="object-cover group-hover:scale-110 transition-transform duration-700">
+
+              <div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#12121a]/90 z-10"></div>
+
+              <div class="absolute top-2 sm:top-4 right-2 sm:right-4 flex items-center gap-2 z-20">
+                <span class="text-xs font-bold px-2 sm:px-3 py-1 sm:py-1.5 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white/90 hover:bg-white/30 transition-all whitespace-nowrap">
+                  {{ proyecto.categoria }}
+                </span>
+              </div>
+            </div>
+
+            <div class="p-4 sm:p-6 space-y-3 sm:space-y-4 flex-1 flex flex-col">
+
+              <div class="space-y-1 sm:space-y-2">
+                <h3 class="text-sm sm:text-xl font-bold text-white group-hover:text-blue-400 transition-colors duration-300 line-clamp-2">
+                  {{ proyecto.titulo }}
+                </h3>
+                <div class="h-0.5 w-6 sm:w-8 bg-gradient-to-r from-blue-500 to-purple-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              </div>
+
+              <p class="text-gray-400 text-xs sm:text-sm leading-relaxed flex-1 line-clamp-3">
+                {{ proyecto.descripcion }}
+              </p>
+
+              <div class="h-0.5 bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+
+              <div class="space-y-2 sm:space-y-3">
+                <p class="text-xs font-bold text-gray-500 uppercase tracking-widest">Stack</p>
+                <div class="flex flex-wrap gap-1 sm:gap-2">
+                  @for (tag of proyecto.tags | slice:0:3; track tag) {
+                    <span class="text-[10px] sm:text-xs font-bold px-2 py-0.5 sm:py-1.5 rounded bg-white/5 text-gray-400 border border-white/5 transition-all uppercase tracking-wide whitespace-nowrap">
+                      {{ tag }}
+                    </span>
+                  }
+                </div>
+              </div>
+              <div class="table-actions hidden"></div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<section id="reviews" class="py-16 md:py-28 bg-[#0d0d14] border-y border-white/5 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto text-center animate-fade-in-up">
+    <div class="flex items-center justify-center gap-2 sm:gap-3 mb-4 flex-wrap">
+      <div class="h-px w-6 sm:w-12 bg-gradient-to-r from-transparent to-yellow-500"></div>
+      <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-400 font-bold uppercase tracking-widest text-xs sm:text-sm">Testimonios</span>
+      <div class="h-px w-6 sm:w-12 bg-gradient-to-l from-transparent to-orange-400"></div>
+    </div>
+    <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white mb-3 sm:mb-4">Lo que dicen <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-400">mis clientes</span></h2>
+    <p class="text-gray-400 text-sm sm:text-base lg:text-lg mb-8 sm:mb-12 max-w-xl mx-auto">Resultados reales que hablan por sí solos.</p>
+
+    <div class="elfsight-app-7b308c20-3d98-41a6-b0eb-c052241a53c0 max-w-5xl mx-auto mb-8 sm:mb-10" data-elfsight-app-lazy></div>
 
     <a href="https://g.page/r/CevjEafxXVMAEBM/review" target="_blank"
-      class="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl border border-yellow-500/30 bg-yellow-500/10 text-yellow-400 font-bold hover:bg-yellow-500/20 transition-colors">
-      <span class="material-symbols-outlined text-[20px]">star</span>
-      Dejar una Reseña en Google
+      class="inline-flex items-center gap-2 px-4 sm:px-8 py-2.5 sm:py-3.5 rounded-lg sm:rounded-xl border border-yellow-500/30 bg-yellow-500/10 text-yellow-400 font-bold text-sm sm:text-base hover:bg-yellow-500/20 transition-colors">
+      <span class="material-symbols-outlined text-[18px] sm:text-[20px]">star</span>
+      Dejar Reseña
     </a>
   </div>
 </section>
 
-<!-- ══════════════════════════════════════════════════════════════════
-     CONTACTO
-══════════════════════════════════════════════════════════════════ -->
-<section id="contacto" class="py-28 bg-[#0a0a0f] relative overflow-hidden">
+<section id="contacto" class="py-16 md:py-28 bg-[#0a0a0f] relative overflow-hidden px-4 sm:px-6 lg:px-8">
   <div class="absolute top-1/2 right-0 w-96 h-96 bg-violet-600/10 rounded-full blur-3xl -translate-y-1/2"></div>
-  <div class="absolute top-1/2 left-0 w-96 h-96 bg-blue-600/8 rounded-full blur-3xl -translate-y-1/2"></div>
+  <div class="absolute top-1/2 left-0 w-80 sm:w-96 h-80 sm:h-96 bg-blue-600/8 rounded-full blur-3xl -translate-y-1/2"></div>
 
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-
-    <div class="text-center max-w-2xl mx-auto mb-14 animate-fade-in-up">
-      <div class="flex items-center justify-center gap-3 mb-4">
-        <div class="h-px w-12 bg-gradient-to-r from-transparent to-blue-500"></div>
-        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-violet-400 font-bold uppercase tracking-widest text-sm">Contacto</span>
-        <div class="h-px w-12 bg-gradient-to-l from-transparent to-violet-500"></div>
+  <div class="max-w-6xl mx-auto relative z-10">
+    <div class="text-center max-w-2xl mx-auto mb-12 sm:mb-14 animate-fade-in-up">
+      <div class="flex items-center justify-center gap-2 sm:gap-3 mb-4 flex-wrap">
+        <div class="h-px w-6 sm:w-12 bg-gradient-to-r from-transparent to-blue-500"></div>
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-violet-400 font-bold uppercase tracking-widest text-xs sm:text-sm">Contacto</span>
+        <div class="h-px w-6 sm:w-12 bg-gradient-to-l from-transparent to-violet-500"></div>
       </div>
-      <h2 class="text-4xl md:text-5xl font-black text-white">¿Listo para <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">empezar?</span></h2>
-      <p class="mt-4 text-gray-400 text-lg">Cuéntame tu idea y te doy una consultoría gratuita.</p>
+      <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white mb-3 sm:mb-4">¿Listo para <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">empezar?</span></h2>
+      <p class="mt-2 sm:mt-4 text-gray-400 text-sm sm:text-base lg:text-lg">Cuéntame tu idea y te doy una consultoría gratuita.</p>
     </div>
 
     <div class="contact-grid animate-fade-in-up delay-100">
-
-      <!-- Lado izquierdo: datos de contacto -->
       <div class="contact-info-panel">
-        <h3 class="text-white font-bold text-xl mb-6">Hablemos directamente</h3>
-        <div class="space-y-4 mb-8">
+        <h3 class="text-white font-bold text-lg sm:text-xl mb-4 sm:mb-6">Hablemos directamente</h3>
+        <div class="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
           @for (info of contactInfo; track info.label) {
             <a [href]="info.href" target="_blank"
-              class="flex items-center gap-4 p-3 rounded-xl bg-white/5 border border-white/5 hover:border-blue-500/30 hover:bg-blue-500/5 transition-all group">
-              <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0" [style.background]="info.bgColor">
-                <span class="material-symbols-outlined text-[18px]" [style.color]="info.color">{{ info.icon }}</span>
+              class="flex items-center gap-3 sm:gap-4 p-2.5 sm:p-3 rounded-lg sm:rounded-xl bg-white/5 border border-white/5 hover:border-blue-500/30 hover:bg-blue-500/5 transition-all group">
+              <div class="w-9 sm:w-10 h-9 sm:h-10 rounded-lg flex items-center justify-center shrink-0" [style.background]="info.bgColor">
+                <span class="material-symbols-outlined text-[16px] sm:text-[18px]" [style.color]="info.color">{{ info.icon }}</span>
               </div>
-              <div>
+              <div class="min-w-0">
                 <p class="text-gray-400 text-xs">{{ info.label }}</p>
-                <p class="text-white text-sm font-medium group-hover:text-blue-400 transition-colors">{{ info.value }}</p>
+                <p class="text-white text-xs sm:text-sm font-medium group-hover:text-blue-400 transition-colors truncate">{{ info.value }}</p>
               </div>
             </a>
           }
         </div>
 
-        <!-- Por qué elegirme -->
-        <div class="space-y-3">
+        <div class="space-y-2 sm:space-y-3">
           <p class="text-gray-500 text-xs font-bold uppercase tracking-widest">Por qué elegirme</p>
           @for (reason of whyMe; track reason) {
             <div class="flex items-center gap-2">
-              <span class="material-symbols-outlined text-emerald-400 text-[16px]">check_circle</span>
-              <span class="text-gray-400 text-sm">{{ reason }}</span>
+              <span class="material-symbols-outlined text-emerald-400 text-[14px] sm:text-[16px] flex-shrink-0">check_circle</span>
+              <span class="text-gray-400 text-xs sm:text-sm">{{ reason }}</span>
             </div>
           }
         </div>
       </div>
 
-      <!-- Lado derecho: formulario -->
       <div class="contact-form-panel">
         <form (submit)="enviarWhatsApp($event)" class="space-y-4">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div>
               <label class="block text-gray-400 text-xs font-bold uppercase tracking-wide mb-2">Nombre</label>
-              <input type="text" required class="contact-input" placeholder="Tu nombre completo">
+              <input type="text" required class="contact-input text-sm" placeholder="Tu nombre completo">
             </div>
             <div>
               <label class="block text-gray-400 text-xs font-bold uppercase tracking-wide mb-2">Correo</label>
-              <input type="email" required class="contact-input" placeholder="tu@correo.com">
+              <input type="email" required class="contact-input text-sm" placeholder="tu@correo.com">
             </div>
           </div>
           <div>
             <label class="block text-gray-400 text-xs font-bold uppercase tracking-wide mb-2">Tipo de proyecto</label>
-            <select class="contact-input">
+            <select class="contact-input text-sm">
               <option value="" disabled selected>Selecciona una opción</option>
-              <option>Aplicación Web / SaaS</option>
-              <option>Página de Impacto</option>
-              <option>App Móvil (Flutter)</option>
-              <option>Automatización</option>
+              <option>Página de Presencia Digital (Web)</option>
+              <option>Aplicación Web / Sistema de Gestión</option>
+              <option>Aplicación Web Progresiva (PWA)</option>
+              <option>Aplicación Móvil Nativa (Flutter)</option>
+              <option>Tech Solutions Care / Automatización</option>
               <option>Otro</option>
             </select>
           </div>
           <div>
             <label class="block text-gray-400 text-xs font-bold uppercase tracking-wide mb-2">Cuéntame tu idea</label>
-            <textarea required rows="4" class="contact-input resize-none" placeholder="Describe brevemente tu proyecto, objetivos y plazos..."></textarea>
+            <textarea required rows="3" class="contact-input text-sm resize-none" placeholder="Describe brevemente tu proyecto, objetivos y plazos..."></textarea>
           </div>
-          <button type="submit" class="contact-submit-btn">
-            <span class="material-symbols-outlined text-[20px]">send</span>
+          <button type="submit" class="contact-submit-btn text-sm">
+            <span class="material-symbols-outlined text-[18px]">send</span>
             Enviar por WhatsApp
           </button>
         </form>
       </div>
-
     </div>
   </div>
 </section>
 
-
-
-<!-- WhatsApp FAB -->
 <a href="https://wa.me/5215539948515?text=¡Hola!%20Vi%20tu%20sitio%20web%20y%20me%20gustaría%20hablar%20sobre%20un%20proyecto."
    target="_blank"
-   class="fixed bottom-6 right-6 md:bottom-8 md:right-8 w-14 h-14 bg-[#25D366] text-white rounded-full flex items-center justify-center shadow-2xl shadow-green-500/30 hover:scale-110 hover:bg-[#128C7E] transition-all duration-300 z-[100]">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" class="w-7 h-7 filter invert">
+   class="fixed bottom-6 right-6 w-12 h-12 md:bottom-8 md:right-8 md:w-14 md:h-14 bg-[#25D366] text-white rounded-full flex items-center justify-center shadow-2xl shadow-green-500/30 hover:scale-110 hover:bg-[#128C7E] transition-all duration-300 z-[100]">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" class="w-6 h-6 md:w-7 md:h-7 filter invert">
 </a>

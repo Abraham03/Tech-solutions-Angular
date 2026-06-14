@@ -1,0 +1,23 @@
+<div class="scroll-wrapper">
+  <div
+    class="scroll-container"
+    [style]="'transform: ' + containerTransform + '; opacity: ' + containerOpacity">
+
+    <!-- Título (puede ser proyectado) -->
+    <div class="scroll-title">
+      <ng-content select="[title]">
+        <h2>{{ title }}</h2>
+      </ng-content>
+    </div>
+
+    <!-- Contenido proyectado -->
+    <div class="scroll-content">
+      <ng-content></ng-content>
+    </div>
+  </div>
+
+  <!-- Indicador de progreso visual -->
+  <div class="scroll-indicator">
+    <div class="progress-bar" [style.width.%]="scrollProgress * 100"></div>
+  </div>
+</div>

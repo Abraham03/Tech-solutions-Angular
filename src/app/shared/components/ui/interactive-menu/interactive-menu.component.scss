@@ -1,0 +1,204 @@
+// ═══════════════════════════════════════════════════════════════════════════════
+// INTERACTIVE MENU - BOTTOM NAV (MOBILE) + TOP STICKY (DESKTOP)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+:host {
+  display: block;
+  
+  @media (max-width: 767px) {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 9999 !important;
+    width: 100% !important;
+  }
+}
+
+.interactive-menu-container {
+  width: 100%;
+  
+  // 📱 MOBILE: Fixed bottom (como app nativa iOS/Android)
+  @media (max-width: 767px) {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 9999 !important;
+    background: rgba(13, 13, 20, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  // 💻 DESKTOP: Sticky top
+  @media (min-width: 768px) {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: rgba(13, 13, 20, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+}
+
+.menu-nav {
+  --accent-color: #3b82f6;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-items-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  
+  @media (max-width: 767px) {
+    padding: 0.5rem 0.25rem;
+    min-height: 60px;
+  }
+  
+  @media (min-width: 768px) {
+    justify-content: center;
+    gap: 1rem;
+    padding: 1rem 2rem;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+}
+
+.menu-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  color: rgba(255, 255, 255, 0.6);
+  transition: all 0.3s ease;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  
+  @media (max-width: 767px) {
+    flex: 1;
+    padding: 0.5rem 0.25rem;
+    border-radius: 0.5rem;
+    min-width: 0;
+    
+    &:active {
+      transform: scale(0.9);
+    }
+  }
+  
+  @media (min-width: 768px) {
+    flex-direction: row;
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.75rem;
+    
+    &:hover {
+      background: rgba(59, 130, 246, 0.1);
+      color: white;
+    }
+  }
+  
+  &.active {
+    color: var(--accent-color);
+    
+    .menu-icon {
+      transform: scale(1.15);
+      filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.6));
+    }
+    
+    @media (max-width: 767px) {
+      .menu-label-mobile {
+        opacity: 1;
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+.menu-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  
+  @media (max-width: 767px) {
+    width: 24px;
+    height: 24px;
+  }
+  
+  @media (min-width: 768px) {
+    width: 20px;
+    height: 20px;
+  }
+  
+  svg {
+    width: 100%;
+    height: 100%;
+    stroke: currentColor;
+    fill: none;
+  }
+}
+
+.menu-label-mobile {
+  display: block;
+  font-size: 0.625rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  opacity: 0.8;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+  
+  @media (min-width: 768px) {
+    display: none;
+  }
+}
+
+.menu-label {
+  display: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  
+  @media (min-width: 768px) {
+    display: inline;
+  }
+}
+
+.sliding-line {
+  position: absolute;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-color), rgba(139, 92, 246, 0.8));
+  border-radius: 2px;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.6);
+  pointer-events: none;
+  
+  @media (max-width: 767px) {
+    top: 0;
+  }
+  
+  @media (min-width: 768px) {
+    bottom: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-item,
+  .menu-icon,
+  .sliding-line {
+    transition: none !important;
+  }
+}

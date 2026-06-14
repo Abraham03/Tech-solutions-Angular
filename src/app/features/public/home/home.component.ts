@@ -1,16 +1,30 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { Meta, Title } from '@angular/platform-browser'; // Importación para SEO
+import { InteractiveMenuComponent } from '../../../shared/components/ui/interactive-menu/interactive-menu.component';
+import { ContainerScrollComponent } from '../../../shared/components/ui/container-scroll/container-scroll.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, InteractiveMenuComponent, NgOptimizedImage],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
 
-  // ── Hero stats ─────────────────────────────────────────────────────────
+  // ✅ Inyección de dependencias para el SEO
+  constructor(private meta: Meta, private title: Title) {}
+
+  // ✅ MENÚ ITEMS CON NOMBRES DE ICONOS (sin componentes lucide)
+  menuItems = [
+    { label: 'Inicio', icon: 'home', id: 'inicio', targetId: 'inicio' },
+    { label: 'Servicios', icon: 'briefcase', id: 'servicios', targetId: 'servicios' },
+    { label: 'Proyectos', icon: 'folder-open', id: 'proyectos', targetId: 'proyectos' },
+    { label: 'Reseñas', icon: 'star', id: 'reviews', targetId: 'reviews' },
+    { label: 'Contacto', icon: 'mail', id: 'contacto', targetId: 'contacto' },
+  ];
+
   heroStats = [
     { icon: 'calendar_month', value: '+5 años',  label: 'de experiencia' },
     { icon: 'group',          value: '15+',       label: 'proyectos entregados' },
@@ -18,13 +32,12 @@ export class HomeComponent implements OnInit {
   ];
 
   heroBars = [
-    { label: 'Angular',   pct: '92%', color: 'linear-gradient(90deg,#dd0031,#c3002f)' },
-    { label: 'Laravel',   pct: '85%', color: 'linear-gradient(90deg,#f55247,#ff6b6b)' },
-    { label: 'Flutter',   pct: '80%', color: 'linear-gradient(90deg,#54c5f8,#01579b)' },
-    { label: 'Spring',    pct: '75%', color: 'linear-gradient(90deg,#6db33f,#3c763d)' },
+    { label: 'Angular',  pct: '92%', color: 'linear-gradient(90deg,#dd0031,#c3002f)' },
+    { label: 'Laravel',  pct: '85%', color: 'linear-gradient(90deg,#f55247,#ff6b6b)' },
+    { label: 'Flutter',  pct: '80%', color: 'linear-gradient(90deg,#54c5f8,#01579b)' },
+    { label: 'Spring',   pct: '75%', color: 'linear-gradient(90deg,#6db33f,#3c763d)' },
   ];
 
-  // ── Counter stats ──────────────────────────────────────────────────────
   counterStats = [
     { icon: 'folder_open',  value: '15+',  label: 'Proyectos entregados', color: '#60a5fa', bgColor: 'rgba(96,165,250,0.1)'  },
     { icon: 'group',        value: '10+',  label: 'Clientes satisfechos', color: '#34d399', bgColor: 'rgba(52,211,153,0.1)'  },
@@ -32,15 +45,13 @@ export class HomeComponent implements OnInit {
     { icon: 'emoji_events', value: '5+',   label: 'Años de experiencia',  color: '#fbbf24', bgColor: 'rgba(251,191,36,0.1)'  },
   ];
 
-  // ── About features ─────────────────────────────────────────────────────
   aboutFeatures = [
-    { icon: 'speed',          title: 'Entrega ágil',         desc: 'Resultados en semanas, no meses.',          color: '#60a5fa', bgColor: 'rgba(96,165,250,0.1)'  },
-    { icon: 'lock',           title: 'Código de calidad',    desc: 'Limpio, seguro y escalable.',               color: '#34d399', bgColor: 'rgba(52,211,153,0.1)'  },
-    { icon: 'support_agent',  title: 'Soporte continuo',     desc: 'Acompañamiento post-lanzamiento.',          color: '#a78bfa', bgColor: 'rgba(167,139,250,0.1)' },
+    { icon: 'speed',          title: 'Entrega ágil',         desc: 'Resultados en semanas, no meses.',         color: '#60a5fa', bgColor: 'rgba(96,165,250,0.1)'  },
+    { icon: 'lock',           title: 'Código de calidad',    desc: 'Limpio, seguro y escalable.',              color: '#34d399', bgColor: 'rgba(52,211,153,0.1)'  },
+    { icon: 'support_agent',  title: 'Soporte continuo',     desc: 'Acompañamiento post-lanzamiento.',         color: '#a78bfa', bgColor: 'rgba(167,139,250,0.1)' },
     { icon: 'handshake',      title: 'Comunicación directa', desc: 'Sin intermediarios ni burocracia.',         color: '#fbbf24', bgColor: 'rgba(251,191,36,0.1)'  },
   ];
 
-  // ── Tech stack ─────────────────────────────────────────────────────────
   techStack = [
     { name: 'Angular',      iconUrl: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/angular/angular-original.svg', color: '#dd0031' },
     { name: 'Laravel',      iconUrl: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/laravel/laravel-original.svg', color: '#f55247' },
@@ -59,156 +70,165 @@ export class HomeComponent implements OnInit {
   // ── Servicios ──────────────────────────────────────────────────────────
   servicios = [
     {
-      icon: 'laptop_mac',
-      title: 'Aplicaciones Web',
-      desc: 'SaaS, dashboards y portales complejos que automatizan procesos y centralizan la operación de tu negocio.',
-      tags: ['Angular', 'Laravel', 'MySQL'],
-      iconColor: '#60a5fa', iconBg: 'rgba(96,165,250,0.12)',
-      glow: 'radial-gradient(ellipse at top left, rgba(96,165,250,0.08) 0%, transparent 70%)',
+      numero: '1/5',
+      image: 'img/services/Pagina Web.webp',
+      title: 'Páginas Web (Presencia Digital)',
+      desc: 'Para negocios locales que necesitan existir en Google y captar clientes vía WhatsApp.',
+      problema: '¿Tus clientes potenciales no te encuentran en Google?',
+      beneficios: [
+        'Posicionamiento en buscadores',
+        'Captura de leads automática por WhatsApp',
+        'Disponible 24/7 para nuevos clientes'
+      ],
+      tags: ['HTML5', 'JS', 'Tailwind CSS']
     },
     {
-      icon: 'rocket_launch',
-      title: 'Páginas de Impacto',
-      desc: 'Sitios rápidos, atractivos y optimizados para convertir visitantes en clientes desde el primer scroll.',
-      tags: ['Angular', 'Tailwind', 'SEO'],
-      iconColor: '#34d399', iconBg: 'rgba(52,211,153,0.12)',
-      glow: 'radial-gradient(ellipse at top left, rgba(52,211,153,0.08) 0%, transparent 70%)',
+      numero: '2/5',
+      image: 'img/services/Dashboard.webp',
+      title: 'Aplicaciones Web (Gestión Operativa)',
+      desc: 'Sistemas a la medida para clínicas o empresas.',
+      problema: '¿Pierdes tiempo en procesos manuales y archivos dispersos?',
+      beneficios: [
+        'Gestión centralizada de datos',
+        'Reportes automáticos en tiempo real',
+        'Control de acceso por perfiles'
+      ],
+      tags: ['Angular', 'Laravel', 'MySQL']
     },
     {
-      icon: 'phone_iphone',
-      title: 'Apps Móviles',
-      desc: 'Aplicaciones nativas para iOS y Android de alto rendimiento construidas con Flutter y Dart.',
-      tags: ['Flutter', 'Dart', 'Firebase'],
-      iconColor: '#a78bfa', iconBg: 'rgba(167,139,250,0.12)',
-      glow: 'radial-gradient(ellipse at top left, rgba(167,139,250,0.08) 0%, transparent 70%)',
+      numero: '3/5',
+      image: 'img/services/Web Page.webp',
+      title: 'App Web Progresiva (PWA)',
+      desc: 'Software de campo instalable en la pantalla del celular.',
+      problema: '¿Necesitas trabajar sin conexión a internet?',
+      beneficios: [
+        'Funciona completamente offline',
+        'Se instala como app nativa',
+        'Sincroniza automáticamente al conectar'
+      ],
+      tags: ['Angular', 'Service Workers']
     },
     {
-      icon: 'settings_suggest',
-      title: 'Automatización',
-      desc: 'Elimina tareas repetitivas con software a la medida. Más eficiencia, menos errores, mayor rentabilidad.',
-      tags: ['API REST', 'Bots', 'Integraciones'],
-      iconColor: '#fbbf24', iconBg: 'rgba(251,191,36,0.12)',
-      glow: 'radial-gradient(ellipse at top left, rgba(251,191,36,0.08) 0%, transparent 70%)',
+      numero: '4/5',
+      image: 'img/services/App Moviles.webp',
+      title: 'Aplicaciones Móviles Nativas',
+      desc: 'Presencia en App Store y Google Play.',
+      problema: '¿Necesitas acceso total al hardware del dispositivo?',
+      beneficios: [
+        'Publicado en App Store y Google Play',
+        'Mejor rendimiento y velocidad',
+        'Experiencia nativa y familiar'
+      ],
+      tags: ['Flutter', 'Dart', 'Firebase']
     },
+    {
+      numero: '5/5',
+      image: 'img/services/Cloud Hosting.webp',
+      title: 'Tech Solutions Care & Automatización',
+      desc: 'Mantenimiento mensual, alojamiento en la nube, seguridad SSL.',
+      problema: '¿Te preocupa la seguridad y el mantenimiento continuo?',
+      beneficios: [
+        'Soporte técnico 24/7 incluido',
+        'Actualizaciones automáticas de seguridad',
+        'Hosting en infraestructura confiable'
+      ],
+      tags: ['Soporte', 'Hosting', 'Automatización']
+    }
   ];
 
-  // ── Proceso ────────────────────────────────────────────────────────────
   proceso = [
-    {
-      icon: 'lightbulb',
-      title: 'Descubrimiento y Estrategia',
-      desc: 'Entendemos a fondo tus objetivos. Definimos alcance, funcionalidades clave y estrategia tecnológica ideal.',
-      color: '#60a5fa',
-      gradient: 'linear-gradient(135deg, #3b82f6, #6366f1)',
-    },
-    {
-      icon: 'design_services',
-      title: 'Prototipado y Diseño UX/UI',
-      desc: 'Creamos un prototipo interactivo para validar la experiencia de usuario antes de escribir una sola línea de código.',
-      color: '#a78bfa',
-      gradient: 'linear-gradient(135deg, #8b5cf6, #d946ef)',
-    },
-    {
-      icon: 'code',
-      title: 'Desarrollo Ágil',
-      desc: 'Construimos con código limpio y escalable, manteniéndote informado con avances periódicos y demostraciones.',
-      color: '#34d399',
-      gradient: 'linear-gradient(135deg, #10b981, #059669)',
-    },
-    {
-      icon: 'rocket_launch',
-      title: 'Revisión y Despliegue',
-      desc: 'Pruebas exhaustivas y despliegue en producción seguro y optimizado. Con soporte post-lanzamiento incluido.',
-      color: '#fbbf24',
-      gradient: 'linear-gradient(135deg, #f59e0b, #ef4444)',
-    },
+    { icon: 'lightbulb', title: 'Descubrimiento y Estrategia', desc: 'Entendemos a fondo tus objetivos.', color: '#60a5fa', gradient: 'linear-gradient(135deg, #3b82f6, #6366f1)' },
+    { icon: 'design_services', title: 'Prototipado y Diseño UX/UI', desc: 'Creamos un prototipo interactivo.', color: '#a78bfa', gradient: 'linear-gradient(135deg, #8b5cf6, #d946ef)' },
+    { icon: 'code', title: 'Desarrollo Ágil', desc: 'Construimos con código limpio y escalable.', color: '#34d399', gradient: 'linear-gradient(135deg, #10b981, #059669)' },
+    { icon: 'rocket_launch', title: 'Revisión y Despliegue', desc: 'Pruebas exhaustivas y despliegue en producción.', color: '#fbbf24', gradient: 'linear-gradient(135deg, #f59e0b, #ef4444)' },
   ];
 
-  // ── Portafolio ─────────────────────────────────────────────────────────
+  // ── Portafolio Actualizado a Mockups ─────────────────────────────────────
   proyectos = [
     {
-      icono: 'sports_basketball',
+      imagen: 'img/proyects/App Movil Basket.webp',
       titulo: 'Basket Pro — App Móvil',
-      descripcion: 'App multiplataforma para control en tiempo real de partidos. Conexión vía IP/HDMI, gestión de alineaciones y generación de PDFs.',
-      tags: ['Flutter', 'Dart', 'WebSockets', 'SQLite'],
-      categoria: 'App Móvil',
-      gradient: 'linear-gradient(135deg, #f97316 0%, #ef4444 100%)',
+      descripcion: 'Digitalización integral de partidos. Eliminó el uso de papel en mesas de control y automatizó la generación de reportes en tiempo real.',
+      tags: ['Flutter', 'WebSockets', 'SQLite'],
+      categoria: 'Solución Móvil',
     },
     {
-      icono: 'admin_panel_settings',
+      imagen: 'img/proyects/Dashboard Basketball.webp',
       titulo: 'Dashboard Admin para Ligas',
-      descripcion: 'Panel backend para administración integral de ligas deportivas: equipos, jugadores, torneos y generación automática de calendarios.',
-      tags: ['Angular', 'Spring Boot', 'MySQL', 'API REST'],
-      categoria: 'SaaS',
-      gradient: 'linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)',
+      descripcion: 'SaaS de gestión deportiva que reduce horas de trabajo administrativo centralizando equipos, finanzas y calendarios automáticos.',
+      tags: ['Angular', 'Spring Boot', 'MySQL'],
+      categoria: 'Plataforma SaaS',
     },
     {
-      icono: 'language',
+      imagen: 'img/proyects/Pagina Web Basket.webp',
       titulo: 'Portal Público de Baloncesto',
-      descripcion: 'Página responsiva comunitaria con galerías, estadísticas en tiempo real, resultados y perfiles de equipos.',
+      descripcion: 'Centro de información comunitaria diseñado para soportar altos volúmenes de tráfico durante torneos, con estadísticas en vivo.',
       tags: ['Angular', 'Tailwind CSS', 'UX/UI'],
-      categoria: 'Web',
-      gradient: 'linear-gradient(135deg, #10b981 0%, #14b8a6 100%)',
+      categoria: 'Presencia Web',
     },
     {
-      icono: 'cloud_done',
+      imagen: 'img/proyects/GBS Renovation.webp',
+      titulo: 'GBS Renovations LLC',
+      descripcion: 'Sistema a la medida de Gestión centralizada de datos de una empresa de remodelación y renovación de viviendas ubicada en Greenville, Carolina del Sur',
+      tags: ['Angular', 'Laravel','Tailwind CSS', 'UX/UI'],
+      categoria: 'Aplicacion Web',
+    },  
+    {
+      imagen: 'img/proyects/Gestion de Proyectos.webp',
       titulo: 'SaaS de Gestión de Proyectos',
-      descripcion: 'Plataforma para administrar proyectos, clientes y horas. Backend robusto dockerizado para despliegue ágil en la nube.',
-      tags: ['Java 17', 'Spring Boot', 'Docker', 'Google Cloud'],
-      categoria: 'SaaS',
-      gradient: 'linear-gradient(135deg, #8b5cf6 0%, #d946ef 100%)',
+      descripcion: 'Entorno de control operativo y financiero. Permite a las empresas rastrear rentabilidad, horas hombre y facturación desde la nube.',
+      tags: ['Java 17', 'Docker', 'G-Cloud'],
+      categoria: 'Gestión Empresarial',
     },
     {
-      icono: 'package',
+      imagen: 'img/proyects/Paqueteria.webp',
       titulo: 'Gestión de Rutas y Paquetes',
-      descripcion: 'Aplicación movíl para gestionar rutas, evidencias, rastrear paquetes con la pagina web.',
-      tags: ['Flutter', 'Laravel', 'JWT', 'PHP', 'MySQL'],
-      categoria: 'Movíl y Backend',
-      gradient: 'linear-gradient(135deg, #f59e0b 0%, #ef4444 100%)',
+      descripcion: 'Sistema de logística con rastreo satelital. Optimizó los tiempos de entrega y transparentó la recolección de evidencias para los clientes.',
+      tags: ['Flutter', 'Angular' ,'Laravel', 'JWT'],
+      categoria: 'Logística & Operación',
     },
     {
-      icono: 'groups',
+      imagen: 'img/proyects/Gestion Comunitaria.webp',
       titulo: 'Sistema de Gestión Comunitaria',
-      descripcion: 'App web para gestionar ciudadanos de una delegación comunitaria, controlando actividades y recursos eficientemente.',
-      tags: ['Java 17', 'Spring', 'MySQL'],
-      categoria: 'Web',
-      gradient: 'linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%)',
+      descripcion: 'Plataforma administrativa para delegaciones. Agilizó el control de recursos, censos ciudadanos y la organización de actividades locales.',
+      tags: ['Java', 'Spring', 'MySQL'],
+      categoria: 'Sector Público',
     },
   ];
 
-  // ── Contacto ───────────────────────────────────────────────────────────
   contactInfo = [
-    { icon: 'chat',     label: 'WhatsApp',  value: '+52 55 3994 8515',               href: 'https://wa.me/5215539948515',                        color: '#34d399', bgColor: 'rgba(52,211,153,0.1)'  },
-    { icon: 'mail',     label: 'Email',     value: 'achave8627@gmail.com',            href: 'mailto:achave8627@gmail.com',                         color: '#60a5fa', bgColor: 'rgba(96,165,250,0.1)'  },
-    { icon: 'work',     label: 'LinkedIn',  value: 'Abraham Chavez',                  href: 'https://linkedin.com/in/abraham-chavez-937758340',    color: '#a78bfa', bgColor: 'rgba(167,139,250,0.1)' },
-    { icon: 'location_on', label: 'Ubicación', value: 'Hidalgo, México',            href: '#',                                                   color: '#fbbf24', bgColor: 'rgba(251,191,36,0.1)'  },
+    { icon: 'chat', label: 'WhatsApp', value: '+52 55 3994 8515', href: 'https://wa.me/5215539948515', color: '#34d399', bgColor: 'rgba(52,211,153,0.1)' },
+    { icon: 'mail', label: 'Email', value: 'achave8627@gmail.com', href: 'mailto:achave8627@gmail.com', color: '#60a5fa', bgColor: 'rgba(96,165,250,0.1)' },
+    { icon: 'work', label: 'LinkedIn', value: 'Abraham Chavez', href: 'https://linkedin.com/in/abraham-chavez-937758340', color: '#a78bfa', bgColor: 'rgba(167,139,250,0.1)' },
+    { icon: 'location_on', label: 'Ubicación', value: 'Hidalgo, México', href: '#', color: '#fbbf24', bgColor: 'rgba(251,191,36,0.1)' },
   ];
 
-  whyMe = [
-    'Consultoría inicial gratuita',
-    'Entrega en plazos acordados',
-    'Código documentado y escalable',
-    'Soporte post-lanzamiento incluido',
-    'Comunicación directa sin intermediarios',
-  ];
+  whyMe = ['Consultoría inicial gratuita', 'Entrega en plazos acordados', 'Código documentado y escalable', 'Soporte post-lanzamiento incluido', 'Comunicación directa sin intermediarios'];
 
-  // ── Lifecycle ──────────────────────────────────────────────────────────
   ngOnInit() {
-    const script = document.createElement('script');
-    script.src = 'https://elfsightcdn.com/platform.js';
-    script.async = true;
-    document.body.appendChild(script);
+    // ✅ Optimización SEO Local
+    this.title.setTitle('Tech Solutions | Desarrollo de Software e Infraestructura Web');
+    this.meta.addTags([
+      { name: 'description', content: 'Agencia de desarrollo web y aplicaciones móviles. Creamos sistemas de gestión a la medida para empresas en Ixmiquilpan, Hidalgo y todo México.' },
+      { name: 'keywords', content: 'desarrollo web Hidalgo, programador Ixmiquilpan, aplicaciones móviles, sistemas web, Angular, Laravel, Flutter' }
+    ]);
+
+    // ✅ Carga diferida del script de Elfsight (mejora rendimiento)
+    setTimeout(() => {
+      const script = document.createElement('script');
+      script.src = 'https://elfsightcdn.com/platform.js';
+      script.async = true;
+      document.body.appendChild(script);
+    }, 3000);
   }
 
-  // ── WhatsApp form ──────────────────────────────────────────────────────
   enviarWhatsApp(event: Event) {
     event.preventDefault();
     const form = event.target as HTMLFormElement;
-    const nombre   = (form.querySelector('input[type="text"]')  as HTMLInputElement).value;
-    const email    = (form.querySelector('input[type="email"]') as HTMLInputElement).value;
-    const tipo     = (form.querySelector('select')              as HTMLSelectElement).value;
-    const proyecto = (form.querySelector('textarea')            as HTMLTextAreaElement).value;
-
+    const nombre = (form.querySelector('input[type="text"]') as HTMLInputElement).value;
+    const email = (form.querySelector('input[type="email"]') as HTMLInputElement).value;
+    const tipo = (form.querySelector('select') as HTMLSelectElement).value;
+    const proyecto = (form.querySelector('textarea') as HTMLTextAreaElement).value;
     const msg = `¡Hola Tech Solutions! 👋\n\nMe interesa trabajar con ustedes.\n\n*Nombre:* ${nombre}\n*Correo:* ${email}\n*Tipo de proyecto:* ${tipo}\n\n*Descripción:*\n${proyecto}\n\n¡Quedo a la espera de su respuesta!`;
     window.open(`https://wa.me/5215539948515?text=${encodeURIComponent(msg)}`, '_blank')?.focus();
     form.reset();

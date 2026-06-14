@@ -14,31 +14,42 @@ html {
       primary: mat.$azure-palette,
       tertiary: mat.$blue-palette,
     ),
-    // Le decimos a Material que use nuestra nueva fuente
     typography: Inter,
     density: 0,
   ));
-  /* Desplazamiento suave nativo */
   scroll-behavior: smooth;
+  // ❌ REMOVIDO: perspective: 1000px → rompía position:fixed del bottom nav
 }
 
 body {
   margin: 0;
   height: 100%;
-  /* Evita saltos en el layout cuando aparece/desaparece el scroll */
-  overflow-y: scroll; 
+  overflow-y: scroll;
+  // ❌ REMOVIDO: perspective-origin: center → ya no necesario
 }
 
 // ==========================================
-// 4. TIPOGRAFÍA FLUIDA Y RESPONSIVA (DRY)
+// 🆕 BOTTOM NAV MOBILE - Espacio + WhatsApp button
+// ==========================================
+@media (max-width: 767px) {
+  body {
+    padding-bottom: 70px; // Espacio para el bottom nav
+  }
+  
+  // Subir el botón WhatsApp arriba del bottom nav
+  a[href*="wa.me"].fixed {
+    bottom: 80px !important;
+  }
+}
+
+// ==========================================
+// TIPOGRAFÍA FLUIDA Y RESPONSIVA (DRY)
 // ==========================================
 @layer base {
-  /* El tamaño base del documento se adapta de 14px en móvil a 16px en escritorio */
   html {
     font-size: clamp(14px, 1vw + 10px, 16px);
   }
 
-  /* Estandarizamos los encabezados para que escalen automáticamente en toda la app */
   h1 { @apply text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight; }
   h2 { @apply text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight; }
   h3 { @apply text-lg sm:text-xl lg:text-2xl font-bold; }
@@ -46,48 +57,37 @@ body {
 }
 
 // ==========================================
-// 5. TECH SOLUTIONS DESIGN SYSTEM
+// TECH SOLUTIONS DESIGN SYSTEM
 // ==========================================
 @layer components {
   
-  /* Tarjetas (Cards): Menos padding en móvil, normal en tablet, amplio en monitores */
   .ui-card {
     @apply bg-white dark:bg-surface-paper rounded-xl border border-gray-100 dark:border-surface-border shadow-sm hover:shadow-md transition-shadow duration-300 p-4 sm:p-6 lg:p-8;
   }
 
-  /* --- BOTONES --- */
-  /* Ajustan su altura y espacio en pantallas grandes */
-  
-  /* Botón Principal (Azul) */
   .ui-btn-primary {
     @apply bg-brand-primary hover:bg-brand-primaryHover text-white font-semibold py-2.5 px-4 sm:px-6 rounded-lg shadow-sm hover:shadow transition-all duration-200 flex justify-center items-center gap-2 active:scale-[0.98] focus:outline-none focus:ring-4 focus:ring-brand-primary/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100;
   }
 
-  /* Botón Secundario (Gris/Oscuro) */
   .ui-btn-secondary {
     @apply bg-gray-100 hover:bg-gray-200 dark:bg-[#202433] dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200 font-semibold py-2.5 px-4 sm:px-6 rounded-lg transition-all duration-200 flex justify-center items-center gap-2 active:scale-[0.98] focus:outline-none focus:ring-4 focus:ring-gray-500/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100;
   }
 
-  /* Botón de Peligro (Para borrar) */
   .ui-btn-danger {
     @apply bg-status-error/10 hover:bg-status-error text-status-error hover:text-white font-semibold py-2.5 px-4 sm:px-6 rounded-lg transition-all duration-200 flex justify-center items-center gap-2 active:scale-[0.98] focus:outline-none focus:ring-4 focus:ring-status-error/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100;
   }
 
-  /* --- FORMULARIOS --- */
-
-  /* Cajas de Texto (Inputs y Selects): Más fáciles de tocar en celular, estilizados en escritorio */
   .ui-input {
     @apply w-full px-3 sm:px-4 py-3 md:py-2.5 text-base sm:text-sm rounded-lg border border-gray-200 dark:border-surface-border bg-gray-50/50 hover:bg-gray-50 dark:bg-[#151822] dark:hover:bg-[#1a1d27] text-gray-900 dark:text-white focus:bg-white dark:focus:bg-[#151822] focus:ring-4 focus:ring-brand-primary/20 focus:border-brand-primary dark:focus:border-brand-primary outline-none transition-all duration-200 disabled:opacity-60 disabled:bg-gray-100 dark:disabled:bg-gray-900 disabled:cursor-not-allowed;
   }
 
-  /* Etiquetas de Texto (Labels): Ajuste sutil de tamaños */
   .ui-label {
     @apply text-sm sm:text-base md:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5 block tracking-tight;
   }
 }
 
 // ==========================================
-// 6. SCROLLBARS PERSONALIZADOS (Estilo Moderno)
+// SCROLLBARS PERSONALIZADOS
 // ==========================================
 ::-webkit-scrollbar {
   width: 8px;
@@ -106,9 +106,8 @@ body {
   @apply bg-gray-400 dark:bg-gray-600;
 }
 
-
 // ==========================================
-// 7. ANIMACIONES DE ENTRADA (CSS PURO)
+// ANIMACIONES DE ENTRADA
 // ==========================================
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(30px); }
@@ -120,13 +119,11 @@ body {
   opacity: 0;
 }
 
-/* Retrasos escalonados para que las cosas aparezcan una por una */
 .delay-100 { animation-delay: 100ms; }
 .delay-200 { animation-delay: 200ms; }
 .delay-300 { animation-delay: 300ms; }
 .delay-400 { animation-delay: 400ms; }
 
-// Animación de Flotación (Para imágenes y decoraciones)
 @keyframes float {
   0% { transform: translateY(0px); }
   50% { transform: translateY(-15px); }
@@ -137,7 +134,6 @@ body {
   animation: float 5s ease-in-out infinite;
 }
 
-// Animación de aparición con Zoom (Para las tarjetas de portafolio y servicios)
 @keyframes scaleIn {
   from { opacity: 0; transform: scale(0.95); }
   to { opacity: 1; transform: scale(1); }
@@ -146,4 +142,128 @@ body {
 .animate-scale-in {
   animation: scaleIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   opacity: 0;
+}
+
+@keyframes slideInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 8px 32px rgba(59, 130, 246, 0.2); }
+  50% { box-shadow: 0 12px 48px rgba(59, 130, 246, 0.4); }
+}
+
+.process-number:hover {
+  animation: glowPulse 2s ease-in-out infinite;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// RESPONSIVE ADJUSTMENTS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+@media (max-width: 768px) {
+  .process-number {
+    width: 72px;
+    height: 72px;
+    font-size: 20px;
+  }
+
+  .process-card {
+    &:hover { transform: translateY(-4px); }
+  }
+
+  .portfolio-card {
+    &:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 10px 30px rgba(59, 130, 246, 0.15);
+    }
+  }
+
+  .portfolio-card-header { height: 120px; }
+  .portfolio-card-icon { width: 60px; height: 60px; }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// REDUCED MOTION
+// ═══════════════════════════════════════════════════════════════════════════════
+
+@media (prefers-reduced-motion: reduce) {
+  .process-card,
+  .portfolio-card,
+  .process-number,
+  .portfolio-card-header,
+  .portfolio-card-icon {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// UTILITIES PARA COMPONENTES INTERACTIVOS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+@layer utilities {
+  @keyframes slideUnderline {
+    from { transform: scaleX(0); transform-origin: left; }
+    to { transform: scaleX(1); transform-origin: left; }
+  }
+
+  .animate-slide-underline {
+    animation: slideUnderline 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  }
+
+  @keyframes scrollPerspective {
+    0% { transform: scale(0.8) translateY(100px); opacity: 0.5; }
+    100% { transform: scale(1) translateY(0px); opacity: 1; }
+  }
+
+  .animate-scroll-perspective {
+    animation: scrollPerspective 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  }
+
+  .transition-smooth {
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .transition-fast {
+    transition: all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+}
+
+// CSS Variables para componentes interactivos
+:root {
+  --color-text-primary: #000000;
+  --color-text-secondary: #666666;
+  --color-background-primary: #ffffff;
+  --color-background-secondary: #f5f5f5;
+  --color-border-tertiary: rgba(0, 0, 0, 0.1);
+  --color-border-secondary: rgba(0, 0, 0, 0.2);
+  --color-border-primary: rgba(0, 0, 0, 0.3);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-text-primary: #ffffff;
+    --color-text-secondary: #aaaaaa;
+    --color-background-primary: #1a1a1a;
+    --color-background-secondary: #2a2a2a;
+    --color-border-tertiary: rgba(255, 255, 255, 0.1);
+    --color-border-secondary: rgba(255, 255, 255, 0.2);
+    --color-border-primary: rgba(255, 255, 255, 0.3);
+  }
+}
+
+// Focus visible para accesibilidad
+*:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+// Print styles
+@media print {
+  .scroll-indicator,
+  .interactive-menu-container {
+    display: none;
+  }
 }

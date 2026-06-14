@@ -1,0 +1,34 @@
+<div class="interactive-menu-container">
+  <nav class="menu-nav" [style]="'--accent-color: ' + accentColor">
+    <div class="menu-items-wrapper">
+      @for (item of items; track item.id || $index; let i = $index) {
+        <button
+          #menuItem
+          class="menu-item"
+          [class.active]="activeIndex === i"
+          (click)="setActive(i)"
+          type="button"
+          [attr.aria-label]="item.label"
+          [attr.aria-current]="activeIndex === i ? 'page' : null"
+          [title]="item.label">
+
+          <!-- ✅ SVG Icon -->
+          <div class="menu-icon" [innerHTML]="getIconSvg(item.icon)"></div>
+
+          <!-- 📱 Label mobile (debajo del icono) -->
+          <span class="menu-label-mobile">{{ item.label }}</span>
+
+          <!-- 💻 Label desktop (al lado del icono) -->
+          <span class="menu-label">{{ item.label }}</span>
+        </button>
+      }
+
+      <!-- Línea animada -->
+      <div
+        class="sliding-line"
+        [style.width.px]="lineWidth"
+        [style.left.px]="lineOffset">
+      </div>
+    </div>
+  </nav>
+</div>
