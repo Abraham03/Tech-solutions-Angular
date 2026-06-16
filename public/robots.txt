@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Le indica explícitamente a cualquier robot dónde encontrar tu mapa del sitio
+Sitemap: https://techsolutions.management/sitemap.xml
