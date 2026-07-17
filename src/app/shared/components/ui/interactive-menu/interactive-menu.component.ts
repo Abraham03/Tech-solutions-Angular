@@ -1,5 +1,5 @@
-import { Component, Input, ViewChildren, QueryList, ElementRef, HostListener, OnInit, AfterViewInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, Input, ViewChildren, QueryList, ElementRef, HostListener, OnInit, AfterViewInit, PLATFORM_ID, inject } from '@angular/core';
+import { CommonModule, isPlatformBrowser  } from '@angular/common';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 export interface MenuItem {
@@ -42,8 +42,10 @@ export class InteractiveMenuComponent implements OnInit, AfterViewInit {
     { label: 'Reseñas', icon: 'star', id: 'reviews', targetId: 'reviews' },
     { label: 'Contacto', icon: 'mail', id: 'contacto', targetId: 'contacto' },
   ];
-
+  private platformId = inject(PLATFORM_ID);
   constructor(private sanitizer: DomSanitizer) {}
+
+
 
   ngOnInit() {
     if (!this.items || this.items.length === 0) {
@@ -53,9 +55,11 @@ export class InteractiveMenuComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    setTimeout(() => {
-      this.calculateLineWidth();
-    }, 100);
+    if (isPlatformBrowser(this.platformId)) {
+      setTimeout(() => {
+        this.calculateLineWidth();
+      }, 100);
+    }
   }
 
   // ✅ NAVEGAR A SECCIÓN
@@ -124,8 +128,10 @@ export class InteractiveMenuComponent implements OnInit, AfterViewInit {
     }
   }
 
-  checkMobile() {
-    this.isMobile = window.innerWidth < 768;
+   checkMobile() {
+    if (isPlatformBrowser(this.platformId)) {
+      this.isMobile = window.innerWidth < 768;
+    }
   }
 
   @HostListener('window:resize')

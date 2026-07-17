@@ -36,7 +36,8 @@
             ],
             "scripts": [],
             "ssr": false,
-            "prerender": false
+            "prerender": true,
+            "outputMode": "static"
           },
           "configurations": {
             "production": {

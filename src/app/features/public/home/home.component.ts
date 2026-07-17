@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { Meta, Title } from '@angular/platform-browser'; // Importación para SEO
 import { InteractiveMenuComponent } from '../../../shared/components/ui/interactive-menu/interactive-menu.component';
-import { ContainerScrollComponent } from '../../../shared/components/ui/container-scroll/container-scroll.component';
 
 @Component({
   selector: 'app-home',
@@ -205,6 +205,8 @@ export class HomeComponent implements OnInit {
 
   whyMe = ['Consultoría inicial gratuita', 'Entrega en plazos acordados', 'Código documentado y escalable', 'Soporte post-lanzamiento incluido', 'Comunicación directa sin intermediarios'];
 
+  private platformId = inject(PLATFORM_ID);
+
   ngOnInit() {
     // ✅ Optimización SEO Local
     this.title.setTitle('Tech Solutions | Desarrollo de Software e Infraestructura Web');
@@ -213,13 +215,15 @@ export class HomeComponent implements OnInit {
       { name: 'keywords', content: 'desarrollo web Hidalgo, programador Ixmiquilpan, aplicaciones móviles, sistemas web, Angular, Laravel, Flutter' }
     ]);
 
-    // ✅ Carga diferida del script de Elfsight (mejora rendimiento)
-    setTimeout(() => {
-      const script = document.createElement('script');
-      script.src = 'https://elfsightcdn.com/platform.js';
-      script.async = true;
-      document.body.appendChild(script);
-    }, 3000);
+    // ✅ Carga diferida del script de Elfsight (solo en navegador)
+    if (isPlatformBrowser(this.platformId)) {
+      setTimeout(() => {
+        const script = document.createElement('script');
+        script.src = 'https://elfsightcdn.com/platform.js';
+        script.async = true;
+        document.body.appendChild(script);
+      }, 3000);
+    }
   }
 
   enviarWhatsApp(event: Event) {

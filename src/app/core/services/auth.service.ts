@@ -1,4 +1,5 @@
-import { Injectable, signal, inject } from '@angular/core';
+import { Injectable, signal, inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment.development';
@@ -11,14 +12,21 @@ import { throwError } from 'rxjs';
 export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
+  private platformId = inject(PLATFORM_ID);
   private apiUrl = environment.apiUrl;
 
   // Signal reactivo para el estado del usuario
   public currentUser = signal<any | null>(null);
 
+  private get isBrowser(): boolean {
+    return isPlatformBrowser(this.platformId);
+  }
+
   constructor() {
-    // Cuando Angular arranca, rehidratamos la sesión inmediatamente
-    this.rehydrateAuth();
+    // Solo rehidratamos si estamos en el navegador (no en prerender)
+    if (this.isBrowser) {
+      this.rehydrateAuth();
+    }
   }
 
   /**
@@ -33,7 +41,7 @@ export class AuthService {
       try {
         // Restauración síncrona (Evita el parpadeo blanco en el menú)
         this.currentUser.set(JSON.parse(savedUser));
-        
+
         // Validación asíncrona de seguridad con el backend
         this.validateSessionSilently();
       } catch (error) {
@@ -50,13 +58,13 @@ export class AuthService {
   private validateSessionSilently() {
     this.http.get<any>(`${this.apiUrl}/me`).subscribe({
       next: (response) => {
-        // Actualizamos con datos frescos de la BD si algo cambió
-        const freshUser = response.data || response; // Depende de cómo responda tu /me
+        const freshUser = response.data || response;
         this.currentUser.set(freshUser);
-        localStorage.setItem('user_data', JSON.stringify(freshUser));
+        if (this.isBrowser) {
+          localStorage.setItem('user_data', JSON.stringify(freshUser));
+        }
       },
       error: () => {
-        // Si el servidor rechaza el token (401), cerramos sesión forzosamente
         this.logout();
       }
     });
@@ -69,19 +77,20 @@ export class AuthService {
         const user = response.data.user;
 
         // 1. Guardar token y datos del usuario persistentes
-        localStorage.setItem('auth_token', token);
-        localStorage.setItem('user_data', JSON.stringify(user));
-        
+        if (this.isBrowser) {
+          localStorage.setItem('auth_token', token);
+          localStorage.setItem('user_data', JSON.stringify(user));
+        }
+
         // 2. Actualizar estado global reactivo
         this.currentUser.set(user);
-        
+
         // 3. Redirigir según el rol
         this.redirectBasedOnRole(user.role);
       }),
       catchError((error: HttpErrorResponse) => {
-        // Manejo de errores profesional según el código de estado HTTP
         let errorMessage = 'Ocurrió un error inesperado al conectar con el servidor.';
-        
+
         if (error.status === 401) {
           errorMessage = 'Correo o contraseña incorrectos.';
         } else if (error.status === 422) {
@@ -98,13 +107,18 @@ export class AuthService {
 
   logout() {
     // Limpieza total por seguridad
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('user_data');
+    if (this.isBrowser) {
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('user_data');
+    }
     this.currentUser.set(null);
     this.router.navigate(['/login']);
   }
 
   getToken(): string | null {
+    if (!this.isBrowser) {
+      return null;
+    }
     return localStorage.getItem('auth_token');
   }
 

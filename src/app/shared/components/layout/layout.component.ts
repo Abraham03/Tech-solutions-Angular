@@ -1,5 +1,5 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, OnInit, signal, PLATFORM_ID  } from '@angular/core';
+import { CommonModule, isPlatformBrowser  } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -20,8 +20,11 @@ export class LayoutComponent implements OnInit {
   
   // Usamos el Signal para obtener los datos del usuario logueado
   public user = this.authService.currentUser;
+  private platformId = inject(PLATFORM_ID);
 
   ngOnInit() {
+    if (!isPlatformBrowser(this.platformId)) return;
+
     // Revisar si el usuario ya tenía el modo oscuro activo en su navegador
     if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
       this.isDarkMode = true;
@@ -39,6 +42,8 @@ export class LayoutComponent implements OnInit {
   }
 
   toggleDarkMode() {
+    if (!isPlatformBrowser(this.platformId)) return;
+
     this.isDarkMode = !this.isDarkMode;
     if (this.isDarkMode) {
       document.documentElement.classList.add('dark');
