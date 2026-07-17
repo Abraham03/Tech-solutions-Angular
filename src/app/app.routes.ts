@@ -1,31 +1,14 @@
 import { Routes } from '@angular/router';
 
-// Layouts
+// Layouts y páginas críticas (se cargan de inmediato porque son la home pública)
 import { PublicLayoutComponent } from './core/layouts/public-layout/public-layout.component';
-import { LayoutComponent } from './shared/components/layout/layout.component'; // Admin/Client Layout
-
-// Páginas Públicas
 import { HomeComponent } from './features/public/home/home.component';
-import { LoginComponent } from './features/auth/login/login.component';
-
-// Páginas Privadas (Admin)
-import { DashboardComponent } from './features/admin/dashboard/dashboard.component';
-import { ProjectListComponent } from './features/admin/projects/project-list/project-list.component';
-import { ProjectFormComponent } from './features/admin/projects/project-form/project-form.component';
-import { ClientListComponent } from './features/admin/clients/client-list/client-list.component';
-import { ClientFormComponent } from './features/admin/clients/client-form/client-form.component';
-import { UserListComponent } from './features/admin/users/user-list/user-list.component';
-import { UserFormComponent } from './features/admin/users/user-form/user-form.component';
-import { ServiceListComponent } from './features/admin/services/service-list/service-list.component';
-import { ServiceFormComponent } from './features/admin/services/service-form/service-form.component';
-import { PaymentListComponent } from './features/admin/payments/payment-list/payment-list.component';
-import { PaymentFormComponent } from './features/admin/payments/payment-form/payment-form.component';
 
 // Guards
 import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
-  
+
   // ------------------------------------------
   // ZONA PÚBLICA (Website de Tech Solutions)
   // ------------------------------------------
@@ -33,76 +16,139 @@ export const routes: Routes = [
     path: '',
     component: PublicLayoutComponent,
     children: [
-      { path: '', component: HomeComponent }, // techsolutions.com/
-      // Si en el futuro creas /about o /contacto, irían aquí.
+      { path: '', component: HomeComponent },
     ]
   },
 
   // ------------------------------------------
-  // ZONA DE AUTENTICACIÓN
+  // ZONA DE AUTENTICACIÓN (lazy)
   // ------------------------------------------
-  { path: 'auth/login', component: LoginComponent },
-  
-  // Mantenemos esta ruta por compatibilidad con tu código anterior
+  {
+    path: 'auth/login',
+    loadComponent: () =>
+      import('./features/auth/login/login.component').then(m => m.LoginComponent)
+  },
   { path: 'login', redirectTo: 'auth/login', pathMatch: 'full' },
-  
+
   // ------------------------------------------
-  // ZONA PRIVADA PROTEGIDA (Admin y Clientes)
+  // ZONA PRIVADA PROTEGIDA (Admin y Clientes) - todo lazy
   // ------------------------------------------
   {
     path: '',
-    component: LayoutComponent,
-    canActivate: [authGuard], // authGuard verifica sesión y lee 'data: { role }'
+    loadComponent: () =>
+      import('./shared/components/layout/layout.component').then(m => m.LayoutComponent),
+    canActivate: [authGuard],
     children: [
-      
-      // ZONA EXCLUSIVA PARA EL DUEÑO (ADMIN)
-      { 
-        path: 'admin', 
+
+      // ADMIN
+      {
+        path: 'admin',
         data: { role: 'admin' },
         children: [
-          // Mantenemos tu Lazy Loading original
           { path: 'lazy', loadChildren: () => import('./features/admin/admin.routes').then(m => m.ADMIN_ROUTES) },
-          
-          { path: 'dashboard', component: DashboardComponent },
-          
-          // MÓDULO DE PROYECTOS
-          { path: 'projects', component: ProjectListComponent },
-          { path: 'projects/new', component: ProjectFormComponent },
-          { path: 'projects/edit/:id', component: ProjectFormComponent },
-          
-          // MÓDULO DE CLIENTES
-          { path: 'clients', component: ClientListComponent }, 
-          { path: 'clients/new', component: ClientFormComponent }, 
-          { path: 'clients/edit/:id', component: ClientFormComponent },
 
-          // MÓDULO DE USUARIOS
-          { path: 'users', component: UserListComponent },
-          { path: 'users/new', component: UserFormComponent },
-          { path: 'users/edit/:id', component: UserFormComponent },
+          {
+            path: 'dashboard',
+            loadComponent: () =>
+              import('./features/admin/dashboard/dashboard.component').then(m => m.DashboardComponent)
+          },
 
-          // MÓDULO DE PAGOS
-          { path: 'payments', component: PaymentListComponent },
-          { path: 'payments/new', component: PaymentFormComponent },
-          { path: 'payments/edit/:id', component: PaymentFormComponent },
+          // Proyectos
+          {
+            path: 'projects',
+            loadComponent: () =>
+              import('./features/admin/projects/project-list/project-list.component').then(m => m.ProjectListComponent)
+          },
+          {
+            path: 'projects/new',
+            loadComponent: () =>
+              import('./features/admin/projects/project-form/project-form.component').then(m => m.ProjectFormComponent)
+          },
+          {
+            path: 'projects/edit/:id',
+            loadComponent: () =>
+              import('./features/admin/projects/project-form/project-form.component').then(m => m.ProjectFormComponent)
+          },
 
-          // MÓDULO DE SERVICIOS
-          { path: 'services', component: ServiceListComponent },
-          { path: 'services/new', component: ServiceFormComponent },
-          { path: 'services/edit/:id', component: ServiceFormComponent },
+          // Clientes
+          {
+            path: 'clients',
+            loadComponent: () =>
+              import('./features/admin/clients/client-list/client-list.component').then(m => m.ClientListComponent)
+          },
+          {
+            path: 'clients/new',
+            loadComponent: () =>
+              import('./features/admin/clients/client-form/client-form.component').then(m => m.ClientFormComponent)
+          },
+          {
+            path: 'clients/edit/:id',
+            loadComponent: () =>
+              import('./features/admin/clients/client-form/client-form.component').then(m => m.ClientFormComponent)
+          },
+
+          // Usuarios
+          {
+            path: 'users',
+            loadComponent: () =>
+              import('./features/admin/users/user-list/user-list.component').then(m => m.UserListComponent)
+          },
+          {
+            path: 'users/new',
+            loadComponent: () =>
+              import('./features/admin/users/user-form/user-form.component').then(m => m.UserFormComponent)
+          },
+          {
+            path: 'users/edit/:id',
+            loadComponent: () =>
+              import('./features/admin/users/user-form/user-form.component').then(m => m.UserFormComponent)
+          },
+
+          // Pagos
+          {
+            path: 'payments',
+            loadComponent: () =>
+              import('./features/admin/payments/payment-list/payment-list.component').then(m => m.PaymentListComponent)
+          },
+          {
+            path: 'payments/new',
+            loadComponent: () =>
+              import('./features/admin/payments/payment-form/payment-form.component').then(m => m.PaymentFormComponent)
+          },
+          {
+            path: 'payments/edit/:id',
+            loadComponent: () =>
+              import('./features/admin/payments/payment-form/payment-form.component').then(m => m.PaymentFormComponent)
+          },
+
+          // Servicios
+          {
+            path: 'services',
+            loadComponent: () =>
+              import('./features/admin/services/service-list/service-list.component').then(m => m.ServiceListComponent)
+          },
+          {
+            path: 'services/new',
+            loadComponent: () =>
+              import('./features/admin/services/service-form/service-form.component').then(m => m.ServiceFormComponent)
+          },
+          {
+            path: 'services/edit/:id',
+            loadComponent: () =>
+              import('./features/admin/services/service-form/service-form.component').then(m => m.ServiceFormComponent)
+          },
         ]
       },
 
-      // ZONA EXCLUSIVA PARA LOS CLIENTES
-      // ZONA EXCLUSIVA PARA LOS CLIENTES
-      { 
-        path: 'client', 
+      // CLIENTES
+      {
+        path: 'client',
         data: { role: 'client' },
-        // Quitamos el array 'children' y cargamos las rutas directamente
         loadChildren: () => import('./features/client/client.routes').then(m => m.CLIENT_ROUTES)
       }
     ]
   },
-  
-  // 404 - Cualquier ruta que no exista redirige a la página pública
+
+  // 404 → home
   { path: '**', redirectTo: '' }
 ];
