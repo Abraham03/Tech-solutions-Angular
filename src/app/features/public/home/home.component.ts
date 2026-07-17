@@ -71,7 +71,7 @@ export class HomeComponent implements OnInit {
   servicios = [
     {
       numero: '1/5',
-      image: 'img/services/Pagina Web.webp',
+      image: 'img/services/pagina-web.webp',
       title: 'Páginas Web (Presencia Digital)',
       desc: 'Para negocios locales que necesitan existir en Google y captar clientes vía WhatsApp.',
       problema: '¿Tus clientes potenciales no te encuentran en Google?',
@@ -84,7 +84,7 @@ export class HomeComponent implements OnInit {
     },
     {
       numero: '2/5',
-      image: 'img/services/Dashboard.webp',
+      image: 'img/services/dashboard.webp',
       title: 'Aplicaciones Web (Gestión Operativa)',
       desc: 'Sistemas a la medida para clínicas o empresas.',
       problema: '¿Pierdes tiempo en procesos manuales y archivos dispersos?',
@@ -97,7 +97,7 @@ export class HomeComponent implements OnInit {
     },
     {
       numero: '3/5',
-      image: 'img/services/Web Page.webp',
+      image: 'img/services/web-page.webp',
       title: 'App Web Progresiva (PWA)',
       desc: 'Software de campo instalable en la pantalla del celular.',
       problema: '¿Necesitas trabajar sin conexión a internet?',
@@ -110,7 +110,7 @@ export class HomeComponent implements OnInit {
     },
     {
       numero: '4/5',
-      image: 'img/services/App Moviles.webp',
+      image: 'img/services/app-moviles.webp',
       title: 'Aplicaciones Móviles Nativas',
       desc: 'Presencia en App Store y Google Play.',
       problema: '¿Necesitas acceso total al hardware del dispositivo?',
@@ -123,7 +123,7 @@ export class HomeComponent implements OnInit {
     },
     {
       numero: '5/5',
-      image: 'img/services/Cloud Hosting.webp',
+      image: 'img/services/cloud-hosting.webp',
       title: 'Tech Solutions Care & Automatización',
       desc: 'Mantenimiento mensual, alojamiento en la nube, seguridad SSL.',
       problema: '¿Te preocupa la seguridad y el mantenimiento continuo?',
@@ -146,49 +146,49 @@ export class HomeComponent implements OnInit {
   // ── Portafolio Actualizado a Mockups ─────────────────────────────────────
   proyectos = [
     {
-      imagen: 'img/proyects/App Movil Basket.webp',
+      imagen: 'img/proyects/app-movil-basket.webp',
       titulo: 'Basket Pro — App Móvil',
       descripcion: 'Digitalización integral de partidos. Eliminó el uso de papel en mesas de control y automatizó la generación de reportes en tiempo real.',
       tags: ['Flutter', 'WebSockets', 'SQLite'],
       categoria: 'Solución Móvil',
     },
     {
-      imagen: 'img/proyects/Dashboard Basketball.webp',
+      imagen: 'img/proyects/dashboard-basketball.webp',
       titulo: 'Dashboard Admin para Ligas',
       descripcion: 'SaaS de gestión deportiva que reduce horas de trabajo administrativo centralizando equipos, finanzas y calendarios automáticos.',
       tags: ['Angular', 'Spring Boot', 'MySQL'],
       categoria: 'Plataforma SaaS',
     },
     {
-      imagen: 'img/proyects/Pagina Web Basket.webp',
+      imagen: 'img/proyects/pagina-web-basket.webp',
       titulo: 'Portal Público de Baloncesto',
       descripcion: 'Centro de información comunitaria diseñado para soportar altos volúmenes de tráfico durante torneos, con estadísticas en vivo.',
       tags: ['Angular', 'Tailwind CSS', 'UX/UI'],
       categoria: 'Presencia Web',
     },
     {
-      imagen: 'img/proyects/GBS Renovation.webp',
+      imagen: 'img/proyects/gbs-renovation.webp',
       titulo: 'GBS Renovations LLC',
       descripcion: 'Sistema a la medida de Gestión centralizada de datos de una empresa de remodelación y renovación de viviendas ubicada en Greenville, Carolina del Sur',
       tags: ['Angular', 'Laravel','Tailwind CSS', 'UX/UI'],
       categoria: 'Aplicacion Web',
     },  
     {
-      imagen: 'img/proyects/Gestion de Proyectos.webp',
+      imagen: 'img/proyects/gestion-de-proyectos.webp',
       titulo: 'SaaS de Gestión de Proyectos',
       descripcion: 'Entorno de control operativo y financiero. Permite a las empresas rastrear rentabilidad, horas hombre y facturación desde la nube.',
       tags: ['Java 17', 'Docker', 'G-Cloud'],
       categoria: 'Gestión Empresarial',
     },
     {
-      imagen: 'img/proyects/Paqueteria.webp',
+      imagen: 'img/proyects/paqueteria.webp',
       titulo: 'Gestión de Rutas y Paquetes',
       descripcion: 'Sistema de logística con rastreo satelital. Optimizó los tiempos de entrega y transparentó la recolección de evidencias para los clientes.',
       tags: ['Flutter', 'Angular' ,'Laravel', 'JWT'],
       categoria: 'Logística & Operación',
     },
     {
-      imagen: 'img/proyects/Gestion Comunitaria.webp',
+      imagen: 'img/proyects/gestion-comunitaria.webp',
       titulo: 'Sistema de Gestión Comunitaria',
       descripcion: 'Plataforma administrativa para delegaciones. Agilizó el control de recursos, censos ciudadanos y la organización de actividades locales.',
       tags: ['Java', 'Spring', 'MySQL'],
