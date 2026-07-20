@@ -84,7 +84,7 @@ export class HomeComponent implements OnInit {
     },
     {
       numero: '2/5',
-      image: 'img/services/dashboard.webp',
+      image: 'img/services/Dashboard.webp',
       title: 'Aplicaciones Web (Gestión Operativa)',
       desc: 'Sistemas a la medida para clínicas o empresas.',
       problema: '¿Pierdes tiempo en procesos manuales y archivos dispersos?',
@@ -181,7 +181,7 @@ export class HomeComponent implements OnInit {
       categoria: 'Gestión Empresarial',
     },
     {
-      imagen: 'img/proyects/paqueteria.webp',
+      imagen: 'img/proyects/Paqueteria.webp',
       titulo: 'Gestión de Rutas y Paquetes',
       descripcion: 'Sistema de logística con rastreo satelital. Optimizó los tiempos de entrega y transparentó la recolección de evidencias para los clientes.',
       tags: ['Flutter', 'Angular' ,'Laravel', 'JWT'],
