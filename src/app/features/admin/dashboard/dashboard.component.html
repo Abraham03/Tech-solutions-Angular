@@ -27,7 +27,7 @@
   </div>
 
   <!-- ══ CONTENT ══════════════════════════════════════════════════════════ -->
-  <div class="max-w-[1100px] mx-auto px-4 md:px-6 py-6 pb-16">
+  <div class="max-w-[1240px] mx-auto px-4 md:px-6 py-6 pb-16">
 
     <!-- LOADING -->
     @if (isLoading()) {
@@ -52,25 +52,67 @@
       ════════════════════════════════════════════════════════════════ -->
       @if (activeTab() === 'overview') {
 
-        <!-- KPIs -->
-        <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
+        <!-- ══ Banner de acción: cobro más urgente ══════════════════════ -->
+        @if (topReceivable(); as r) {
+          <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-4 mb-4 rounded-2xl bg-amber-500/10 border border-amber-500/30">
+            <span class="material-symbols-outlined text-amber-500 text-[28px] shrink-0">error</span>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-bold text-amber-500">{{ r.name }} tiene {{ formatMoney(r.balance) }} por cobrar</p>
+              <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Saldo pendiente · {{ r.paid_pct }}% pagado</p>
+            </div>
+            <div class="flex gap-2 shrink-0 flex-wrap">
+              <a [routerLink]="['/admin/projects/edit', r.id]"
+                 class="flex items-center gap-1.5 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-[#1e2235] text-gray-600 dark:text-gray-300 text-xs font-bold px-3 py-2 rounded-lg hover:border-blue-500/40 transition">
+                <span class="material-symbols-outlined text-[16px] leading-none">visibility</span> Ver proyecto
+              </a>
+              <a routerLink="/admin/payments/new"
+                 class="flex items-center gap-1.5 bg-amber-500 text-amber-950 text-xs font-bold px-3 py-2 rounded-lg hover:brightness-110 transition">
+                <span class="material-symbols-outlined text-[16px] leading-none">payments</span> Registrar cobro
+              </a>
+            </div>
+          </div>
+        }
 
-          <div class="dash-card col-span-2 md:col-span-1">
+        <!-- ══ KPIs hero: MRR + Por cobrar ══════════════════════════════ -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+
+          <div class="dash-card !p-5">
+            <div class="p-2 rounded-xl bg-emerald-500/10 w-fit">
+              <span class="material-symbols-outlined text-emerald-500">autorenew</span>
+            </div>
+            <p class="kpi-label mt-3">MRR · Ingreso recurrente</p>
+            <p class="text-3xl font-extrabold tabular-nums tracking-tight text-emerald-500 leading-none">
+              {{ formatMoney(data.metrics.mrr) }}
+            </p>
+            <p class="kpi-sub text-gray-500 dark:text-gray-400">
+              Proyección anual: {{ formatMoney(data.metrics.annualProjection) }}
+            </p>
+          </div>
+
+          <div class="dash-card !p-5">
+            <div class="p-2 rounded-xl bg-amber-500/10 w-fit">
+              <span class="material-symbols-outlined text-amber-500">pending_actions</span>
+            </div>
+            <p class="kpi-label mt-3">Por cobrar</p>
+            <p class="text-3xl font-extrabold tabular-nums tracking-tight text-amber-500 leading-none">
+              {{ formatMoney(data.metrics.totalReceivable) }}
+            </p>
+            <p class="kpi-sub text-gray-500 dark:text-gray-400">
+              @if (topReceivable(); as r) { {{ r.name }} } @else { Sin saldos pendientes }
+            </p>
+          </div>
+        </div>
+
+        <!-- ══ KPIs secundarios ═════════════════════════════════════════ -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+
+          <div class="dash-card">
             <div class="p-1.5 rounded-lg bg-blue-500/10 w-fit mb-3">
               <span class="material-symbols-outlined text-blue-500 text-[18px]">account_balance</span>
             </div>
             <p class="kpi-label">Total cobrado</p>
-            <p class="kpi-value text-blue-500">{{ formatMoney(data.metrics.totalCollected) }}</p>
-            <p class="kpi-sub text-emerald-500">Histórico acumulado</p>
-          </div>
-
-          <div class="dash-card">
-            <div class="p-1.5 rounded-lg bg-emerald-500/10 w-fit mb-3">
-              <span class="material-symbols-outlined text-emerald-500 text-[18px]">autorenew</span>
-            </div>
-            <p class="kpi-label">MRR</p>
-            <p class="kpi-value text-emerald-500">{{ formatMoney(data.metrics.mrr) }}</p>
-            <p class="kpi-sub text-blue-500">↑ Ingreso mensual recurrente</p>
+            <p class="kpi-value">{{ formatMoney(data.metrics.totalCollected) }}</p>
+            <p class="kpi-sub text-gray-500 dark:text-gray-400">Histórico</p>
           </div>
 
           <div class="dash-card">
@@ -78,17 +120,11 @@
               <span class="material-symbols-outlined text-violet-500 text-[18px]">diamond</span>
             </div>
             <p class="kpi-label">Margen mensual</p>
-            <p class="kpi-value text-violet-500">{{ formatMoney(data.metrics.monthlyProfit) }}</p>
-            <p class="kpi-sub text-violet-500">{{ marginPct() }}% de rentabilidad</p>
-          </div>
-
-          <div class="dash-card">
-            <div class="p-1.5 rounded-lg bg-amber-500/10 w-fit mb-3">
-              <span class="material-symbols-outlined text-amber-500 text-[18px]">pending_actions</span>
-            </div>
-            <p class="kpi-label">Por cobrar</p>
-            <p class="kpi-value text-amber-500">{{ formatMoney(data.metrics.totalReceivable) }}</p>
-            <p class="kpi-sub text-amber-500">Gestor Basketball</p>
+            <p class="kpi-value">{{ formatMoney(data.metrics.monthlyProfit) }}</p>
+            <!-- Salud como badge (umbral 30%) -->
+            <span class="inline-block mt-1.5 text-[11px] font-bold px-2 py-0.5 rounded-md" [ngClass]="healthBadgeClass(marginPct())">
+              {{ marginPct() }}% rentable
+            </span>
           </div>
 
           <div class="dash-card">
@@ -96,8 +132,8 @@
               <span class="material-symbols-outlined text-emerald-500 text-[18px]">rocket_launch</span>
             </div>
             <p class="kpi-label">Proyección anual</p>
-            <p class="kpi-value text-emerald-500">{{ formatMoney(data.metrics.annualProjection) }}</p>
-            <p class="kpi-sub text-emerald-500">Basado en MRR activo</p>
+            <p class="kpi-value">{{ formatMoney(data.metrics.annualProjection) }}</p>
+            <p class="kpi-sub text-gray-500 dark:text-gray-400">Basado en MRR</p>
           </div>
 
           <div class="dash-card">
@@ -106,7 +142,7 @@
             </div>
             <p class="kpi-label">Clientes</p>
             <p class="kpi-value">{{ data.metrics.totalClients }}</p>
-            <p class="kpi-sub text-gray-400">{{ data.metrics.activeProjects }} proyecto activo</p>
+            <p class="kpi-sub text-gray-500 dark:text-gray-400">{{ data.metrics.activeProjects }} activo(s)</p>
           </div>
 
         </div>
@@ -126,7 +162,7 @@
                   <div class="flex justify-between items-start gap-2">
                     <div>
                       <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ project.name }}</p>
-                      <p class="text-xs text-gray-400 mt-0.5">{{ project.type }} · {{ formatMoney(project.amount) }}</p>
+                      <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5 tabular-nums">{{ project.type }} · {{ formatMoney(project.amount) }}</p>
                     </div>
                     <span class="status-badge" [ngClass]="statusBadgeClass(project.status)">
                       {{ statusLabel(project.status) }}
@@ -138,15 +174,13 @@
                         class="h-full rounded-full transition-all duration-500"
                         [style.width.%]="project.paid_pct"
                         [class.bg-emerald-500]="project.paid_pct === 100"
-                        [class.bg-gradient-to-r]="project.paid_pct < 100"
-                        [class.from-blue-500]="project.paid_pct < 100"
-                        [class.to-violet-500]="project.paid_pct < 100">
+                        [class.bg-blue-500]="project.paid_pct < 100">
                       </div>
                     </div>
-                    <span class="text-[10px] text-gray-400 min-w-[28px] text-right">{{ project.paid_pct }}%</span>
+                    <span class="text-[10px] text-gray-400 min-w-[28px] text-right tabular-nums">{{ project.paid_pct }}%</span>
                   </div>
                   @if (project.balance > 0) {
-                    <p class="text-xs text-amber-500 font-semibold">Pendiente: {{ formatMoney(project.balance) }}</p>
+                    <p class="text-xs text-amber-500 font-semibold tabular-nums">Pendiente: {{ formatMoney(project.balance) }}</p>
                   }
                 </div>
               }
@@ -165,7 +199,7 @@
                   <div class="flex justify-between items-start mb-1.5">
                     <div>
                       <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ client.name }}</p>
-                      <p class="text-xs text-gray-400">{{ client.contact_name }}</p>
+                      <p class="text-xs text-gray-500 dark:text-gray-400">{{ client.contact_name }}</p>
                     </div>
                     <p class="text-sm font-bold text-gray-900 dark:text-white tabular-nums">{{ formatMoney(client.ltv) }}</p>
                   </div>
@@ -197,7 +231,7 @@
               </div>
             </div>
             <p class="kpi-value text-gray-900 dark:text-white">{{ formatMoney(data.revenueThisMonth.total) }}</p>
-            <p class="kpi-sub text-blue-500">{{ data.revenueThisMonth.count }} pago(s)</p>
+            <p class="kpi-sub text-gray-500 dark:text-gray-400">{{ data.revenueThisMonth.count }} pago(s)</p>
           </div>
           <div class="dash-card">
             <div class="flex justify-between items-start mb-3">
@@ -207,7 +241,7 @@
               </div>
             </div>
             <p class="kpi-value text-gray-900 dark:text-white">{{ formatMoney(data.revenueThisYear.total) }}</p>
-            <p class="kpi-sub text-violet-500">{{ data.revenueThisYear.count }} pago(s)</p>
+            <p class="kpi-sub text-gray-500 dark:text-gray-400">{{ data.revenueThisYear.count }} pago(s)</p>
           </div>
           <div class="dash-card">
             <div class="flex justify-between items-start mb-3">
@@ -217,37 +251,53 @@
               </div>
             </div>
             <p class="kpi-value text-gray-900 dark:text-white">{{ formatMoney(data.metrics.totalCollected) }}</p>
-            <p class="kpi-sub text-emerald-500">Todos los tiempos</p>
+            <!-- Referencia cruzada al Resumen (sin duplicar métrica) -->
+            <p class="kpi-sub text-gray-400 italic">= Total cobrado (Resumen)</p>
           </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
-          <!-- Gráfica mensual -->
+          <!-- Gráfica mensual: eje Y + mismo color + más reciente resaltada -->
           <div class="lg:col-span-2">
             <p class="section-title">
               <span class="material-symbols-outlined text-[14px] mr-1">bar_chart</span>
               Ingresos por mes
             </p>
             <div class="dash-card">
-              <div class="flex items-end gap-2 h-[120px] border-b border-gray-200 dark:border-[#1e2235] pb-2">
-                @for (point of data.revenueChart.slice().reverse(); track point.month) {
-                  <div class="flex flex-col items-center flex-1 group relative cursor-pointer">
-                    <div class="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[10px] px-2 py-1 rounded shadow-lg whitespace-nowrap z-10 pointer-events-none">
-                      {{ formatMoney(point.total) }}
-                    </div>
-                    <div class="w-full flex-1 flex items-end">
-                      <div
-                        class="w-full rounded-t-sm transition-all duration-300"
-                        [style.height.%]="barHeight(point.total)"
-                        style="min-height:4px"
-                        [style.background]="point.total > 0 ? (point.total === maxChartRevenue(data.revenueChart) ? 'linear-gradient(180deg,#818cf8,#3b82f6)' : '#1e2a3a') : 'transparent'">
+              <div class="flex gap-3">
+                <div class="flex flex-col justify-between items-end text-[10px] text-gray-400 h-[130px] sm:h-[160px] pb-6 shrink-0 tabular-nums">
+                  <span>{{ formatMoney(maxChartRevenue(data.revenueChart)) }}</span>
+                  <span>{{ formatMoney(maxChartRevenue(data.revenueChart) / 2) }}</span>
+                  <span>$0</span>
+                </div>
+                <div class="flex-1 flex items-end gap-1.5 sm:gap-2 h-[130px] sm:h-[160px] border-b border-gray-200 dark:border-[#1e2235] pb-2 relative">
+                  <div class="absolute left-0 right-0 top-0 border-t border-dashed border-gray-200/50 dark:border-white/5 pointer-events-none"></div>
+                  <div class="absolute left-0 right-0 top-1/2 border-t border-dashed border-gray-200/50 dark:border-white/5 pointer-events-none"></div>
+                  @for (point of data.revenueChart.slice().reverse(); track point.month; let last = $last) {
+                    <div class="flex-1 flex flex-col items-center justify-end h-full group relative cursor-pointer">
+                      <div class="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-7 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[10px] px-2 py-1 rounded shadow-lg whitespace-nowrap z-10 pointer-events-none tabular-nums">
+                        {{ formatMoney(point.total) }}
                       </div>
+                      <div
+                        class="w-full max-w-[26px] rounded-t-md transition-all duration-300"
+                        [style.height.%]="barHeight(point.total)"
+                        style="min-height:3px"
+                        [class.bg-blue-500]="!last"
+                        [class.bg-gradient-to-t]="last"
+                        [class.from-blue-500]="last"
+                        [class.to-indigo-400]="last">
+                      </div>
+                      <span class="text-[10px] mt-1.5 font-semibold tabular-nums"
+                        [class.text-indigo-400]="last" [class.text-gray-400]="!last">
+                        {{ point.month.substring(5,7) }}/{{ point.month.substring(2,4) }}
+                      </span>
                     </div>
-                    <span class="text-[9px] text-gray-400 mt-1.5 font-medium">
-                      {{ point.month.substring(5,7) }}/{{ point.month.substring(2,4) }}
-                    </span>
-                  </div>
-                }
+                  }
+                </div>
+              </div>
+              <div class="flex gap-4 mt-3 text-[11px] text-gray-400">
+                <span class="flex items-center gap-1.5"><i class="w-2.5 h-2.5 rounded-sm bg-blue-500 inline-block"></i>Ingreso mensual</span>
+                <span class="flex items-center gap-1.5"><i class="w-2.5 h-2.5 rounded-sm bg-gradient-to-t from-blue-500 to-indigo-400 inline-block"></i>Más reciente</span>
               </div>
             </div>
           </div>
@@ -262,8 +312,8 @@
               @for (yr of data.revenueByYear; track yr.year) {
                 <div class="flex justify-between items-center p-4">
                   <div>
-                    <p class="text-sm font-bold text-gray-900 dark:text-white">{{ yr.year }}</p>
-                    <p class="text-xs text-gray-400">{{ yr.payments_count }} pago(s)</p>
+                    <p class="text-sm font-bold text-gray-900 dark:text-white tabular-nums">{{ yr.year }}</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ yr.payments_count }} pago(s)</p>
                   </div>
                   <p class="text-base font-bold text-blue-500 tabular-nums">{{ formatMoney(yr.total) }}</p>
                 </div>
@@ -272,35 +322,33 @@
           </div>
         </div>
 
-        <!-- Márgenes -->
+        <!-- Márgenes: % como badge + responsive -->
         <p class="section-title mt-2">
           <span class="material-symbols-outlined text-[14px] mr-1">analytics</span>
           Márgenes por servicio
         </p>
         <div class="dash-card !p-0">
-          <div class="grid grid-cols-[1fr_auto_auto_auto] gap-x-4 px-4 py-2 border-b border-gray-200 dark:border-[#1e2235]">
+          <div class="grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_auto_auto_auto] gap-x-4 px-4 py-2 border-b border-gray-200 dark:border-[#1e2235]">
             <span class="col-label">Servicio</span>
-            <span class="col-label text-right">MRR</span>
-            <span class="col-label text-right">Margen/mes</span>
+            <span class="col-label text-right hidden sm:block">MRR</span>
+            <span class="col-label text-right hidden sm:block">Margen/mes</span>
             <span class="col-label text-right">%</span>
           </div>
           @for (s of data.serviceMargins; track s.id) {
-            <div class="grid grid-cols-[1fr_auto_auto_auto] gap-x-4 px-4 py-3 border-b border-gray-100 dark:border-[#1a1f2e] last:border-0 items-center hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
+            <div class="grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_auto_auto_auto] gap-x-4 px-4 py-3 border-b border-gray-100 dark:border-[#1a1f2e] last:border-0 items-center hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
               <div class="min-w-0">
                 <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">{{ s.name }}</p>
-                <p class="text-xs text-gray-400">{{ s.client_name }} · {{ cycleLabel(s.billing_cycle) }}</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ s.client_name }} · {{ cycleLabel(s.billing_cycle) }}</p>
               </div>
-              <p class="text-sm font-bold text-blue-500 tabular-nums text-right">{{ formatMoney(s.mrr) }}</p>
-              <p class="text-sm font-bold tabular-nums text-right"
+              <p class="text-sm font-bold text-blue-500 tabular-nums text-right hidden sm:block">{{ formatMoney(s.mrr) }}</p>
+              <p class="text-sm font-bold tabular-nums text-right hidden sm:block"
                 [class.text-emerald-500]="s.margin_monthly > 0"
                 [class.text-red-500]="s.margin_monthly <= 0">
                 {{ formatMoney(s.margin_monthly) }}
               </p>
-              <p class="text-sm font-bold tabular-nums text-right"
-                [class.text-amber-500]="marginPctSvc(s) < 30 && marginPctSvc(s) > 0"
-                [class.text-emerald-500]="marginPctSvc(s) >= 30">
+              <span class="justify-self-end text-[11px] font-bold px-2 py-0.5 rounded-md" [ngClass]="healthBadgeClass(marginPctSvc(s))">
                 {{ marginPctSvc(s) }}%
-              </p>
+              </span>
             </div>
           }
         </div>
@@ -316,7 +364,7 @@
             <span class="material-symbols-outlined text-amber-500 shrink-0">warning</span>
             <div>
               <p class="text-sm font-bold text-amber-500">{{ data.expiringServices.length }} servicio(s) próximos a vencer</p>
-              <p class="text-xs text-gray-400 mt-0.5">Revisa y envía recordatorios a tus clientes</p>
+              <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Revisa y envía recordatorios a tus clientes</p>
             </div>
           </div>
         }
@@ -347,12 +395,12 @@
                   <span class="text-base font-bold text-gray-900 dark:text-white">{{ s.name }}</span>
                   <span class="status-badge" [ngClass]="urgencyBadgeClass(s.urgency)">{{ urgencyLabel(s.urgency) }}</span>
                 </div>
-                <p class="text-xs text-gray-400 mt-1">
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
                   Cliente: <strong class="text-gray-700 dark:text-gray-200">{{ s.client_name }}</strong>
                   · Proveedor: {{ s.provider }}
                   · {{ cycleLabel(s.billing_cycle) }}
                 </p>
-                <p class="text-xs text-gray-400 mt-1">
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
                   Vence: <strong class="text-amber-500">{{ s.expiration_date }}</strong>
                   · <span
                     [class.text-red-500]="s.urgency === 'expired' || s.urgency === 'critical'"
@@ -362,8 +410,8 @@
                 </p>
               </div>
               <div class="flex flex-col items-end gap-2 shrink-0">
-                <p class="text-lg font-bold text-gray-900 dark:text-white">{{ formatMoney(s.price_mxn) }}</p>
-                <p class="text-xs text-emerald-500">Margen: {{ formatMoney(s.profit_margin) }}</p>
+                <p class="text-lg font-bold text-gray-900 dark:text-white tabular-nums">{{ formatMoney(s.price_mxn) }}</p>
+                <p class="text-xs text-emerald-500 tabular-nums">Margen: {{ formatMoney(s.profit_margin) }}</p>
                 <button
                   (click)="openWhatsApp(s)"
                   class="flex items-center gap-1.5 bg-gradient-to-r from-[#25D366] to-[#128C7E] text-white text-xs font-bold px-3 py-2 rounded-lg hover:opacity-90 transition-opacity cursor-pointer">
@@ -380,25 +428,23 @@
           Todos los servicios activos
         </p>
         <div class="dash-card !p-0">
-          <div class="grid grid-cols-[1fr_auto_auto_auto] gap-x-4 px-4 py-2 border-b border-gray-200 dark:border-[#1e2235]">
+          <div class="grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_auto_auto_auto] gap-x-4 px-4 py-2 border-b border-gray-200 dark:border-[#1e2235]">
             <span class="col-label">Servicio</span>
-            <span class="col-label text-right">Precio</span>
-            <span class="col-label text-right">MRR</span>
+            <span class="col-label text-right hidden sm:block">Precio</span>
+            <span class="col-label text-right hidden sm:block">MRR</span>
             <span class="col-label text-right">Margen</span>
           </div>
           @for (s of data.serviceMargins; track s.id) {
-            <div class="grid grid-cols-[1fr_auto_auto_auto] gap-x-4 px-4 py-3 border-b border-gray-100 dark:border-[#1a1f2e] last:border-0 items-center hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
+            <div class="grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_auto_auto_auto] gap-x-4 px-4 py-3 border-b border-gray-100 dark:border-[#1a1f2e] last:border-0 items-center hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
               <div class="min-w-0">
                 <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">{{ s.name }}</p>
-                <p class="text-xs text-gray-400">{{ s.client_name }} · {{ cycleLabel(s.billing_cycle) }}</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ s.client_name }} · {{ cycleLabel(s.billing_cycle) }}</p>
               </div>
-              <p class="text-sm text-gray-500 dark:text-gray-400 tabular-nums text-right">{{ formatMoney(s.price_mxn) }}</p>
-              <p class="text-sm font-bold text-blue-500 tabular-nums text-right">{{ formatMoney(s.mrr) }}</p>
-              <p class="text-sm font-bold tabular-nums text-right"
-                [class.text-amber-500]="marginPctSvc(s) < 30 && marginPctSvc(s) > 0"
-                [class.text-emerald-500]="marginPctSvc(s) >= 30">
+              <p class="text-sm text-gray-500 dark:text-gray-400 tabular-nums text-right hidden sm:block">{{ formatMoney(s.price_mxn) }}</p>
+              <p class="text-sm font-bold text-blue-500 tabular-nums text-right hidden sm:block">{{ formatMoney(s.mrr) }}</p>
+              <span class="justify-self-end text-[11px] font-bold px-2 py-0.5 rounded-md" [ngClass]="healthBadgeClass(marginPctSvc(s))">
                 {{ marginPctSvc(s) }}%
-              </p>
+              </span>
             </div>
           }
         </div>
@@ -411,14 +457,15 @@
 
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
           @for (ch of notifChannels(data.notificationsSummary); track ch.key) {
-            <div
-              class="dash-card cursor-pointer transition-all"
+            <button
+              type="button"
+              class="dash-card cursor-pointer transition-all text-left"
               [class.ring-1]="notifFilter() === ch.key"
               [class.ring-blue-500]="notifFilter() === ch.key"
               (click)="notifFilter.set(ch.key)">
               <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{{ ch.icon }} {{ ch.label }}</p>
-              <p class="text-3xl font-bold" [style.color]="ch.color">{{ ch.val }}</p>
-            </div>
+              <p class="text-3xl font-bold tabular-nums" [style.color]="ch.color">{{ ch.val }}</p>
+            </button>
           }
         </div>
 
@@ -443,7 +490,7 @@
                   <span class="text-[10px] text-gray-400 shrink-0 whitespace-nowrap">{{ log.sent_ago }}</span>
                 </div>
                 @if (log.service_name) {
-                  <p class="text-xs text-gray-400 mt-0.5 flex items-center gap-1">
+                  <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5 flex items-center gap-1">
                     <span class="material-symbols-outlined text-[12px]">build</span>
                     {{ log.service_name }}
                   </p>

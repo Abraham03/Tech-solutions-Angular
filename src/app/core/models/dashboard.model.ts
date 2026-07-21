@@ -41,6 +41,7 @@ export interface ProjectSummary {
   status: string;
   amount: number;
   balance: number;
+  paid_pct?: number;
 }
 
 export interface ExpiringService {
@@ -70,9 +71,9 @@ export interface RevenueYear {
 
 export interface DashboardData {
   metrics: DashboardMetrics;
-  recentProjects: any[]; 
-  expiringServices: any[]; 
-  revenueChart: any[]; 
+  recentProjects: any[];
+  expiringServices: any[];
+  revenueChart: any[];
   revenueByYear: RevenueYear[];
   revenueThisMonth: RevenuePeriod;
   revenueThisYear: RevenuePeriod;

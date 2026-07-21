@@ -55,6 +55,7 @@ import { DashboardData } from '../../../core/models/dashboard.model';
       font-weight: 700;
       color: #111827;
       line-height: 1.2;
+      font-variant-numeric: tabular-nums;
     }
 
     :host-context(html.dark) .kpi-value { color: #f1f5f9; }
@@ -103,6 +104,14 @@ import { DashboardData } from '../../../core/models/dashboard.model';
       border-color: #e5e7eb;
     }
 
+    /* ── Foco de teclado accesible ────────────────────────────────── */
+    a:focus-visible,
+    button:focus-visible {
+      outline: 2px solid #3b82f6;
+      outline-offset: 2px;
+      border-radius: 8px;
+    }
+
     /* ── Scrollbar ────────────────────────────────────────────────── */
     ::-webkit-scrollbar { width: 4px; height: 4px; }
     ::-webkit-scrollbar-track { background: transparent; }
@@ -139,6 +148,14 @@ export class DashboardComponent implements OnInit {
     const d = this.dashboardData();
     if (!d || d.metrics.mrr === 0) return 0;
     return Math.round((d.metrics.monthlyProfit / d.metrics.mrr) * 100);
+  });
+
+  /** Cobro más urgente (mayor saldo pendiente) para el banner de acción */
+  topReceivable = computed(() => {
+    const projects = this.dashboardData()?.recentProjects ?? [];
+    const withBalance = projects.filter(p => Number(p.balance) > 0);
+    if (!withBalance.length) return null;
+    return [...withBalance].sort((a, b) => Number(b.balance) - Number(a.balance))[0];
   });
 
   // ── Lifecycle ─────────────────────────────────────────────────────────
@@ -228,6 +245,13 @@ export class DashboardComponent implements OnInit {
   // ── Margins ───────────────────────────────────────────────────────────
   marginPctSvc(s: any): number {
     return s.mrr > 0 ? Math.round((s.margin_monthly / s.mrr) * 100) : 0;
+  }
+
+  /** Badge de salud reutilizando tu umbral de 30% */
+  healthBadgeClass(pct: number): string {
+    if (pct >= 30) return 'bg-emerald-500/10 text-emerald-500';
+    if (pct > 0)   return 'bg-amber-500/10 text-amber-500';
+    return 'bg-red-500/10 text-red-500';
   }
 
   cycleLabel(cycle: string): string {
