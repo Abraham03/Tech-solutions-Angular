@@ -1,0 +1,156 @@
+# CI/CD del panel de Tech Solutions (Angular 19 + SSR).
+#
+# Variables requeridas en GitLab (Settings > CI/CD > Variables), marcadas
+# "Protected" y "Masked" donde se pueda. Son las mismas del backend:
+#   SSH_PRIVATE_KEY  clave privada SSH en base64, en una sola linea
+#   SSH_HOST         host SSH de Hostinger
+#   SSH_USER         usuario SSH (u525153682)
+#   SSH_PORT         puerto SSH (en hosting compartido suele ser 65002)
+
+stages:
+  - build
+  # `test` en ingles no es un descuido: las plantillas de seguridad de GitLab
+  # declaran sus jobs en ese stage y no se puede cambiar sin reescribirlas.
+  # Si falta, el pipeline ni siquiera arranca.
+  - test
+  - deploy
+
+variables:
+  # Raiz publica del dominio. OJO: aqui conviven otras aplicaciones (api/ entre
+  # ellas), por eso el despliegue nunca borra de forma indiscriminada.
+  DEPLOY_PATH: "/home/u525153682/domains/techsolutions.management/public_html"
+  SITE_URL: "https://techsolutions.management"
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never
+    - if: $CI_COMMIT_BRANCH
+
+include:
+  - template: Security/Secret-Detection.gitlab-ci.yml
+  - template: Security/SAST.gitlab-ci.yml
+
+# ---------------------------------------------------------------- build
+
+build:angular:
+  stage: build
+  image: node:22
+  timeout: 20m
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - .npm/
+  script:
+    # npm ci y no npm install: respeta package-lock.json al pie de la letra, asi
+    # que la compilacion es reproducible y no se cuela una version nueva de una
+    # dependencia sin que nadie lo decida.
+    - npm ci --cache .npm --prefer-offline
+    - npm run build -- --configuration production
+    # Comprobacion barata que evita un despliegue inutil: sin el service worker
+    # en la raiz no llegan notificaciones, y sin manifest la PWA no se instala.
+    - test -f dist/techsolutions-frontend/browser/firebase-messaging-sw.js
+    - test -f dist/techsolutions-frontend/browser/manifest.webmanifest
+    - test -f dist/techsolutions-frontend/browser/index.html
+  artifacts:
+    expire_in: 1 hour
+    paths:
+      - dist/techsolutions-frontend/browser/
+
+# Nota: no hay job de pruebas. Los 7 .spec.ts son los andamios del CLI y hoy
+# fallan todos: los componentes inyectan servicios que necesitan HttpClient y el
+# TestBed no lo provee. Un job permanentemente rojo solo ensena a ignorar el
+# pipeline. Cuando esos specs se arreglen, se anade aqui un job con
+# `ng test --watch=false --browsers=ChromeHeadless`.
+
+# ---------------------------------------------------------------- deploy
+
+.ssh_setup:
+  before_script:
+    - apk add --no-cache openssh-client rsync curl
+    - mkdir -p ~/.ssh && chmod 700 ~/.ssh
+    # Falla temprano y con un mensaje claro: una variable ausente se expande a
+    # cadena vacia sin avisar, y el error aparecería despues como un fallo
+    # incomprensible de ssh.
+    - |
+      faltan=""
+      [ -z "$SSH_PRIVATE_KEY" ] && faltan="$faltan SSH_PRIVATE_KEY"
+      [ -z "$SSH_HOST" ]        && faltan="$faltan SSH_HOST"
+      [ -z "$SSH_USER" ]        && faltan="$faltan SSH_USER"
+      [ -z "$SSH_PORT" ]        && faltan="$faltan SSH_PORT"
+      if [ -n "$faltan" ]; then
+        echo "Faltan estas variables de CI/CD:$faltan"
+        echo "Se definen en Settings > CI/CD > Variables."
+        exit 1
+      fi
+    - echo "$SSH_PRIVATE_KEY" | base64 -d > ~/.ssh/id_deploy
+    - chmod 600 ~/.ssh/id_deploy
+    - ssh-keyscan -p "$SSH_PORT" -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+    - |
+      cat >> ~/.ssh/config <<CFG
+      Host deploy
+        HostName $SSH_HOST
+        User $SSH_USER
+        Port $SSH_PORT
+        IdentityFile ~/.ssh/id_deploy
+        IdentitiesOnly yes
+      CFG
+    - chmod 600 ~/.ssh/config
+
+deploy:produccion:
+  stage: deploy
+  image: alpine:3.20
+  extends: .ssh_setup
+  needs:
+    - build:angular
+  environment:
+    name: production
+    url: https://techsolutions.management
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+  script:
+    # PASO 1: subir la version nueva sin borrar nada.
+    # -rlvz en vez de -a: -a arrastra permisos y propietario, que en hosting
+    # compartido fallan porque el uid remoto no es nuestro.
+    # Al no borrar todavia, el sitio nunca queda a medias: conviven los archivos
+    # viejos y los nuevos, y el index.html ya apunta a los nuevos.
+    - rsync -rlvz ./dist/techsolutions-frontend/browser/ "deploy:$DEPLOY_PATH/"
+
+    # PASO 2: retirar los bundles viejos, que es lo unico que se acumula.
+    # index.html, iconos, manifest y service worker tienen nombre fijo y se
+    # sobrescriben solos; los bundles llevan hash, asi que cada compilacion
+    # dejaba una copia mas en el servidor.
+    #
+    # Se usa find y no un rsync --delete a proposito: public_html es compartido
+    # con api/ y no quiero que la seguridad dependa de acertar con el orden de
+    # los filtros de rsync. Aqui las tres garantias se leen de un vistazo:
+    #   -maxdepth 1  -> nunca entra en api/ ni en ninguna subcarpeta
+    #   -name        -> solo toca los patrones que genera Angular
+    #   -mmin +5     -> solo lo que NO acaba de escribir el rsync de arriba
+    #                   (el rsync no lleva -t, asi que lo recien subido tiene
+    #                    fecha actual)
+    # El script remoto va en un heredoc entrecomillado ('REMOTO') para que el
+    # runner no toque nada de su interior; la unica sustitucion local es la de
+    # DEPLOY_PATH, en el cd de la propia orden ssh.
+    - |
+      ssh deploy "cd '$DEPLOY_PATH' && bash -s" <<'REMOTO'
+        set -e
+        echo '--- bundles retirados:'
+        for patron in 'chunk-*.js' 'main-*.js' 'polyfills-*.js' 'scripts-*.js' 'styles-*.css'; do
+          find . -maxdepth 1 -type f -name "$patron" -mmin +5 -print -delete
+        done
+        if [ -d ./media ]; then
+          find ./media -type f -mmin +5 -print -delete
+        fi
+        echo '--- limpieza terminada'
+      REMOTO
+
+    # PASO 3: comprobar que lo esencial responde. Un 404 aqui es un fallo
+    # silencioso que solo se notaria semanas despues.
+    - curl -fsS -o /dev/null -w "healthcheck / -> %{http_code}\n" "$SITE_URL"
+    - curl -fsS -o /dev/null -w "firebase-messaging-sw.js -> %{http_code}\n" "$SITE_URL/firebase-messaging-sw.js"
+    - curl -fsS -o /dev/null -w "manifest.webmanifest -> %{http_code}\n" "$SITE_URL/manifest.webmanifest"
