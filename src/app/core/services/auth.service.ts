@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment.development';
 import { tap, catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
+import { PushNotificationsService } from './push-notifications.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +14,7 @@ export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
   private platformId = inject(PLATFORM_ID);
+  private push = inject(PushNotificationsService);
   private apiUrl = environment.apiUrl;
 
   // Signal reactivo para el estado del usuario
@@ -44,6 +46,10 @@ export class AuthService {
 
         // Validación asíncrona de seguridad con el backend
         this.validateSessionSilently();
+
+        // FCM rota el token sin avisar, asi que lo reclamamos en cada arranque
+        // con sesion activa y no solo al iniciar sesion.
+        this.push.registerDevice();
       } catch (error) {
         console.error('Corrupción en datos de sesión local. Limpiando...', error);
         this.logout();
@@ -85,7 +91,11 @@ export class AuthService {
         // 2. Actualizar estado global reactivo
         this.currentUser.set(user);
 
-        // 3. Redirigir según el rol
+        // 3. Registrar el dispositivo para notificaciones push.
+        // Sin await: pedir el permiso no debe retrasar la entrada al panel.
+        this.push.registerDevice();
+
+        // 4. Redirigir según el rol
         this.redirectBasedOnRole(user.role);
       }),
       catchError((error: HttpErrorResponse) => {
@@ -106,6 +116,25 @@ export class AuthService {
   }
 
   logout() {
+    // Avisamos al backend ANTES de borrar nada del almacenamiento local: el
+    // interceptor lee el Bearer de localStorage al suscribirse, y si lo
+    // borraramos primero la peticion saldria sin autenticar. El servidor no
+    // revocaria el token de Passport ni limpiaria el fcm_token, y este
+    // navegador seguiria recibiendo los avisos de pagos despues de salir.
+    if (this.isBrowser && this.getToken()) {
+      this.http.post(`${this.apiUrl}/logout`, {}).subscribe({
+        error: (error) => {
+          // La sesion local se cierra igual: no dejamos al usuario atrapado
+          // dentro de la aplicacion porque el servidor no conteste.
+          console.warn('No se pudo cerrar la sesion en el servidor:', error);
+        }
+      });
+    }
+
+    this.clearLocalSession();
+  }
+
+  private clearLocalSession() {
     // Limpieza total por seguridad
     if (this.isBrowser) {
       localStorage.removeItem('auth_token');

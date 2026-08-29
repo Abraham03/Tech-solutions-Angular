@@ -44,7 +44,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <link rel="icon" type="image/png" sizes="96x96" href="https://techsolutions.management/favicon-96x96.png">
-  <link rel="apple-touch-icon" href="https://techsolutions.management/favicon-96x96.png">
+
+  <!-- PWA: sin el manifest el navegador no ofrece instalar la aplicacion, y en
+       iOS las notificaciones push solo llegan si esta instalada en la pantalla
+       de inicio. Rutas relativas: el manifest se sirve desde la raiz. -->
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <!-- Safari ignora el manifest para estas dos: hay que declararlas aparte. -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Tech Solutions">
+  <meta name="mobile-web-app-capable" content="yes">
 
   <!-- Preload de la imagen LCP (hero) -->
   <link rel="preload" as="image" href="/img/cover5.webp" fetchpriority="high">
