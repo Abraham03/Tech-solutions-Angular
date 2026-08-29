@@ -43,6 +43,23 @@ jobs:
       - name: Compilar
         run: npm run build -- --configuration production
 
+      - name: Comprobar que los secretos existen
+        # GitHub sustituye por cadena vacia los secretos que no existen, sin
+        # avisar. Sin esta comprobacion el fallo aparece varios pasos despues
+        # como un error críptico de ssh-keyscan con host vacio.
+        run: |
+          faltan=""
+          [ -z "${{ secrets.SSH_PRIVATE_KEY }}" ] && faltan="$faltan SSH_PRIVATE_KEY"
+          [ -z "${{ secrets.SSH_HOST }}" ]        && faltan="$faltan SSH_HOST"
+          [ -z "${{ secrets.SSH_USER }}" ]        && faltan="$faltan SSH_USER"
+          [ -z "${{ secrets.SSH_PORT }}" ]        && faltan="$faltan SSH_PORT"
+          if [ -n "$faltan" ]; then
+            echo "Faltan estos secretos:$faltan"
+            echo "Se crean en Settings > Secrets and variables > Actions > New repository secret."
+            exit 1
+          fi
+          echo "Los cuatro secretos estan definidos."
+
       - name: Preparar la clave SSH
         run: |
           mkdir -p ~/.ssh && chmod 700 ~/.ssh
