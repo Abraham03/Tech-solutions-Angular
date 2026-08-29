@@ -37,13 +37,24 @@ messaging.onBackgroundMessage((payload) => {
   // SDK expone aqui como payload.fcmOptions.link.
   const link = (payload.fcmOptions && payload.fcmOptions.link) || '/';
 
+  // Un tag distinto por aviso. Con un tag fijo, cada notificacion nueva
+  // REEMPLAZA en silencio a la anterior: sin sonido, sin vibracion y sin
+  // banner. El usuario nunca se entera de que llego algo nuevo.
+  // Para pagos hay que ver cada uno por separado, asi que se usa el id del
+  // pago cuando viene, y si no una marca de tiempo.
+  const data = payload.data || {};
+  const tag = data.payment_id ? `pago-${data.payment_id}` : `aviso-${Date.now()}`;
+
   self.registration.showNotification(notification.title || 'Tech Solutions', {
     body: notification.body || '',
     icon: '/favicon-96x96.png',
     badge: '/favicon-96x96.png',
     data: { link },
-    // Evita apilar avisos repetidos del mismo tipo en la bandeja.
-    tag: 'techsolutions-notification'
+    tag,
+    // Si aun asi coincidiera un tag, que vuelva a avisar en vez de sustituir
+    // la anterior sin hacer ruido.
+    renotify: true,
+    vibrate: [200, 100, 200]
   });
 });
 
