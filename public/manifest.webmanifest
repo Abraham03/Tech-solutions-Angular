@@ -34,7 +34,7 @@
     {
       "name": "Pagos",
       "short_name": "Pagos",
-      "url": "/admin/pagos",
+      "url": "/admin/payments",
       "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     }
   ]
