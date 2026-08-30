@@ -98,7 +98,7 @@ import { DashboardData } from '../../../core/models/dashboard.model';
     }
 
     /* ── Nav tabs fondo light ─────────────────────────────────────── */
-    :host-context(.light) .tabs-bar,
+    :host-context(html:not(.dark)) .tabs-bar,
     :host-context([data-theme="light"]) .tabs-bar {
       background: #ffffff;
       border-color: #e5e7eb;

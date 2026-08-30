@@ -53,14 +53,14 @@ import { CommonModule } from '@angular/common';
     }
 
     /* Light mode */
-    :host-context(.light) .metric-card,
+    :host-context(html:not(.dark)) .metric-card,
     :host-context([data-theme="light"]) .metric-card {
       background: #ffffff;
       border-color: #e5e7eb;
       box-shadow: 0 1px 3px rgba(0,0,0,.06);
     }
 
-    :host-context(.light) .metric-card:hover,
+    :host-context(html:not(.dark)) .metric-card:hover,
     :host-context([data-theme="light"]) .metric-card:hover {
       border-color: #d1d5db;
       box-shadow: 0 4px 12px rgba(0,0,0,.08);
@@ -83,7 +83,7 @@ import { CommonModule } from '@angular/common';
       letter-spacing: -0.02em;
     }
 
-    :host-context(.light) .metric-value,
+    :host-context(html:not(.dark)) .metric-value,
     :host-context([data-theme="light"]) .metric-value {
       color: #111827;
     }

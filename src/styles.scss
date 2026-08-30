@@ -257,3 +257,42 @@ body {
     display: none;
   }
 }
+// ============================================================
+// Angular Material en modo oscuro
+//
+// Los menus de Material se renderizan en un overlay colgado del <body>, fuera
+// del componente. Por eso las clases de Tailwind del template no les llegan y
+// conservan los colores del tema claro: texto oscuro sobre panel oscuro, que es
+// lo que hacia ilegible "Cerrar Sesion".
+//
+// La clase `dark` vive en <html>, que si es ancestro del overlay, asi que desde
+// aqui si se puede corregir.
+// ============================================================
+html.dark {
+  .mat-mdc-menu-panel {
+    background-color: #1e212b; // surface-paper
+    border: 1px solid #2a2f42; // surface-border
+  }
+
+  .mat-mdc-menu-item {
+    color: #e5e7eb;
+
+    .mat-mdc-menu-item-text,
+    .mat-icon {
+      color: inherit;
+    }
+
+    &:hover:not([disabled]),
+    &.cdk-program-focused:not([disabled]),
+    &.cdk-keyboard-focused:not([disabled]) {
+      background-color: #2a2f42;
+      color: #ffffff;
+    }
+  }
+
+  // Los tooltips comparten el mismo problema.
+  .mat-mdc-tooltip .mdc-tooltip__surface {
+    background-color: #2a2f42;
+    color: #e5e7eb;
+  }
+}

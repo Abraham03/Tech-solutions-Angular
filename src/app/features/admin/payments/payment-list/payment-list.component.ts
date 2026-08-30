@@ -1,5 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ListState } from '../../../../core/models/list-state';
 import { Router } from '@angular/router';
 import { PaymentService } from '../../../../core/services/payment.service';
 import { DataTableComponent, TableColumn } from '../../../../shared/components/ui/data-table/data-table.component';
@@ -14,7 +15,8 @@ export class PaymentListComponent implements OnInit {
   private paymentService = inject(PaymentService);
   private router = inject(Router);
 
-  payments = signal<any[]>([]);
+  /** Pagina actual, tamano, busqueda y resultados del listado. */
+  lista = new ListState<any>();
 
   columns: TableColumn[] = [
     { key: 'client_name', label: 'Cliente' },
@@ -64,14 +66,36 @@ export class PaymentListComponent implements OnInit {
   }
 
   loadPayments() {
-    this.paymentService.getPayments().subscribe({
+    this.lista.loading.set(true);
+
+    this.paymentService.getPayments(this.lista.params()).subscribe({
       next: (response: any) => {
-        let data = response?.data || response;
-        if (data && data.data && Array.isArray(data.data)) data = data.data;
-        this.payments.set(Array.isArray(data) ? data : []);
+        this.lista.apply(response);
+        this.lista.loading.set(false);
       },
-      error: (err) => console.error('Error cargando pagos', err)
+      error: (err: unknown) => {
+        console.error('Error cargando el listado', err);
+        this.lista.fail();
+        this.lista.loading.set(false);
+      }
     });
+  }
+
+  // La paginacion y la busqueda las resuelve el servidor, asi que cada cambio
+  // vuelve a pedir la pagina correspondiente.
+  onPageChange(pagina: number) {
+    this.lista.goToPage(pagina);
+    this.loadPayments();
+  }
+
+  onPageSizeChange(tamano: number) {
+    this.lista.changePageSize(tamano);
+    this.loadPayments();
+  }
+
+  onSearchChange(termino: string) {
+    this.lista.changeSearch(termino);
+    this.loadPayments();
   }
 
   handleAction(event: { action: string; row: any }) {

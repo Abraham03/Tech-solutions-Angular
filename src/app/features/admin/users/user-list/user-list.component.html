@@ -2,9 +2,14 @@
 
   <app-data-table 
     title="Directorio de Usuarios"
-    [data]="users()" 
+    [data]="lista.items()" 
     [columns]="columns" 
     [actions]="actions"
+    [meta]="lista.meta()"
+    [loading]="lista.loading()"
+    (pageChanged)="onPageChange($event)"
+    (pageSizeChanged)="onPageSizeChange($event)"
+    (searchChanged)="onSearchChange($event)"
     (actionClicked)="handleAction($event)"
     (createClicked)="createNewUser()">
   </app-data-table>

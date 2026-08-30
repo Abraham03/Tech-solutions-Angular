@@ -1,5 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ListState } from '../../../../core/models/list-state';
 import { Router } from '@angular/router';
 import { UserService } from '../../../../core/services/user.service';
 import { DataTableComponent, TableColumn } from '../../../../shared/components/ui/data-table/data-table.component';
@@ -14,7 +15,8 @@ export class UserListComponent implements OnInit {
   private userService = inject(UserService);
   private router = inject(Router);
 
-  users = signal<any[]>([]);
+  /** Pagina actual, tamano, busqueda y resultados del listado. */
+  lista = new ListState<any>();
 
   columns: TableColumn[] = [
     { key: 'name', label: 'Nombre' },
@@ -41,14 +43,36 @@ export class UserListComponent implements OnInit {
   }
 
   loadUsers() {
-    this.userService.getUsers().subscribe({
+    this.lista.loading.set(true);
+
+    this.userService.getUsers(this.lista.params()).subscribe({
       next: (response: any) => {
-        let data = response?.data || response;
-        if (data && data.data && Array.isArray(data.data)) data = data.data; // Extraer si viene paginado
-        this.users.set(Array.isArray(data) ? data : []);
+        this.lista.apply(response);
+        this.lista.loading.set(false);
       },
-      error: (err) => console.error('Error al cargar usuarios', err)
+      error: (err: unknown) => {
+        console.error('Error cargando el listado', err);
+        this.lista.fail();
+        this.lista.loading.set(false);
+      }
     });
+  }
+
+  // La paginacion y la busqueda las resuelve el servidor, asi que cada cambio
+  // vuelve a pedir la pagina correspondiente.
+  onPageChange(pagina: number) {
+    this.lista.goToPage(pagina);
+    this.loadUsers();
+  }
+
+  onPageSizeChange(tamano: number) {
+    this.lista.changePageSize(tamano);
+    this.loadUsers();
+  }
+
+  onSearchChange(termino: string) {
+    this.lista.changeSearch(termino);
+    this.loadUsers();
   }
 
   handleAction(event: { action: string; row: any }) {

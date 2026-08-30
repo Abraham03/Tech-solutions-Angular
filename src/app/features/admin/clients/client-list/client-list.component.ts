@@ -1,5 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ListState } from '../../../../core/models/list-state';
 import { DataTableComponent, TableColumn, TableActionConfig } from '../../../../shared/components/ui/data-table/data-table.component';
 import { ClientService } from '../../../../core/services/client.service';
 import { Router } from '@angular/router';
@@ -14,8 +15,8 @@ export class ClientListComponent implements OnInit {
   private clientService = inject(ClientService);
   private router = inject(Router);
 
-  // Estado reactivo para inyectar a la tabla
-  clients = signal<any[]>([]);
+  /** Pagina actual, tamano, busqueda y resultados del listado. */
+  lista = new ListState<any>();
 
   // 1. Contrato de Columnas (Basado en la migración de tu BD)
   tableColumns: TableColumn[] = [
@@ -37,21 +38,36 @@ export class ClientListComponent implements OnInit {
   }
 
   loadClients() {
-    this.clientService.getClients().subscribe({
-      next: (response: any) => {
-        let extractedData = response?.data || response;
-        
-        if (extractedData && extractedData.data && Array.isArray(extractedData.data)) {
-          extractedData = extractedData.data;
-        }
+    this.lista.loading.set(true);
 
-        this.clients.set(Array.isArray(extractedData) ? extractedData : []);
+    this.clientService.getClients(this.lista.params()).subscribe({
+      next: (response: any) => {
+        this.lista.apply(response);
+        this.lista.loading.set(false);
       },
-      error: (err) => {
-        console.error('Error cargando el directorio de clientes', err);
-        this.clients.set([]);
+      error: (err: unknown) => {
+        console.error('Error cargando el listado', err);
+        this.lista.fail();
+        this.lista.loading.set(false);
       }
     });
+  }
+
+  // La paginacion y la busqueda las resuelve el servidor, asi que cada cambio
+  // vuelve a pedir la pagina correspondiente.
+  onPageChange(pagina: number) {
+    this.lista.goToPage(pagina);
+    this.loadClients();
+  }
+
+  onPageSizeChange(tamano: number) {
+    this.lista.changePageSize(tamano);
+    this.loadClients();
+  }
+
+  onSearchChange(termino: string) {
+    this.lista.changeSearch(termino);
+    this.loadClients();
   }
 
   // 3. Recepción de eventos desde la tabla reutilizable

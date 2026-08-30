@@ -2,8 +2,13 @@
   <app-data-table
     title="Gestión de Proyectos"
     [columns]="tableColumns"
-    [data]="projects()"
+    [data]="lista.items()"
     [actions]="tableActions"
+    [meta]="lista.meta()"
+    [loading]="lista.loading()"
+    (pageChanged)="onPageChange($event)"
+    (pageSizeChanged)="onPageSizeChange($event)"
+    (searchChanged)="onSearchChange($event)"
     (actionClicked)="handleAction($event)"
     (createClicked)="createNewProject()">
   </app-data-table>

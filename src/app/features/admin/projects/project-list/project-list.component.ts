@@ -1,5 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ListState } from '../../../../core/models/list-state';
 import { DataTableComponent, TableColumn, TableActionConfig } from '../../../../shared/components/ui/data-table/data-table.component';
 import { ProjectService } from '../../../../core/services/project.service';
 import { Router } from '@angular/router';
@@ -14,8 +15,8 @@ export class ProjectListComponent implements OnInit {
   private projectService = inject(ProjectService);
   private router = inject(Router);
 
-  // Estado reactivo para los datos
-  projects = signal<any[]>([]);
+  /** Pagina actual, tamano, busqueda y resultados del listado. */
+  lista = new ListState<any>();
 
   // 1. Configuración de las columnas exactas que queremos ver
   tableColumns: TableColumn[] = [
@@ -47,25 +48,36 @@ export class ProjectListComponent implements OnInit {
   }
 
   loadProjects() {
-    this.projectService.getProjects().subscribe({
-      next: (response: any) => {
-        // 1. Extraemos la data (Laravel Resource suele enviarlo en 'data')
-        let extractedData = response?.data || response;
-        
-        // 2. Si Laravel manda paginación nativa, la data real está un nivel más adentro
-        if (extractedData && extractedData.data && Array.isArray(extractedData.data)) {
-          extractedData = extractedData.data;
-        }
+    this.lista.loading.set(true);
 
-        // 3. Validación estricta: Si no es un Array, forzamos un Array vacío
-        this.projects.set(Array.isArray(extractedData) ? extractedData : []); 
+    this.projectService.getProjects(this.lista.params()).subscribe({
+      next: (response: any) => {
+        this.lista.apply(response);
+        this.lista.loading.set(false);
       },
-      error: (err) => {
-        console.error('Error cargando proyectos', err);
-        // Si hay error 500 o 404, evitamos que la tabla se rompa
-        this.projects.set([]); 
+      error: (err: unknown) => {
+        console.error('Error cargando el listado', err);
+        this.lista.fail();
+        this.lista.loading.set(false);
       }
     });
+  }
+
+  // La paginacion y la busqueda las resuelve el servidor, asi que cada cambio
+  // vuelve a pedir la pagina correspondiente.
+  onPageChange(pagina: number) {
+    this.lista.goToPage(pagina);
+    this.loadProjects();
+  }
+
+  onPageSizeChange(tamano: number) {
+    this.lista.changePageSize(tamano);
+    this.loadProjects();
+  }
+
+  onSearchChange(termino: string) {
+    this.lista.changeSearch(termino);
+    this.loadProjects();
   }
 
   // 3. Manejador de eventos (Cuando hacen clic en algún botón de la tabla)
