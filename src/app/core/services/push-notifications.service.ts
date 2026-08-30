@@ -105,10 +105,14 @@ export class PushNotificationsService {
    */
   private listenForForegroundMessages(): void {
     onMessage(this.getMessaging(), (payload) => {
+      // El backend envia data-only, asi que titulo, cuerpo y enlace vienen en
+      // data y no en payload.notification.
+      const data = payload.data ?? {};
+
       this.foregroundMessage.set({
-        title: payload.notification?.title ?? 'Tech Solutions',
-        body: payload.notification?.body ?? '',
-        link: payload.fcmOptions?.link
+        title: data['title'] ?? 'Tech Solutions',
+        body: data['body'] ?? '',
+        link: data['link']
       });
     });
   }

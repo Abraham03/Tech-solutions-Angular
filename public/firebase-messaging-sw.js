@@ -31,22 +31,22 @@ firebase.initializeApp({
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
-  const notification = payload.notification || {};
-
-  // El backend manda el destino del clic en webpush.fcm_options.link, que el
-  // SDK expone aqui como payload.fcmOptions.link.
-  const link = (payload.fcmOptions && payload.fcmOptions.link) || '/';
+  // El backend envia data-only: sin bloque 'notification'. Si lo llevara, el
+  // SDK pintaria la notificacion por su cuenta ADEMAS de llamar aqui, y el
+  // usuario veria el mismo aviso dos veces con iconos distintos.
+  // Por eso titulo, cuerpo y enlace viajan dentro de data.
+  const data = payload.data || {};
+  const link = data.link || '/';
 
   // Un tag distinto por aviso. Con un tag fijo, cada notificacion nueva
   // REEMPLAZA en silencio a la anterior: sin sonido, sin vibracion y sin
   // banner. El usuario nunca se entera de que llego algo nuevo.
   // Para pagos hay que ver cada uno por separado, asi que se usa el id del
   // pago cuando viene, y si no una marca de tiempo.
-  const data = payload.data || {};
   const tag = data.payment_id ? `pago-${data.payment_id}` : `aviso-${Date.now()}`;
 
-  self.registration.showNotification(notification.title || 'Tech Solutions', {
-    body: notification.body || '',
+  self.registration.showNotification(data.title || 'Tech Solutions', {
+    body: data.body || '',
     // 192px y no el favicon de 96: en escritorio y tablets la notificacion
     // muestra el icono a mayor tamano y el de 96 se ve borroso.
     icon: '/icon-192.png',
