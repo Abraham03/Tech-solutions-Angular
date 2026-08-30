@@ -2,7 +2,7 @@
 <div class="text-gray-900 dark:text-slate-100">
 
   <!-- ══ NAV TABS ═════════════════════════════════════════════════════════ -->
-  <div class="border-b border-gray-200 dark:border-[#1e2235] bg-white dark:bg-[#0d1117] px-4 md:px-6 flex gap-1 overflow-x-auto sticky top-0 z-10">
+  <div class="tabs-bar border-b border-gray-200 dark:border-[#1e2235] flex gap-1 overflow-x-auto">
     @for (tab of tabs; track tab.id) {
       <button
         (click)="onTabChange(tab.id)"

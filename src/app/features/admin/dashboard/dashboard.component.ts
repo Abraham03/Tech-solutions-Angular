@@ -99,9 +99,32 @@ import { PaginationComponent } from '../../../shared/components/ui/pagination/pa
       color: #4b5563;
     }
 
-    /* ── Nav tabs fondo light ─────────────────────────────────────── */
-    :host-context(html:not(.dark)) .tabs-bar,
-    :host-context([data-theme="light"]) .tabs-bar {
+    /* -- Barra de pestanas -----------------------------------------
+       Sticky con fondo OPACO y z-index alto: con z-10 el contenido de las
+       pestanas podia pintarse por encima al hacer scroll y se veia a traves.
+
+       Los margenes negativos la extienden sobre el padding del contenedor del
+       layout (p-4 sm:p-6 lg:p-8), para que no asome contenido por los lados
+       mientras se desplaza. */
+    .tabs-bar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: #0d1117;
+      margin: -1rem -1rem 0;
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+
+    @media (min-width: 640px) {
+      .tabs-bar { margin: -1.5rem -1.5rem 0; padding-left: 1.5rem; padding-right: 1.5rem; }
+    }
+
+    @media (min-width: 1024px) {
+      .tabs-bar { margin: -2rem -2rem 0; padding-left: 2rem; padding-right: 2rem; }
+    }
+
+    :host-context(html:not(.dark)) .tabs-bar {
       background: #ffffff;
       border-color: #e5e7eb;
     }
