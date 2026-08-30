@@ -26,6 +26,13 @@ export class PushNotificationsService {
 
   private messaging: Messaging | null = null;
 
+  /**
+   * Ultimo token obtenido en esta sesion. AuthService lo necesita al cerrar
+   * sesion para dar de baja SOLO este dispositivo: sin el, el backend no sabria
+   * cual de los aparatos del usuario esta saliendo.
+   */
+  private currentToken: string | null = null;
+
   private get isBrowser(): boolean {
     return isPlatformBrowser(this.platformId);
   }
@@ -79,6 +86,7 @@ export class PushNotificationsService {
         return null;
       }
 
+      this.currentToken = token;
       await this.sendTokenToBackend(token);
       this.listenForForegroundMessages();
 
@@ -105,11 +113,19 @@ export class PushNotificationsService {
     });
   }
 
+  /** Token de este dispositivo, o null si aun no se ha registrado. */
+  getCurrentToken(): string | null {
+    return this.currentToken;
+  }
+
   private async sendTokenToBackend(token: string): Promise<void> {
     // El interceptor de autenticacion adjunta el Bearer, asi que esta llamada
     // solo funciona con sesion iniciada.
     await firstValueFrom(
-      this.http.post(`${environment.apiUrl}/me/fcm-token`, { fcm_token: token })
+      this.http.post(`${environment.apiUrl}/me/fcm-token`, {
+        fcm_token: token,
+        platform: 'web'
+      })
     );
   }
 

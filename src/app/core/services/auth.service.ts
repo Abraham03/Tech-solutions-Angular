@@ -122,7 +122,12 @@ export class AuthService {
     // revocaria el token de Passport ni limpiaria el fcm_token, y este
     // navegador seguiria recibiendo los avisos de pagos despues de salir.
     if (this.isBrowser && this.getToken()) {
-      this.http.post(`${this.apiUrl}/logout`, {}).subscribe({
+      // Mandamos el token de ESTE dispositivo para que el backend lo de de baja
+      // solo a el. Sin este dato no podria distinguirlo, y darlos de baja todos
+      // dejaria sin avisos al resto de aparatos del usuario.
+      const fcmToken = this.push.getCurrentToken();
+
+      this.http.post(`${this.apiUrl}/logout`, fcmToken ? { fcm_token: fcmToken } : {}).subscribe({
         error: (error) => {
           // La sesion local se cierra igual: no dejamos al usuario atrapado
           // dentro de la aplicacion porque el servidor no conteste.
