@@ -2,7 +2,8 @@ import { Component, input, output, signal, effect, OnDestroy } from '@angular/co
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
-import { PaginationMeta, PAGE_SIZES, DEFAULT_PAGE_SIZE, emptyMeta } from '../../../../core/models/pagination.model';
+import { PaginationMeta, emptyMeta } from '../../../../core/models/pagination.model';
+import { PaginationComponent } from '../pagination/pagination.component';
 
 export interface TableColumn {
   key: string;
@@ -21,7 +22,7 @@ export interface TableActionConfig {
 @Component({
   selector: 'app-data-table',
   standalone: true,
-  imports: [CommonModule, MatIconModule, FormsModule],
+  imports: [CommonModule, MatIconModule, FormsModule, PaginationComponent],
   providers: [CurrencyPipe],
   templateUrl: './data-table.component.html'
 })
@@ -50,9 +51,6 @@ export class DataTableComponent implements OnDestroy {
 
   searchTerm = signal('');
 
-  readonly pageSizes = PAGE_SIZES;
-  readonly defaultPageSize = DEFAULT_PAGE_SIZE;
-
   private searchTimer?: ReturnType<typeof setTimeout>;
 
   private primeraEmision = true;
@@ -77,78 +75,6 @@ export class DataTableComponent implements OnDestroy {
 
   ngOnDestroy(): void {
     clearTimeout(this.searchTimer);
-  }
-
-  // ── Paginación ────────────────────────────────────────────────────────
-
-  get hasPrevious(): boolean {
-    return this.meta().current_page > 1;
-  }
-
-  get hasNext(): boolean {
-    return this.meta().current_page < this.meta().last_page;
-  }
-
-  goToPage(pagina: number | '...'): void {
-    if (pagina === '...') {
-      return;
-    }
-
-    const { last_page, current_page } = this.meta();
-
-    if (pagina < 1 || pagina > last_page || pagina === current_page) {
-      return;
-    }
-
-    this.pageChanged.emit(pagina);
-  }
-
-  onPageSizeChange(valor: string | number): void {
-    this.pageSizeChanged.emit(Number(valor));
-  }
-
-  /**
-   * Numeros de pagina a mostrar, con elipsis cuando hay muchas: con 40 paginas
-   * no tiene sentido pintar 40 botones.
-   */
-  get visiblePages(): (number | '...')[] {
-    const { current_page: actual, last_page: ultima } = this.meta();
-
-    if (ultima <= 7) {
-      return Array.from({ length: ultima }, (_, i) => i + 1);
-    }
-
-    const paginas: (number | '...')[] = [1];
-
-    const desde = Math.max(2, actual - 1);
-    const hasta = Math.min(ultima - 1, actual + 1);
-
-    if (desde > 2) {
-      paginas.push('...');
-    }
-
-    for (let i = desde; i <= hasta; i++) {
-      paginas.push(i);
-    }
-
-    if (hasta < ultima - 1) {
-      paginas.push('...');
-    }
-
-    paginas.push(ultima);
-
-    return paginas;
-  }
-
-  /** "Mostrando 11–20 de 137" */
-  get rangeLabel(): string {
-    const { from, to, total } = this.meta();
-
-    if (!total) {
-      return 'Sin registros';
-    }
-
-    return `Mostrando ${from ?? 0}–${to ?? 0} de ${total}`;
   }
 
   // ── Acciones y formato ────────────────────────────────────────────────

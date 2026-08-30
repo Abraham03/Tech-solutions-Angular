@@ -4,11 +4,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 import { DashboardService } from '../../../core/services/dashboard.service';
 import { DashboardData } from '../../../core/models/dashboard.model';
+import { ListState } from '../../../core/models/list-state';
+import { PaginationComponent } from '../../../shared/components/ui/pagination/pagination.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, MatIconModule, RouterModule],
+  imports: [CommonModule, MatIconModule, RouterModule, PaginationComponent],
   providers: [CurrencyPipe],
   templateUrl: './dashboard.component.html',
   styles: [`
@@ -128,6 +130,18 @@ export class DashboardComponent implements OnInit {
   error         = signal<string | null>(null);
   maxRevenue    = signal(0);
 
+  // Cada lista de las pestanas trae su propia pagina. Antes el resumen las
+  // servia todas de golpe y recortadas (5 proyectos, 20 notificaciones), asi
+  // que lo que quedaba fuera era inalcanzable desde el panel.
+  recentProjects   = new ListState<any>();
+  clientLtv        = new ListState<any>();
+  expiringServices = new ListState<any>();
+  serviceMargins   = new ListState<any>();
+  notifications    = new ListState<any>();
+
+  /** Ventana de vencimiento de la pestana Servicios. */
+  expiringDays = signal(30);
+
   activeTab   = signal<'overview' | 'revenue' | 'services' | 'notifs'>('overview');
   notifFilter = signal<string>('all');
 
@@ -159,7 +173,10 @@ export class DashboardComponent implements OnInit {
   });
 
   // ── Lifecycle ─────────────────────────────────────────────────────────
-  ngOnInit(): void { this.loadData(); }
+  ngOnInit(): void {
+    this.loadData();
+    this.loadTab(this.activeTab());
+  }
 
   // ── Data ──────────────────────────────────────────────────────────────
   loadData(): void {
@@ -180,6 +197,87 @@ export class DashboardComponent implements OnInit {
         this.isLoading.set(false);
       }
     });
+  }
+
+  // ── Listas paginadas de las pestanas ──────────────────────────────────
+
+  /**
+   * Se carga solo lo que la pestana necesita, y solo la primera vez: cambiar de
+   * pestana no deberia repetir una peticion que ya trajo datos.
+   */
+  onTabChange(tab: 'overview' | 'revenue' | 'services' | 'notifs'): void {
+    this.activeTab.set(tab);
+    this.loadTab(tab);
+  }
+
+  private loadTab(tab: string, forzar = false): void {
+    if (tab === 'overview') {
+      if (forzar || !this.recentProjects.meta().total) this.loadRecentProjects();
+      if (forzar || !this.clientLtv.meta().total) this.loadClientLtv();
+    } else if (tab === 'revenue') {
+      if (forzar || !this.serviceMargins.meta().total) this.loadServiceMargins();
+    } else if (tab === 'services') {
+      if (forzar || !this.expiringServices.meta().total) this.loadExpiringServices();
+      if (forzar || !this.serviceMargins.meta().total) this.loadServiceMargins();
+    } else if (tab === 'notifs') {
+      if (forzar || !this.notifications.meta().total) this.loadNotifications();
+    }
+  }
+
+  private fetch(estado: ListState<any>, peticion: any): void {
+    estado.loading.set(true);
+
+    peticion.subscribe({
+      next: (respuesta: any) => {
+        estado.apply(respuesta);
+        estado.loading.set(false);
+      },
+      error: (err: unknown) => {
+        console.error('[Dashboard] listado', err);
+        estado.fail();
+        estado.loading.set(false);
+      }
+    });
+  }
+
+  loadRecentProjects(): void {
+    this.fetch(this.recentProjects, this.dashboardService.getRecentProjects(this.recentProjects.params()));
+  }
+
+  loadClientLtv(): void {
+    this.fetch(this.clientLtv, this.dashboardService.getClientLtv(this.clientLtv.params()));
+  }
+
+  loadExpiringServices(): void {
+    this.fetch(
+      this.expiringServices,
+      this.dashboardService.getExpiringServices(this.expiringServices.params(), this.expiringDays())
+    );
+  }
+
+  loadServiceMargins(): void {
+    this.fetch(this.serviceMargins, this.dashboardService.getServiceMargins(this.serviceMargins.params()));
+  }
+
+  loadNotifications(): void {
+    this.fetch(
+      this.notifications,
+      this.dashboardService.getNotifications(this.notifications.params(), this.notifFilter())
+    );
+  }
+
+  /** El filtro por canal se resuelve en el servidor, no sobre la pagina cargada. */
+  setNotifFilter(canal: string): void {
+    this.notifFilter.set(canal);
+    this.notifications.changeSearch('');
+    this.notifications.goToPage(1);
+    this.loadNotifications();
+  }
+
+  setExpiringDays(dias: number): void {
+    this.expiringDays.set(dias);
+    this.expiringServices.goToPage(1);
+    this.loadExpiringServices();
   }
 
   // ── Formatters ────────────────────────────────────────────────────────
@@ -279,11 +377,6 @@ export class DashboardComponent implements OnInit {
       { key: 'email_invoice',     label: 'Email',    icon: '✉️',  val: summary.email,    color: '#60a5fa' },
       { key: 'push_alert',        label: 'Push',     icon: '📲', val: summary.push,     color: '#a78bfa' },
     ];
-  }
-
-  filteredNotifs(notifs: any[]): any[] {
-    const f = this.notifFilter();
-    return f === 'all' ? notifs : notifs.filter(n => n.type === f);
   }
 
   notifLabel(type: string): string {

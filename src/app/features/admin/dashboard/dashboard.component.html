@@ -5,7 +5,7 @@
   <div class="border-b border-gray-200 dark:border-[#1e2235] bg-white dark:bg-[#0d1117] px-4 md:px-6 flex gap-1 overflow-x-auto sticky top-0 z-10">
     @for (tab of tabs; track tab.id) {
       <button
-        (click)="activeTab.set(tab.id)"
+        (click)="onTabChange(tab.id)"
         class="flex items-center gap-2 px-4 py-3 text-sm font-semibold whitespace-nowrap border-b-2 transition-all"
         [class.border-blue-500]="activeTab() === tab.id"
         [class.text-blue-500]="activeTab() === tab.id"
@@ -157,7 +157,7 @@
               Proyectos recientes
             </p>
             <div class="dash-card !p-0 divide-y divide-gray-100 dark:divide-[#1a1f2e]">
-              @for (project of data.recentProjects; track project.id) {
+              @for (project of recentProjects.items(); track project.id) {
                 <div class="p-4 flex flex-col gap-2">
                   <div class="flex justify-between items-start gap-2">
                     <div>
@@ -184,6 +184,12 @@
                   }
                 </div>
               }
+              <app-pagination
+                [meta]="recentProjects.meta()"
+                [loading]="recentProjects.loading()"
+                [showPageSize]="false"
+                (pageChange)="recentProjects.goToPage($event); loadRecentProjects()"
+                (pageSizeChange)="recentProjects.changePageSize($event); loadRecentProjects()" />
             </div>
           </div>
 
@@ -194,7 +200,7 @@
               Valor de vida por cliente (LTV)
             </p>
             <div class="dash-card space-y-4">
-              @for (client of data.clientLTV; track client.id) {
+              @for (client of clientLtv.items(); track client.id) {
                 <div>
                   <div class="flex justify-between items-start mb-1.5">
                     <div>
@@ -206,11 +212,18 @@
                   <div class="h-1.5 bg-gray-200 dark:bg-[#1e2235] rounded-full overflow-hidden">
                     <div
                       class="h-full rounded-full bg-gradient-to-r from-blue-500 to-violet-500 transition-all duration-500"
-                      [style.width.%]="ltvPct(client.ltv, data.clientLTV)">
+                      [style.width.%]="ltvPct(client.ltv, clientLtv.items())">
                     </div>
                   </div>
                 </div>
               }
+
+              <app-pagination
+                [meta]="clientLtv.meta()"
+                [loading]="clientLtv.loading()"
+                [showPageSize]="false"
+                (pageChange)="clientLtv.goToPage($event); loadClientLtv()"
+                (pageSizeChange)="clientLtv.changePageSize($event); loadClientLtv()" />
             </div>
           </div>
 
@@ -334,7 +347,7 @@
             <span class="col-label text-right hidden sm:block">Margen/mes</span>
             <span class="col-label text-right">%</span>
           </div>
-          @for (s of data.serviceMargins; track s.id) {
+          @for (s of serviceMargins.items(); track s.id) {
             <div class="grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_auto_auto_auto] gap-x-4 px-4 py-3 border-b border-gray-100 dark:border-[#1a1f2e] last:border-0 items-center hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
               <div class="min-w-0">
                 <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">{{ s.name }}</p>
@@ -351,6 +364,12 @@
               </span>
             </div>
           }
+          <app-pagination
+            [meta]="serviceMargins.meta()"
+            [loading]="serviceMargins.loading()"
+            [showPageSize]="true"
+            (pageChange)="serviceMargins.goToPage($event); loadServiceMargins()"
+            (pageSizeChange)="serviceMargins.changePageSize($event); loadServiceMargins()" />
         </div>
       }
 
@@ -359,29 +378,46 @@
       ════════════════════════════════════════════════════════════════ -->
       @if (activeTab() === 'services') {
 
-        @if (data.expiringServices.length > 0) {
+        @if (expiringServices.meta().total > 0) {
           <div class="flex items-center gap-3 p-4 rounded-xl bg-amber-500/10 border border-amber-500/25 mb-4">
             <span class="material-symbols-outlined text-amber-500 shrink-0">warning</span>
             <div>
-              <p class="text-sm font-bold text-amber-500">{{ data.expiringServices.length }} servicio(s) próximos a vencer</p>
+              <p class="text-sm font-bold text-amber-500">{{ expiringServices.meta().total }} servicio(s) próximos a vencer</p>
               <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Revisa y envía recordatorios a tus clientes</p>
             </div>
           </div>
         }
 
-        <p class="section-title">
-          <span class="material-symbols-outlined text-[14px] mr-1">alarm</span>
-          Servicios por vencer (30 días)
-        </p>
+        <div class="flex items-center justify-between flex-wrap gap-2">
+          <p class="section-title">
+            <span class="material-symbols-outlined text-[14px] mr-1">alarm</span>
+            Servicios por vencer
+          </p>
 
-        @if (data.expiringServices.length === 0) {
+          <!-- La ventana la resuelve el servidor: 30 dias sirve para vigilar,
+               pero al revisar a fondo interesa mirar mas lejos. -->
+          <div class="flex items-center gap-1 text-xs">
+            @for (dias of [30, 90, 365]; track dias) {
+              <button
+                type="button"
+                (click)="setExpiringDays(dias)"
+                [class]="expiringDays() === dias
+                  ? 'px-2.5 py-1 rounded-lg font-semibold bg-brand-primary text-white'
+                  : 'px-2.5 py-1 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-surface-border transition-colors'">
+                {{ dias }} días
+              </button>
+            }
+          </div>
+        </div>
+
+        @if (expiringServices.meta().total === 0) {
           <div class="dash-card flex flex-col items-center py-8 text-gray-400">
             <span class="material-symbols-outlined text-emerald-500 text-[48px] mb-3">check_circle</span>
             <p class="text-sm">🎉 Sin servicios urgentes por vencer</p>
           </div>
         }
 
-        @for (s of data.expiringServices; track s.id) {
+        @for (s of expiringServices.items(); track s.id) {
           <div class="dash-card mb-3">
             <div class="flex flex-col md:flex-row justify-between gap-4">
               <div class="flex-1 min-w-0">
@@ -422,6 +458,12 @@
             </div>
           </div>
         }
+        <app-pagination
+          [meta]="expiringServices.meta()"
+          [loading]="expiringServices.loading()"
+          [showPageSize]="true"
+          (pageChange)="expiringServices.goToPage($event); loadExpiringServices()"
+          (pageSizeChange)="expiringServices.changePageSize($event); loadExpiringServices()" />
 
         <p class="section-title mt-2">
           <span class="material-symbols-outlined text-[14px] mr-1">dns</span>
@@ -434,7 +476,7 @@
             <span class="col-label text-right hidden sm:block">MRR</span>
             <span class="col-label text-right">Margen</span>
           </div>
-          @for (s of data.serviceMargins; track s.id) {
+          @for (s of serviceMargins.items(); track s.id) {
             <div class="grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_auto_auto_auto] gap-x-4 px-4 py-3 border-b border-gray-100 dark:border-[#1a1f2e] last:border-0 items-center hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
               <div class="min-w-0">
                 <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">{{ s.name }}</p>
@@ -447,6 +489,12 @@
               </span>
             </div>
           }
+          <app-pagination
+            [meta]="serviceMargins.meta()"
+            [loading]="serviceMargins.loading()"
+            [showPageSize]="true"
+            (pageChange)="serviceMargins.goToPage($event); loadServiceMargins()"
+            (pageSizeChange)="serviceMargins.changePageSize($event); loadServiceMargins()" />
         </div>
       }
 
@@ -462,7 +510,7 @@
               class="dash-card cursor-pointer transition-all text-left"
               [class.ring-1]="notifFilter() === ch.key"
               [class.ring-blue-500]="notifFilter() === ch.key"
-              (click)="notifFilter.set(ch.key)">
+              (click)="setNotifFilter(ch.key)">
               <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{{ ch.icon }} {{ ch.label }}</p>
               <p class="text-3xl font-bold tabular-nums" [style.color]="ch.color">{{ ch.val }}</p>
             </button>
@@ -474,7 +522,7 @@
           Historial de notificaciones
         </p>
         <div class="dash-card !p-0 divide-y divide-gray-100 dark:divide-[#1a1f2e]">
-          @for (log of filteredNotifs(data.recentNotifications); track log.id) {
+          @for (log of notifications.items(); track log.id) {
             <div class="flex gap-3 p-4 hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
               <div
                 class="w-9 h-9 rounded-full flex items-center justify-center shrink-0 border"
@@ -500,12 +548,18 @@
               </div>
             </div>
           }
-          @if (filteredNotifs(data.recentNotifications).length === 0) {
+          @if (notifications.items().length === 0) {
             <div class="flex flex-col items-center py-12 text-gray-400">
               <span class="material-symbols-outlined text-[48px] mb-3">notifications_none</span>
               <p class="text-sm">Sin notificaciones para este filtro</p>
             </div>
           }
+          <app-pagination
+            [meta]="notifications.meta()"
+            [loading]="notifications.loading()"
+            [showPageSize]="true"
+            (pageChange)="notifications.goToPage($event); loadNotifications()"
+            (pageSizeChange)="notifications.changePageSize($event); loadNotifications()" />
         </div>
       }
 
