@@ -47,7 +47,11 @@ messaging.onBackgroundMessage((payload) => {
 
   self.registration.showNotification(notification.title || 'Tech Solutions', {
     body: notification.body || '',
-    icon: '/favicon-96x96.png',
+    // 192px y no el favicon de 96: en escritorio y tablets la notificacion
+    // muestra el icono a mayor tamano y el de 96 se ve borroso.
+    icon: '/icon-192.png',
+    // El badge es el icono monocromo pequeno de la barra de estado en Android;
+    // el resto de plataformas lo ignoran.
     badge: '/favicon-96x96.png',
     data: { link },
     tag,
